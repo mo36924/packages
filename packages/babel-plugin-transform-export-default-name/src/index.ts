@@ -10,7 +10,7 @@ export default ({ types: t }: typeof babel): PluginObj<State> => {
       ExportDefaultDeclaration(path, state) {
         const declaration = path.node.declaration;
 
-        if (t.isIdentifier(declaration)) {
+        if (!t.isArrowFunctionExpression(declaration)) {
           return;
         }
 
@@ -23,7 +23,7 @@ export default ({ types: t }: typeof babel): PluginObj<State> => {
         }
 
         const [nodePath] = path.replaceWithMultiple([
-          t.variableDeclaration("const", [t.variableDeclarator(t.identifier(name), declaration as any)]),
+          t.variableDeclaration("const", [t.variableDeclarator(t.identifier(name), declaration)]),
           t.exportDefaultDeclaration(t.identifier(name)),
         ]);
 
