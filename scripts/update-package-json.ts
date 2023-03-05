@@ -45,9 +45,11 @@ await Promise.all(
             version: "0.0.1",
             description: name,
             keywords: [],
+            ..._pkg,
             license: "MIT",
             name: `@${pkg.author}/${name}`,
             author: pkg.author,
+            type: "module",
             homepage: `https://github.com/${pkg.author}/${pkg.name}#readme`,
             bugs: {
               url: `https://github.com/${pkg.author}/${pkg.name}/issues`,
@@ -57,13 +59,12 @@ await Promise.all(
               url: `git+https://github.com/${pkg.author}/${pkg.name}.git`,
               directory: `packages/${name}`,
             },
-            main: "./dist/index.cjs",
+            main: "./dist/index.js",
             module: "./dist/index.js",
             types: "./dist/index.d.ts",
             publishConfig: {
               access: "public",
             },
-            ..._pkg,
             typesVersions: { "*": { "*": ["dist/*.d.ts", "*"] } },
             files: ["dist"],
             exports: Object.fromEntries(
@@ -75,7 +76,7 @@ await Promise.all(
                     types: `./dist/${name}.d.ts`,
                     import: `./dist/${name}.js`,
                     require: `./dist/${name}.cjs`,
-                    default: `./dist/${name}.cjs`,
+                    default: `./dist/${name}.js`,
                   },
                 ];
               }),
