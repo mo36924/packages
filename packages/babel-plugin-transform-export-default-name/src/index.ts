@@ -1,10 +1,10 @@
-import babel, { PluginObj, PluginPass } from "@babel/core";
+import babel, { PluginObj } from "@babel/core";
 import { pascalCase } from "change-case";
 import { relative } from "path";
 
-type State = PluginPass & { baseDir?: string };
+export type Options = { baseDir?: string };
 
-export default ({ types: t }: typeof babel): PluginObj<State> => {
+export default ({ types: t }: typeof babel, options: Options): PluginObj => {
   return {
     visitor: {
       ExportDefaultDeclaration(path, state) {
@@ -14,7 +14,7 @@ export default ({ types: t }: typeof babel): PluginObj<State> => {
           return;
         }
 
-        let name = pascalCase(relative(state.baseDir ?? ".", state.filename!.replace(/\.\w+$/, "")));
+        let name = pascalCase(relative(options.baseDir ?? ".", state.filename!.replace(/\.\w+$/, "")));
         name = /\W/.test(name) ? "Anonymous" : name;
         const scope = path.scope;
 
