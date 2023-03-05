@@ -1,0 +1,35 @@
+{
+  "name": "packages",
+  "version": "0.0.1",
+  "private": true,
+  "keywords": [],
+  "homepage": "https://github.com/mo36924/packages#readme",
+  "bugs": {
+    "url": "https://github.com/mo36924/packages/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mo36924/packages.git"
+  },
+  "license": "MIT",
+  "author": "mo36924",
+  "type": "module",
+  "scripts": {
+    "format": "run-s format:*",
+    "format:sort-package-json": "sort-package-json package.json \"packages/*/package.json\"",
+    "format:prettier": "prettier --write .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "prettier": {
+    "printWidth": 120,
+    "trailingComma": "all"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.21.0",
+    "eslint": "^8.35.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.8.4",
+    "sort-package-json": "^2.4.1",
+    "typescript": "^4.9.5"
+  }
+}
