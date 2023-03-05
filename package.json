@@ -25,7 +25,7 @@
     "format:prettier": "prettier --write .",
     "test": "vitest run",
     "publish": "run-s build publish:*",
-    "publish:lerna": "lerna publish"
+    "publish:lerna": "lerna publish --sync-workspace-lock"
   },
   "prettier": {
     "printWidth": 120,
