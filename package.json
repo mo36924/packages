@@ -17,13 +17,15 @@
   "scripts": {
     "init": "tsx scripts/init-package.ts",
     "update": "tsx scripts/update-package-json.ts",
-    "build": "run-s clean format build:*",
+    "build": "run-s clean test update format build:*",
     "build:vite": "vite build",
     "clean": "del \"packages/*/dist\"",
     "format": "run-s format:*",
     "format:sort-package-json": "sort-package-json package.json \"packages/*/package.json\"",
     "format:prettier": "prettier --write .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run",
+    "publish": "run-s build publish:*",
+    "publish:lerna": "lerna publish"
   },
   "prettier": {
     "printWidth": 120,
@@ -32,8 +34,10 @@
   "devDependencies": {
     "@babel/core": "^7.21.0",
     "@lerna-lite/cli": "^1.16.0",
+    "@types/babel__core": "^7.20.0",
     "@types/node": "^18.14.6",
     "@types/prettier": "^2.7.2",
+    "change-case": "^4.1.2",
     "del-cli": "^5.0.0",
     "depcheck": "^1.4.3",
     "eslint": "^8.35.0",
@@ -43,6 +47,7 @@
     "sort-package-json": "^2.4.1",
     "tsx": "^3.12.3",
     "typescript": "^4.9.5",
-    "vite": "^4.1.4"
+    "vite": "^4.1.4",
+    "vitest": "^0.29.2"
   }
 }

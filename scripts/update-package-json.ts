@@ -58,7 +58,7 @@ await Promise.all(
               directory: `packages/${name}`,
             },
             main: "./dist/index.cjs",
-            module: "./dist/index.mjs",
+            module: "./dist/index.js",
             types: "./dist/index.d.ts",
             publishConfig: {
               access: "public",
@@ -73,8 +73,7 @@ await Promise.all(
                   key,
                   {
                     types: `./dist/${name}.d.ts`,
-                    browser: `./dist/${name}.js`,
-                    import: `./dist/${name}.mjs`,
+                    import: `./dist/${name}.js`,
                     require: `./dist/${name}.cjs`,
                     default: `./dist/${name}.cjs`,
                   },

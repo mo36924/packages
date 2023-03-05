@@ -4,7 +4,7 @@
     "target": "ES2022",
     "module": "ES2022",
     "moduleResolution": "node",
-    "types": ["vite/client"],
+    "types": ["vite/client", "node"],
     "baseUrl": ".",
     "paths": {
       "@mo36924/*": ["packages/*/src"]

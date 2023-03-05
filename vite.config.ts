@@ -1,6 +1,6 @@
 import { readdirSync } from "fs";
 import ts from "rollup-plugin-ts";
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   build: {
@@ -13,6 +13,12 @@ export default defineConfig({
       ),
       formats: ["es", "cjs"],
     },
+    rollupOptions: {
+      external: /^[@\w]/,
+    },
   },
-  plugins: [ts()],
+  plugins: [{ ...ts(), enforce: "pre" }],
+  test: {
+    setupFiles: "setup.ts",
+  },
 });
