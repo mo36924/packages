@@ -3,6 +3,7 @@
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
     "foxundermoon.shell-format",
+    "github.codespaces",
     "ms-azuretools.vscode-docker"
   ]
 }
