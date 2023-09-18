@@ -1,0 +1,10 @@
+services:
+  vscode:
+    build: .
+    command: sleep infinity
+    volumes:
+      - ..:/workspace:cached
+      - node_modules:/workspace/node_modules
+
+volumes:
+  node_modules:
