@@ -14,6 +14,9 @@
   "license": "MIT",
   "author": "mo36924",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "init": "tsx scripts/init-package.ts",
     "update": "tsx scripts/update-package-json.ts",
@@ -28,26 +31,26 @@
     "publish:lerna": "lerna publish --sync-workspace-lock"
   },
   "prettier": {
-    "printWidth": 120,
-    "trailingComma": "all"
+    "printWidth": 120
   },
   "devDependencies": {
     "@babel/core": "^7.21.0",
-    "@lerna-lite/cli": "^1.16.0",
     "@types/babel__core": "^7.20.0",
     "@types/node": "^18.14.6",
-    "@types/prettier": "^2.7.2",
+    "@types/v2-prettier": "npm:@types/prettier@^2.7.3",
     "change-case": "^4.1.2",
     "del-cli": "^5.0.0",
     "depcheck": "^1.4.3",
-    "eslint": "^8.35.0",
+    "eslint": "^8.49.0",
+    "lerna": "^7.3.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "^2.8.4",
+    "prettier": "^3.0.3",
     "rollup-plugin-ts": "^3.2.0",
     "sort-package-json": "^2.4.1",
     "tsx": "^3.12.3",
     "typescript": "^4.9.5",
-    "vite": "^4.1.4",
-    "vitest": "^0.29.2"
+    "v2-prettier": "npm:prettier@^2.8.8",
+    "vite": "^4.4.9",
+    "vitest": "^0.29.8"
   }
 }

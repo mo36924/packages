@@ -1,6 +1,6 @@
-import { expect } from "vitest";
-import { format, resolveConfig } from "prettier";
 import { BabelFileResult } from "@babel/core";
+import { format, resolveConfig } from "v2-prettier";
+import { expect } from "vitest";
 
 const config = { ...resolveConfig.sync("index.js"), filepath: "index.js" };
 
