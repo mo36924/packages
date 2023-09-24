@@ -19,12 +19,13 @@
   "scripts": {
     "init": "tsx scripts/init-package.ts",
     "update": "tsx scripts/update-package-json.ts",
-    "build": "run-s clean test update format build:*",
+    "build": "run-s clean test lint update format build:*",
     "build:vite": "vite build",
     "clean": "del \"packages/*/dist\"",
     "format": "run-s format:*",
     "format:sort-package-json": "sort-package-json package.json \"packages/*/package.json\"",
     "format:prettier": "prettier --write .",
+    "lint": "eslint --fix .",
     "test": "vitest run"
   },
   "prettier": {
@@ -34,13 +35,17 @@
     "@babel/core": "^7.21.0",
     "@prettier/sync": "^0.3.0",
     "@types/babel__core": "^7.20.0",
+    "@types/eslint": "^8.44.3",
     "@types/node": "^18.14.6",
     "@types/validate-npm-package-name": "^4.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.2",
+    "@typescript-eslint/parser": "^6.7.2",
     "change-case": "^4.1.2",
     "del-cli": "^5.0.0",
     "depcheck": "^1.4.3",
     "dts-bundle-generator": "^8.0.1",
-    "eslint": "^8.49.0",
+    "eslint": "^8.50.0",
+    "eslint-plugin-import": "^2.28.1",
     "lerna": "^7.3.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.0.3",
@@ -49,6 +54,6 @@
     "typescript": "^5.2.2",
     "validate-npm-package-name": "^5.0.0",
     "vite": "^4.4.9",
-    "vitest": "^0.29.8"
+    "vitest": "^0.34.5"
   }
 }

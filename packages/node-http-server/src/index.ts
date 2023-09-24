@@ -22,6 +22,7 @@ export default (requestListener: (request: Request) => Response | Promise<Respon
       // @ts-expect-error
       init.body = req;
     }
+
     const request = new Request(url, init);
     const response = await requestListener(request);
     res.writeHead(response.status, [...response.headers]);

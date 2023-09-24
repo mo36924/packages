@@ -1,5 +1,5 @@
-import { generateDtsBundle } from "dts-bundle-generator";
 import { mkdir, readdir, writeFile } from "fs/promises";
+import { generateDtsBundle } from "dts-bundle-generator";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig(async ({ command }) => {
@@ -17,6 +17,7 @@ export default defineConfig(async ({ command }) => {
       }),
     );
   }
+
   return {
     build: {
       outDir: ".",

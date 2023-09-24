@@ -1,6 +1,6 @@
+import { relative } from "path";
 import babel, { PluginObj } from "@babel/core";
 import { pascalCase } from "change-case";
-import { relative } from "path";
 
 export type Options = { baseDir?: string };
 

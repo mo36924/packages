@@ -1,6 +1,6 @@
-import depcheck from "depcheck";
 import { readdir, writeFile } from "fs/promises";
 import { join, resolve } from "path";
+import depcheck from "depcheck";
 import { format, resolveConfig } from "prettier";
 import sort from "sort-package-json";
 import { author, devDependencies, name } from "../package.json";
