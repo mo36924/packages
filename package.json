@@ -25,9 +25,7 @@
     "format": "run-s format:*",
     "format:sort-package-json": "sort-package-json package.json \"packages/*/package.json\"",
     "format:prettier": "prettier --write .",
-    "test": "vitest run",
-    "publish": "run-s build publish:*",
-    "publish:lerna": "lerna publish"
+    "test": "vitest run"
   },
   "prettier": {
     "printWidth": 120
