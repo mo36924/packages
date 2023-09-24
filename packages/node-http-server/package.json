@@ -1,0 +1,43 @@
+{
+  "name": "@mo36924/node-http-server",
+  "version": "0.0.1",
+  "description": "node-http-server",
+  "keywords": [],
+  "homepage": "https://github.com/mo36924/packages#readme",
+  "bugs": {
+    "url": "https://github.com/mo36924/packages/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mo36924/packages.git",
+    "directory": "packages/node-http-server"
+  },
+  "license": "MIT",
+  "author": "mo36924",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/*.d.ts",
+        "*"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}

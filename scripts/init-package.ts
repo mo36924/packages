@@ -1,11 +1,11 @@
+import { ok } from "assert";
 import { mkdir, writeFile } from "fs/promises";
+import validate from "validate-npm-package-name";
 
-const name = process.argv[2];
 const workspaceDir = "packages";
-
-if (!/^[a-z][a-z0-9-]*$/.test(name)) {
-  throw new Error(`Invalid name: ${name}`);
-}
+const name = process.argv[2];
+const { validForNewPackages, validForOldPackages } = validate(name);
+ok(validForNewPackages && validForOldPackages);
 
 await mkdir(`${workspaceDir}/${name}/src`, { recursive: true });
 

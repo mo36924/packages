@@ -1,9 +1,9 @@
 import depcheck from "depcheck";
 import { readdir, writeFile } from "fs/promises";
 import { join, resolve } from "path";
-import prettier from "prettier";
+import { format, resolveConfig } from "prettier";
 import sort from "sort-package-json";
-import pkg from "../package.json";
+import { author, devDependencies, name } from "../package.json";
 
 const dir = resolve("packages");
 
@@ -24,77 +24,76 @@ const [pkgs, config] = await Promise.all([
         ),
     ),
   ),
-  prettier.resolveConfig("package.json"),
+  resolveConfig("package.json"),
 ]);
 
 const deps = Object.assign(
   Object.create(null),
-  pkg.devDependencies,
-  Object.fromEntries(pkgs.filter(([, pkg]) => pkg.name && pkg.version).map(([, pkg]) => [pkg.name, `^${pkg.version}`])),
+  devDependencies,
+  Object.fromEntries(pkgs.map(([, { name, version }]) => [name, `^${version}`])),
 );
 
-const _deps = (obj: any) => (Object.keys(obj).length ? obj : undefined);
+const deleteEmptyObject = (obj: any) => (Object.keys(obj).length ? obj : undefined);
 
 await Promise.all(
-  pkgs.map(([name, _pkg, result]) =>
-    writeFile(
-      join(dir, name, "package.json"),
-      prettier.format(
-        JSON.stringify(
-          sort({
-            version: "0.0.1",
-            description: name,
-            keywords: [],
-            ..._pkg,
-            license: "MIT",
-            name: `@${pkg.author}/${name}`,
-            author: pkg.author,
-            type: "module",
-            homepage: `https://github.com/${pkg.author}/${pkg.name}#readme`,
-            bugs: {
-              url: `https://github.com/${pkg.author}/${pkg.name}/issues`,
-            },
-            repository: {
-              type: "git",
-              url: `git+https://github.com/${pkg.author}/${pkg.name}.git`,
-              directory: `packages/${name}`,
-            },
-            main: "./dist/index.js",
-            module: "./dist/index.js",
-            types: "./dist/index.d.ts",
-            publishConfig: {
-              access: "public",
-            },
-            typesVersions: { "*": { "*": ["dist/*.d.ts", "*"] } },
-            files: ["dist"],
-            exports: Object.fromEntries(
-              Object.keys(_pkg.exports ?? { ".": {} }).map((key) => {
-                const name = key.slice(2) || "index";
-                return [
-                  key,
-                  {
-                    types: `./dist/${name}.d.ts`,
-                    import: `./dist/${name}.js`,
-                    require: `./dist/${name}.cjs`,
-                    default: `./dist/${name}.js`,
-                  },
-                ];
-              }),
-            ),
-            dependencies: _deps({
-              ..._pkg.dependencies,
-              ...Object.fromEntries(
-                Object.keys(result.using)
-                  .map((name) => `@types/${name.replace("@", "").replace("/", "__")}`)
-                  .map((name) => [name, deps[name]]),
-              ),
-              ...Object.fromEntries(Object.keys(result.using).map((name) => [name, deps[name]])),
+  pkgs.map(async ([_name, _pkg, result]) => {
+    const path = join(dir, _name, "package.json");
+    const data = await format(
+      JSON.stringify(
+        sort({
+          version: "0.0.1",
+          description: _name,
+          keywords: [],
+          ..._pkg,
+          license: "MIT",
+          name: `@${author}/${_name}`,
+          author: author,
+          type: "module",
+          homepage: `https://github.com/${author}/${name}#readme`,
+          bugs: {
+            url: `https://github.com/${author}/${name}/issues`,
+          },
+          repository: {
+            type: "git",
+            url: `git+https://github.com/${author}/${name}.git`,
+            directory: `packages/${_name}`,
+          },
+          main: "./dist/index.js",
+          module: "./dist/index.js",
+          types: "./dist/index.d.ts",
+          publishConfig: {
+            access: "public",
+          },
+          typesVersions: { "*": { "*": ["dist/*.d.ts", "*"] } },
+          files: ["dist"],
+          exports: Object.fromEntries(
+            Object.keys(_pkg.exports ?? { ".": {} }).map((key) => {
+              const name = key.slice(2) || "index";
+              return [
+                key,
+                {
+                  types: `./dist/${name}.d.ts`,
+                  import: `./dist/${name}.js`,
+                  require: `./dist/${name}.cjs`,
+                  default: `./dist/${name}.js`,
+                },
+              ];
             }),
-            default: undefined,
+          ),
+          dependencies: deleteEmptyObject({
+            ..._pkg.dependencies,
+            ...Object.fromEntries(
+              Object.keys(result.using)
+                .map((name) => `@types/${name.replace("@", "").replace("/", "__")}`)
+                .map((name) => [name, deps[name]]),
+            ),
+            ...Object.fromEntries(Object.keys(result.using).map((name) => [name, deps[name]])),
           }),
-        ),
-        { ...config, filepath: "package.json" },
+          default: undefined,
+        }),
       ),
-    ),
-  ),
+      { ...config, filepath: path },
+    );
+    await writeFile(path, data);
+  }),
 );

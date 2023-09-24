@@ -1,8 +1,8 @@
 import { BabelFileResult } from "@babel/core";
-import { format, resolveConfig } from "v2-prettier";
+import { format, resolveConfig } from "@prettier/sync";
 import { expect } from "vitest";
 
-const config = { ...resolveConfig.sync("index.js"), filepath: "index.js" };
+const config = { ...resolveConfig("index.js"), filepath: "index.js" };
 
 expect.addSnapshotSerializer({
   test: (value: BabelFileResult) =>
