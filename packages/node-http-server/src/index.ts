@@ -10,12 +10,14 @@ export default (requestListener: (request: Request) => Response | Promise<Respon
     const url = `http://${headers.host}${req.url}`;
     const ctrl = new AbortController();
     req.once("aborted", () => ctrl.abort());
+
     const init: RequestInit = {
       method,
       headers,
       signal: ctrl.signal,
       referrer: headers.referrer,
     };
+
     if (method !== "GET" && method !== "HEAD") {
       // @ts-expect-error
       init.duplex = "half";
@@ -26,6 +28,7 @@ export default (requestListener: (request: Request) => Response | Promise<Respon
     const request = new Request(url, init);
     const response = await requestListener(request);
     res.writeHead(response.status, [...response.headers]);
+
     if (response.body) {
       // @ts-expect-error
       await pipeline(Readable.fromWeb(response.body), res);

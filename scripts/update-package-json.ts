@@ -38,6 +38,7 @@ const deleteEmptyObject = (obj: any) => (Object.keys(obj).length ? obj : undefin
 await Promise.all(
   pkgs.map(async ([_name, _pkg, result]) => {
     const path = join(dir, _name, "package.json");
+
     const data = await format(
       JSON.stringify(
         sort({
@@ -94,6 +95,7 @@ await Promise.all(
       ),
       { ...config, filepath: path },
     );
+
     await writeFile(path, data);
   }),
 );
