@@ -1,2 +1,2 @@
 sudo chown vscode:vscode node_modules
-npm i
+. ${NVM_DIR}/nvm.sh && nvm install

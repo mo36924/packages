@@ -1,3 +1,1 @@
-FROM mcr.microsoft.com/devcontainers/base:debian
-
-RUN apt-get update
+FROM mcr.microsoft.com/devcontainers/base:bookworm
