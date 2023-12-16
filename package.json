@@ -31,7 +31,8 @@
     "lint:tsc": "tsc",
     "test": "vitest run",
     "publish": "run-s publish:*",
-    "publish:lerna": "lerna publish"
+    "publish:lerna": "lerna publish",
+    "lerna:from-git": "lerna publish from-git"
   },
   "prettier": {
     "printWidth": 120
