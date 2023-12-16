@@ -1,9 +1,9 @@
 import { mkdir, readFile, readdir, writeFile } from "fs/promises";
 import { dirname } from "path";
 import { generateDtsBundle } from "dts-bundle-generator";
-import { defineConfig } from "vitest/config";
+import { UserConfig, defineConfig } from "vitest/config";
 
-export default defineConfig(async ({ command }) => {
+export default defineConfig(async ({ command }): Promise<UserConfig> => {
   const dir = "packages";
   const packages = await readdir(dir);
 
