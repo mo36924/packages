@@ -68,11 +68,12 @@ await Promise.all(
           typesVersions: { "*": { "*": ["dist/*.d.ts", "*"] } },
           files: ["dist"],
           exports: Object.fromEntries(
-            Object.keys(_pkg.exports ?? { ".": {} }).map((key) => {
+            Object.entries<{ [key: string]: string }>(_pkg.exports ?? { ".": {} }).map(([key, value]) => {
               const name = key.slice(2) || "index";
               return [
                 key,
                 {
+                  ...value,
                   types: `./dist/${name}.d.ts`,
                   import: `./dist/${name}.js`,
                   require: `./dist/${name}.cjs`,
