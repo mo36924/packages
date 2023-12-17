@@ -1,9 +1,10 @@
-import { relative } from "path";
+import { relative } from "node:path";
 import babel, { PluginObj } from "@babel/core";
 import { pascalCase } from "change-case";
 
-export type Options = { baseDir?: string };
-
+export interface Options {
+  baseDir?: string;
+}
 export default ({ types: t }: typeof babel, options: Options): PluginObj => {
   return {
     visitor: {

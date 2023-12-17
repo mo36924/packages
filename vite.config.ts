@@ -1,5 +1,5 @@
-import { mkdir, readFile, readdir, writeFile } from "fs/promises";
-import { dirname } from "path";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { dirname } from "node:path";
 import { generateDtsBundle } from "dts-bundle-generator";
 import { UserConfig, defineConfig } from "vitest/config";
 

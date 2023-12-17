@@ -1,9 +1,10 @@
-import { ok } from "assert";
-import { mkdir, writeFile } from "fs/promises";
+import { ok } from "node:assert";
+import { mkdir, writeFile } from "node:fs/promises";
+import { argv } from "node:process";
 import validate from "validate-npm-package-name";
 
 const workspaceDir = "packages";
-const name = process.argv[2];
+const name = argv[2];
 const { validForNewPackages, validForOldPackages } = validate(name);
 ok(validForNewPackages && validForOldPackages);
 

@@ -1,17 +1,17 @@
 {
   "compilerOptions": {
-    "noEmit": true,
     "target": "ES2022",
+    "baseUrl": ".",
     "module": "ES2022",
     "moduleResolution": "Bundler",
-    "types": ["vite/client", "node"],
-    "baseUrl": ".",
     "paths": {
       "@mo36924/*": ["packages/*/src"]
     },
-    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "types": ["vite/client", "node"],
     "strict": true,
-    "resolveJsonModule": true
+    "noEmit": true,
+    "esModuleInterop": true
   },
   "exclude": ["node_modules", "packages/*/dist"]
 }

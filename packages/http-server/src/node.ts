@@ -1,6 +1,8 @@
-import { createServer as createNodeServer } from "http";
-import { Readable } from "stream";
-import { pipeline } from "stream/promises";
+import { createServer as createNodeServer } from "node:http";
+import { env } from "node:process";
+import { Readable } from "node:stream";
+import { pipeline } from "node:stream/promises";
+import { ReadableStream as NodeWebReadableStream } from "node:stream/web";
 
 export const createHttpServer = (requestListener: (request: Request) => Response | Promise<Response>) => {
   createNodeServer(async (req, res) => {
@@ -19,10 +21,8 @@ export const createHttpServer = (requestListener: (request: Request) => Response
     };
 
     if (method !== "GET" && method !== "HEAD") {
-      // @ts-ignore
-      init.duplex = "half";
-      // @ts-ignore
-      init.body = Readable.toWeb(req);
+      (init as any).duplex = "half";
+      init.body = Readable.toWeb(req) as ReadableStream;
     }
 
     const request = new Request(url, init);
@@ -30,10 +30,9 @@ export const createHttpServer = (requestListener: (request: Request) => Response
     res.writeHead(response.status, [...response.headers]);
 
     if (response.body) {
-      // @ts-ignore
-      await pipeline(Readable.fromWeb(response.body), res);
+      await pipeline(Readable.fromWeb(response.body as NodeWebReadableStream), res);
     } else {
       res.end();
     }
-  }).listen(process.env.PORT || 8080);
+  }).listen(env.PORT || 8080);
 };

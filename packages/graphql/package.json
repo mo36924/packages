@@ -1,20 +1,20 @@
 {
   "name": "@mo36924/graphql",
+  "type": "module",
   "version": "0.0.1",
   "description": "graphql",
-  "keywords": [],
+  "author": "mo36924",
+  "license": "MIT",
   "homepage": "https://github.com/mo36924/packages#readme",
-  "bugs": {
-    "url": "https://github.com/mo36924/packages/issues"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mo36924/packages.git",
     "directory": "packages/graphql"
   },
-  "license": "MIT",
-  "author": "mo36924",
-  "type": "module",
+  "bugs": {
+    "url": "https://github.com/mo36924/packages/issues"
+  },
+  "keywords": [],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",

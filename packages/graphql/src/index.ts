@@ -15,25 +15,35 @@ import { UnionToIntersection } from "type-fest";
 
 const { singular, plural } = pluralize;
 
-type Types = { [typeName: string]: Type };
-type Type = { name: string; directives: TypeDirectives; fields: Fields };
-type Fields = { [fieldName: string]: Field };
-type Field = {
+interface Types {
+  [typeName: string]: Type;
+}
+interface Type {
+  name: string;
+  directives: TypeDirectives;
+  fields: Fields;
+}
+interface Fields {
+  [fieldName: string]: Field;
+}
+interface Field {
   name: string;
   type: string;
   scalar: boolean;
   nullable: boolean;
   list: boolean;
   directives: FieldDirectives;
-};
-type TypeDirectives = { join?: {} };
-type FieldDirectives = {
+}
+interface TypeDirectives {
+  join?: object;
+}
+interface FieldDirectives {
   field?: { name: string; key: string };
   type?: { name: string; keys: [string, string] };
   key?: { name: string };
   ref?: { name: string };
-  unique?: {};
-};
+  unique?: object;
+}
 type CustomScalarTypeName = (typeof customScalarTypeNames)[number];
 type ScalarTypeName = (typeof scalarTypeNames)[number];
 type ReservedTypeName = (typeof reservedTypeNames)[number];
@@ -63,6 +73,7 @@ const customScalars = /* GraphQL */ `
   scalar JSON
 `;
 
+// eslint-disable-next-line unused-imports/no-unused-vars
 const modelDirectives = /* GraphQL */ `
   directive @field(name: String!) on FIELD_DEFINITION
   directive @type(name: String!) on FIELD_DEFINITION
@@ -77,9 +88,11 @@ const schemaDirectives = /* GraphQL */ `
   directive @type(name: String!, keys: [String!]!) on FIELD_DEFINITION
 `;
 
-export const createObject = <T extends {}, U extends {}[] = {}[]>(...sources: U): UnionToIntersection<T | U[number]> =>
-  Object.assign(Object.create(null), ...sources);
+export const createObject = <T extends object, U extends object[] = object[]>(
+  ...sources: U
+): UnionToIntersection<T | U[number]> => Object.assign(Object.create(null), ...sources);
 
+// eslint-disable-next-line unused-imports/no-unused-vars
 const isCustomScalarTypeName = (type: string): type is CustomScalarTypeName =>
   customScalarTypeNames.includes(type as CustomScalarTypeName);
 
@@ -128,6 +141,7 @@ const getDirectives = <T extends ObjectTypeDefinitionNode | FieldDefinitionNode>
 
 const format = (source: string) => printGraphQLSource(parseGraphQLSource(stripIgnoredCharacters(source)));
 
+// eslint-disable-next-line unused-imports/no-unused-vars
 const clone = (types: Types): Types =>
   JSON.parse(JSON.stringify(types), (_key, value) =>
     value && typeof value === "object" && !Array.isArray(value) ? createObject(value) : value,
@@ -147,7 +161,7 @@ export const parse = (source: string): Types => {
 
     types[definition.name.value] = {
       name: definition.name.value,
-      fields: fields,
+      fields,
       directives: getDirectives(graphQLSchema, definition),
     };
 
@@ -191,25 +205,6 @@ export const parse = (source: string): Types => {
   return types;
 };
 
-const print = (types: Types): string => {
-  let source = "";
-
-  for (const { name, directives, fields } of Object.values(types)) {
-    source += `type ${name}${printDirectives(directives)}{`;
-
-    for (const field of Object.values(fields)) {
-      source += `${field.name}:${printFieldType(field)}${printDirectives(field.directives)} `;
-    }
-
-    source += "}";
-  }
-
-  return format(source);
-};
-
-const printFieldType = (field: Pick<Field, "type" | "list" | "nullable">): string =>
-  `${field.list ? `[${field.type}!]` : field.type}${field.nullable ? "" : "!"}`;
-
 const printDirectives = (directives: TypeDirectives | FieldDirectives): string => {
   let _directives = "";
 
@@ -235,6 +230,26 @@ const printDirectives = (directives: TypeDirectives | FieldDirectives): string =
   }
 
   return _directives;
+};
+
+const printFieldType = (field: Pick<Field, "type" | "list" | "nullable">): string =>
+  `${field.list ? `[${field.type}!]` : field.type}${field.nullable ? "" : "!"}`;
+
+// eslint-disable-next-line unused-imports/no-unused-vars
+const print = (types: Types): string => {
+  let source = "";
+
+  for (const { name, directives, fields } of Object.values(types)) {
+    source += `type ${name}${printDirectives(directives)}{`;
+
+    for (const field of Object.values(fields)) {
+      source += `${field.name}:${printFieldType(field)}${printDirectives(field.directives)} `;
+    }
+
+    source += "}";
+  }
+
+  return format(source);
 };
 
 export const sort = (types: Types): Types =>
@@ -284,7 +299,6 @@ export const sort = (types: Types): Types =>
         },
       ]),
   );
-
 export const fix = (types: Types) => {
   const joinTypeNameSet = new Set<string>();
   const renameJoinTypeFields: Field[] = [];
@@ -361,7 +375,6 @@ export const fix = (types: Types) => {
 
   return types;
 };
-
 export const relation = (types: Types) => {
   for (const [typeName, type] of Object.entries(types)) {
     const fields = (type.fields = createObject(type.fields));
@@ -435,7 +448,7 @@ export const relation = (types: Types) => {
           name: refTypeFieldName,
           type: typeName,
           list: false,
-          nullable: nullable,
+          nullable,
           scalar: false,
           directives: {
             key: {
@@ -448,7 +461,7 @@ export const relation = (types: Types) => {
           name: keyFieldName,
           type: primaryKeyTypeName,
           list: false,
-          nullable: nullable,
+          nullable,
           scalar: true,
           directives: {
             ref: { name: typeName },
@@ -650,7 +663,6 @@ export const base = (types: Types) => {
 
   return types;
 };
-
 export const build = (types: Types) => {
   let schema = customScalars + schemaDirectives;
   let query = "";
@@ -664,7 +676,7 @@ export const build = (types: Types) => {
   let createInput = "";
   let updateInput = "";
   let deleteInput = "";
-  let orderEnum = "enum Order {asc desc}";
+  const orderEnum = "enum Order {asc desc}";
 
   query += `type Query {`;
 

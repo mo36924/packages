@@ -1,31 +1,24 @@
-import { readdir, writeFile } from "fs/promises";
-import { join, resolve } from "path";
+import { readdir, writeFile } from "node:fs/promises";
+import { join, resolve } from "node:path";
 import depcheck from "depcheck";
-import { format, resolveConfig } from "prettier";
-import sort from "sort-package-json";
+import { $ } from "zx";
 import { author, devDependencies, name } from "../package.json";
 
 const dir = resolve("packages");
+const names = await readdir(dir);
 
-const [pkgs, config] = await Promise.all([
-  readdir(dir).then((names) =>
-    Promise.all(
-      names
-        .filter((name) => name[0] !== ".")
-        .map((name) =>
-          Promise.all([
-            name,
-            import(join(dir, name, "package.json")),
-            depcheck(join(dir, name), {
-              ignoreDirs: ["dist"],
-              ignorePatterns: ["*.test.*"],
-            }),
-          ]),
-        ),
-    ),
+const pkgs = await Promise.all(
+  names.map((name) =>
+    Promise.all([
+      name,
+      import(join(dir, name, "package.json")),
+      depcheck(join(dir, name), {
+        ignoreDirs: ["dist"],
+        ignorePatterns: ["*.test.*"],
+      }),
+    ]),
   ),
-  resolveConfig("package.json"),
-]);
+);
 
 const deps = Object.assign(
   Object.create(null),
@@ -39,64 +32,62 @@ await Promise.all(
   pkgs.map(async ([_name, _pkg, result]) => {
     const path = join(dir, _name, "package.json");
 
-    const data = await format(
-      JSON.stringify(
-        sort({
-          version: "0.0.1",
-          description: _name,
-          keywords: [],
-          ..._pkg,
-          license: "MIT",
-          name: `@${author}/${_name}`,
-          author: author,
-          type: "module",
-          homepage: `https://github.com/${author}/${name}#readme`,
-          bugs: {
-            url: `https://github.com/${author}/${name}/issues`,
-          },
-          repository: {
-            type: "git",
-            url: `git+https://github.com/${author}/${name}.git`,
-            directory: `packages/${_name}`,
-          },
-          main: "./dist/index.js",
-          module: "./dist/index.js",
-          types: "./dist/index.d.ts",
-          publishConfig: {
-            access: "public",
-          },
-          typesVersions: { "*": { "*": ["dist/*.d.ts", "*"] } },
-          files: ["dist"],
-          exports: Object.fromEntries(
-            Object.entries<{ [key: string]: string }>(_pkg.exports ?? { ".": {} }).map(([key, value]) => {
-              const name = key.slice(2) || "index";
-              return [
-                key,
-                {
-                  ...value,
-                  types: `./dist/${name}.d.ts`,
-                  import: `./dist/${name}.js`,
-                  require: `./dist/${name}.cjs`,
-                  default: `./dist/${name}.js`,
-                },
-              ];
-            }),
-          ),
-          dependencies: deleteEmptyObject({
-            ..._pkg.dependencies,
-            ...Object.fromEntries(
-              Object.keys(result.using)
-                .map((name) => `@types/${name.replace("@", "").replace("/", "__")}`)
-                .map((name) => [name, deps[name]]),
-            ),
-            ...Object.fromEntries(Object.keys(result.using).map((name) => [name, deps[name]])),
-          }),
-          default: undefined,
+    const data = JSON.stringify({
+      version: "0.0.1",
+      description: _name,
+      keywords: [],
+      ..._pkg,
+      license: "MIT",
+      name: `@${author}/${_name}`,
+      author,
+      type: "module",
+      homepage: `https://github.com/${author}/${name}#readme`,
+      bugs: {
+        url: `https://github.com/${author}/${name}/issues`,
+      },
+      repository: {
+        type: "git",
+        url: `git+https://github.com/${author}/${name}.git`,
+        directory: `packages/${_name}`,
+      },
+      main: "./dist/index.js",
+      module: "./dist/index.js",
+      types: "./dist/index.d.ts",
+      publishConfig: {
+        access: "public",
+      },
+      typesVersions: { "*": { "*": ["dist/*.d.ts", "*"] } },
+      files: ["dist"],
+      exports: Object.fromEntries(
+        Object.entries<{ [key: string]: string }>(_pkg.exports ?? { ".": {} }).map(([key, value]) => {
+          const name = key.slice(2) || "index";
+          return [
+            key,
+            {
+              ...value,
+              types: `./dist/${name}.d.ts`,
+              import: `./dist/${name}.js`,
+              require: `./dist/${name}.cjs`,
+              default: `./dist/${name}.js`,
+            },
+          ];
         }),
       ),
-      { ...config, filepath: path },
-    );
+      dependencies: deleteEmptyObject({
+        ..._pkg.dependencies,
+        ...Object.fromEntries(
+          Object.keys(result.using)
+            .map((name) => `@types/${name.replace("@", "").replace("/", "__")}`)
+            .map((name) => [name, deps[name]]),
+        ),
+        ...Object.fromEntries(Object.keys(result.using).map((name) => [name, deps[name]])),
+      }),
+      default: undefined,
+    });
 
     await writeFile(path, data);
   }),
 );
+
+await $`eslint --fix '**/package.json'`.quiet().nothrow();
+await $`prettier --write '**/package.json'`.quiet();
