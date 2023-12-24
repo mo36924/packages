@@ -1,42 +1,50 @@
-import { readdir, writeFile } from "node:fs/promises";
+import { readFile, readdir, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
+import { cwd } from "node:process";
 import depcheck from "depcheck";
-import { $ } from "zx";
+import { Linter } from "eslint";
+import { format, resolveConfig } from "prettier";
+import promiseConfig from "../eslint.config.js";
 import { author, devDependencies, name } from "../package.json";
 
 const dir = resolve("packages");
 const names = await readdir(dir);
+const linter = new Linter({ configType: "flat" });
+const eslintConfig = await promiseConfig;
+const prettierConfig = await resolveConfig(cwd());
 
 const pkgs = await Promise.all(
-  names.map((name) =>
-    Promise.all([
-      name,
-      import(join(dir, name, "package.json")),
-      depcheck(join(dir, name), {
-        ignoreDirs: ["dist"],
-        ignorePatterns: ["*.test.*"],
-      }),
-    ]),
-  ),
+  names.map(async (name) => {
+    const packageDir = join(dir, name);
+    const code = await readFile(join(packageDir, "package.json"), "utf-8");
+    const pkg = JSON.parse(code);
+
+    const result = await depcheck(packageDir, {
+      ignoreDirs: ["dist"],
+      ignorePatterns: ["*.test.*"],
+    });
+
+    return { name, code, pkg, result };
+  }),
 );
 
 const deps = Object.assign(
   Object.create(null),
   devDependencies,
-  Object.fromEntries(pkgs.map(([, { name, version }]) => [name, `^${version}`])),
+  Object.fromEntries(pkgs.map(({ pkg: { name, version } }) => [name, `^${version}`])),
 );
 
 const deleteEmptyObject = (obj: any) => (Object.keys(obj).length ? obj : undefined);
 
 await Promise.all(
-  pkgs.map(async ([_name, _pkg, result]) => {
+  pkgs.map(async ({ name: _name, code, pkg, result }) => {
     const path = join(dir, _name, "package.json");
 
     const data = JSON.stringify({
       version: "0.0.1",
       description: _name,
       keywords: [],
-      ..._pkg,
+      ...pkg,
       license: "MIT",
       name: `@${author}/${_name}`,
       author,
@@ -59,7 +67,7 @@ await Promise.all(
       typesVersions: { "*": { "*": ["dist/*.d.ts", "*"] } },
       files: ["dist"],
       exports: Object.fromEntries(
-        Object.entries<{ [key: string]: string }>(_pkg.exports ?? { ".": {} }).map(([key, value]) => {
+        Object.entries<{ [key: string]: string }>(pkg.exports ?? { ".": {} }).map(([key, value]) => {
           const name = key.slice(2) || "index";
           return [
             key,
@@ -74,7 +82,7 @@ await Promise.all(
         }),
       ),
       dependencies: deleteEmptyObject({
-        ..._pkg.dependencies,
+        ...pkg.dependencies,
         ...Object.fromEntries(
           Object.keys(result.using)
             .map((name) => `@types/${name.replace("@", "").replace("/", "__")}`)
@@ -85,9 +93,11 @@ await Promise.all(
       default: undefined,
     });
 
-    await writeFile(path, data);
+    const { output } = linter.verifyAndFix(data, eslintConfig, path);
+    const formattedCode = await format(output, { ...prettierConfig, filepath: path });
+
+    if (code !== formattedCode) {
+      await writeFile(path, code);
+    }
   }),
 );
-
-await $`eslint --fix '**/package.json'`.quiet().nothrow();
-await $`prettier --write '**/package.json'`.quiet();

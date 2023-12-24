@@ -8,8 +8,10 @@
       "@mo36924/*": ["packages/*/src"]
     },
     "resolveJsonModule": true,
+    "allowJs": true,
     "strict": true,
     "noEmit": true,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true
   },
   "exclude": ["node_modules", "packages/*/dist"]
