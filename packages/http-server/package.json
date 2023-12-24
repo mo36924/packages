@@ -18,15 +18,11 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "deno": "./dist/deno.js",
+      "node": "./dist/index.js",
       "import": "./dist/index.js",
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
-    },
-    "./node": {
-      "types": "./dist/node.d.ts",
-      "import": "./dist/node.js",
-      "require": "./dist/node.cjs",
-      "default": "./dist/node.js"
     }
   },
   "main": "./dist/index.js",
