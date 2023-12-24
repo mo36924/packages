@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/http-server",
   "type": "module",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "http-server",
   "author": "mo36924",
   "license": "MIT",
