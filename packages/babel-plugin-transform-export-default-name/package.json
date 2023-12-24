@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/babel-plugin-transform-export-default-name",
   "type": "module",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "babel-plugin-transform-export-default-name",
   "author": "mo36924",
   "license": "MIT",
