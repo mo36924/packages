@@ -97,7 +97,7 @@ await Promise.all(
     const formattedCode = await format(output, { ...prettierConfig, filepath: path });
 
     if (code !== formattedCode) {
-      await writeFile(path, code);
+      await writeFile(path, formattedCode);
     }
   }),
 );
