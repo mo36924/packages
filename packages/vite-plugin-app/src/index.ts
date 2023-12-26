@@ -1,24 +1,26 @@
-import { dirname, relative } from "node:path";
+import { dirname, relative, resolve, sep } from "node:path";
 import { pascalCase } from "change-case";
 import fastGlob from "fast-glob";
 import { PluginOption } from "vite";
 import solid from "vite-plugin-solid";
 
 const glob = fastGlob.glob;
-const virtualPath = "__render.tsx";
-const dir = "pages";
+const virtualPath = "__render.jsx";
+const pagesDir = "src/pages";
+const absolutePagesDir = resolve(pagesDir) + sep;
+const includePagesDir = (path: string) => path.startsWith(absolutePagesDir);
 const addDot = (path: string) => path.replace(/^[^\.]/, "./$&");
 const normalizePath = (path: string) => path.replaceAll("\\", "/");
 const trimExtname = (path: string) => path.replace(/\.\w+$/, "");
 const trimIndex = (path: string) => path.replace(/\/index$/, "/");
-const importDirPath = addDot(normalizePath(relative(dirname(virtualPath), dir)));
+const importDirPath = addDot(normalizePath(relative(dirname(virtualPath), pagesDir)));
 
 export default (): PluginOption => [
   {
     name: "@mo36924/vite-plugin-app",
     resolveId(source) {
       if (source === virtualPath) {
-        return virtualPath;
+        return source;
       }
     },
     async load(id) {
@@ -26,7 +28,7 @@ export default (): PluginOption => [
         return;
       }
 
-      const paths = await glob("**/*.[jt]sx", { cwd: dir });
+      const paths = await glob("**/*.[jt]sx", { cwd: pagesDir });
 
       const pages = paths.map((path) => {
         const normalizedPath = normalizePath(path);
@@ -49,17 +51,36 @@ export default (): PluginOption => [
       `;
     },
     configureServer(server) {
+      const onRename = async (path: string) => {
+        if (!includePagesDir(path)) {
+          return;
+        }
+
+        const module = server.moduleGraph.getModuleById(virtualPath);
+
+        if (module) {
+          await server.reloadModule(module);
+        }
+      };
+
+      server.watcher.on("add", onRename);
+      server.watcher.on("addDir", onRename);
+      server.watcher.on("unlink", onRename);
+      server.watcher.on("unlinkDir", onRename);
+
       return () => {
-        server.middlewares.use(async (req, res, next) => {
-          if (req.url !== "/index.html") {
+        server.middlewares.use(async ({ url, originalUrl = "/" }, res, next) => {
+          if (url !== "/index.html") {
             next();
+            return;
           }
 
           try {
             const { render } = await server.ssrLoadModule(virtualPath);
-            const html = await render(req.originalUrl ?? "/");
+            const html = await render(originalUrl);
+            const transformedHtml = await server.transformIndexHtml(url, html, originalUrl);
             res.setHeader("Content-Type", "text/html; charset=UTF-8");
-            res.end(html);
+            res.end(transformedHtml);
           } catch {
             next();
           }
