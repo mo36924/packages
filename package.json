@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.23.5",
-    "@mo36924/eslint-config": "^3.0.3",
+    "@mo36924/eslint-config": "^3.0.4",
     "@prettier/sync": "^0.3.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/babel__core": "^7.20.5",

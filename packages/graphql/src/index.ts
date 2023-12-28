@@ -15,35 +15,35 @@ import { UnionToIntersection } from "type-fest";
 
 const { singular, plural } = pluralize;
 
-interface Types {
+type Types = {
   [typeName: string]: Type;
-}
-interface Type {
+};
+type Type = {
   name: string;
   directives: TypeDirectives;
   fields: Fields;
-}
-interface Fields {
+};
+type Fields = {
   [fieldName: string]: Field;
-}
-interface Field {
+};
+type Field = {
   name: string;
   type: string;
   scalar: boolean;
   nullable: boolean;
   list: boolean;
   directives: FieldDirectives;
-}
-interface TypeDirectives {
+};
+type TypeDirectives = {
   join?: object;
-}
-interface FieldDirectives {
+};
+type FieldDirectives = {
   field?: { name: string; key: string };
   type?: { name: string; keys: [string, string] };
   key?: { name: string };
   ref?: { name: string };
   unique?: object;
-}
+};
 type CustomScalarTypeName = (typeof customScalarTypeNames)[number];
 type ScalarTypeName = (typeof scalarTypeNames)[number];
 type ReservedTypeName = (typeof reservedTypeNames)[number];

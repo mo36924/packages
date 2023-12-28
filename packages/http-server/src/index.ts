@@ -3,7 +3,9 @@ import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import { ReadableStream as NodeWebReadableStream } from "node:stream/web";
 
+// eslint-disable-next-line ts/consistent-type-definitions
 export interface Request extends globalThis.Request {}
+// eslint-disable-next-line ts/consistent-type-definitions
 export interface Response extends globalThis.Response {}
 export type Serve = (options: {
   fetch: (req: Request) => Response | Promise<Response>;
