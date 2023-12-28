@@ -36,19 +36,76 @@ export default (): PluginOption => [
         const pathname = trimIndex(`/${trimmedExtnamePath}`);
         const name = `Page${pascalCase(trimmedExtnamePath)}`;
         const importPath = `${importDirPath}/${trimmedExtnamePath}`;
-        return { pathname, name, importPath };
+        return { pathname, name, importPath, isDynamic: /\[(\w+)\]/.test(pathname) };
       });
 
-      return `
+      const staticPages = pages.filter(({ isDynamic }) => !isDynamic);
+
+      const dynamicPages = pages
+        .filter(({ isDynamic }) => isDynamic)
+        .map(({ pathname, name }) => {
+          const params: string[] = [];
+
+          const regExp = pathname
+            .replaceAll("/", "\\/")
+            .replace(/\[(\w+)\]/g, (_, param) => {
+              params.push(param);
+              return "([^/]+)";
+            })
+            .replace(/^/, "(")
+            .replace(/$/, ")");
+
+          return { name, params, regExp };
+        });
+
+      const code = `
         import { renderToStringAsync } from "solid-js/web";
         ${pages.map(({ name, importPath }) => `import ${name} from ${JSON.stringify(importPath)};`).join("")}
-        const routes = {${pages.map(({ pathname, name }) => `${JSON.stringify(pathname)}:${name}`).join()}};
+        const staticPages = {${staticPages.map(({ pathname, name }) => `${JSON.stringify(pathname)}:${name}`).join()}};
+        ${
+          dynamicPages.length
+            ? `
+        const dynamicPageRegExp = /^(?:${dynamicPages.map(({ regExp }) => regExp).join("|")})$/
+        const dynamicPages = [,${dynamicPages
+          .flatMap(({ name, params }) => [name, ...params.map((param) => JSON.stringify(param))])
+          .join()}]
+        `
+            : ""
+        }
+        const match = (pathname) => {
+          const StaticPage = staticPages[pathname]
+          if(StaticPage){
+            return () => <StaticPage />
+          }
+          ${
+            dynamicPages.length
+              ? `
+          const matches = pathname.match(dynamicPageRegExp)
+          if(!matches){
+            return () => <div>404 Not Found</div>
+          }
+          const index = matches.indexOf(pathname, 1)
+          const DynamicPage = dynamicPages[index]
+          const params = {}
+          for(let i = index + 1; matches[i] !== undefined; i++){
+            params[dynamicPages[i]] = matches[i]
+          }
+          return () => <DynamicPage {...params} />
+          `
+              : `
+          return () => <div>404 Not Found</div>
+          `
+          }
+          
+        }
         export const render = async (pathname) => {
-          const Page = routes[pathname] || (() => <div />)
-          const html = await renderToStringAsync(() => <Page />)
+          const fn = match(pathname)
+          const html = await renderToStringAsync(fn)
           return \`<!DOCTYPE html>\${html}\`
         }
       `;
+
+      return code;
     },
     configureServer(server) {
       const onRename = async (path: string) => {
