@@ -1,4 +1,5 @@
 import { createServer } from "node:http";
+import { env } from "node:process";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
 import { ReadableStream as NodeWebReadableStream } from "node:stream/web";
@@ -12,7 +13,7 @@ export type Serve = (options: {
   port?: number;
   hostname?: string;
 }) => void;
-export const serve: Serve = ({ port, hostname, fetch }) => {
+export const serve: Serve = ({ port = Number(env.PORT) || 3000, hostname, fetch }) => {
   createServer(async (req, res) => {
     const method = req.method;
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/48895
