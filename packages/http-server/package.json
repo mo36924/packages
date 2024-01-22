@@ -42,5 +42,8 @@
   ],
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.4.1"
   }
 }
