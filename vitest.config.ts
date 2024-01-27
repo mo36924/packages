@@ -5,5 +5,6 @@ export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
     setupFiles: "scripts/setup.ts",
+    poolMatchGlobs: [["**/vite-plugin-solid/**", "forks"]],
   },
 });
