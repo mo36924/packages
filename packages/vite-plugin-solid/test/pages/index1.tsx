@@ -10,7 +10,7 @@ export default () => {
         <title>Document</title>
       </head>
       <body>
-        <div>index</div>
+        <div>index1</div>
         <div>
           <button
             onclick={() => {

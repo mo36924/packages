@@ -9,10 +9,11 @@ const isJSX = (path?: string): path is string => !!path && /\.[cm]?[jt]sx$/.test
 
 export type Options = {
   baseDir?: string;
+  ssr?: boolean;
   manifest?: string | Manifest;
 };
 export default ({ types: t }: typeof babel, options: Options): PluginObj => {
-  const baseDir = options.baseDir ?? "";
+  const { baseDir = "", ssr = false } = options;
 
   const manifest: Manifest =
     typeof options.manifest === "string" ? JSON.parse(readFileSync(options.manifest, "utf-8")) : options.manifest ?? {};
@@ -27,6 +28,34 @@ export default ({ types: t }: typeof babel, options: Options): PluginObj => {
         const filename = state.filename;
 
         if (!isJSX(filename)) {
+          return;
+        }
+
+        if (!ssr) {
+          path.traverse({
+            JSXElement(path) {
+              const openingElement = path.get("openingElement");
+              const name = openingElement.get("name");
+
+              if (!name.isJSXIdentifier({ name: "html" })) {
+                return;
+              }
+
+              const body = path
+                .get("children")
+                .find(
+                  (child): child is babel.NodePath<babel.types.JSXElement> =>
+                    child.isJSXElement() && child.get("openingElement").get("name").isJSXIdentifier({ name: "body" }),
+                );
+
+              if (!body) {
+                return;
+              }
+
+              path.replaceWith(t.jsxFragment(t.jsxOpeningFragment(), t.jsxClosingFragment(), body.node.children));
+            },
+          });
+
           return;
         }
 
