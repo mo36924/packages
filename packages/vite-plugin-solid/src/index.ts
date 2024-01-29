@@ -95,7 +95,7 @@ export default ({ buildServer = true, external }: Options = {}): PluginOption =>
           }
         }
       },
-      async load(id) {
+      async load(id, options) {
         if (id === serverEntryId) {
           return `
             import { serve } from "@mo36924/http-server"
@@ -209,9 +209,17 @@ export default ({ buildServer = true, external }: Options = {}): PluginOption =>
               return { name, params, regExp };
             });
 
+          const ssr = !!options?.ssr;
+
           return `
-            import { renderToStringAsync } from "solid-js/web";
-            ${pages.map(({ name, importPath }) => `import ${name} from ${JSON.stringify(importPath)};`).join("")}
+            ${ssr ? "" : `import { lazy } from "solid-js";`}
+            ${pages
+              .map(({ name, importPath }) =>
+                ssr
+                  ? `import ${name} from ${JSON.stringify(importPath)};`
+                  : `const ${name} = lazy(() => import(${JSON.stringify(importPath)}));`,
+              )
+              .join("")}
             const staticPages = {${staticPages
               .map(({ pathname, name }) => `${JSON.stringify(pathname)}:${name}`)
               .join()}};
