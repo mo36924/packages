@@ -60,6 +60,7 @@ const normalizeManifest = (manifest: Manifest) =>
 let config: ResolvedConfig;
 
 export type Options = {
+  dev?: boolean;
   buildServer?: boolean;
   external?: ExternalOption;
 };
@@ -69,7 +70,7 @@ export default ({ buildServer = true, external }: Options = {}): PluginOption =>
     solid({
       ssr: true,
       babel: {
-        plugins: [[babelPlugin, { ssr: true, manifest } as BabelPluginOptions]],
+        plugins: [[babelPlugin, { manifest } as BabelPluginOptions]],
       },
     }),
     {
@@ -205,8 +206,8 @@ export default ({ buildServer = true, external }: Options = {}): PluginOption =>
             ? `
             import { hydrate } from "solid-js/web";
             import DynamicPage from "./${basename}"
-            const matches = location.pathname.match(/^${regExp}$/);
-            const params = {${params.map((param, i) => `${param}:matches[${i + 2}]`)}};
+            const matches = location.pathname.match(/^${regExp.slice(1, -1)}$/);
+            const params = {${params.map((param, i) => `${param}:matches[${i + 1}]`)}};
             hydrate(() => <DynamicPage {...params} />, document);
           `
             : `
