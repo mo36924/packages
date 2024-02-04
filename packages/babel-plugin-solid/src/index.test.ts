@@ -17,14 +17,14 @@ export default () => (
 )
 `;
 
-const transform = (options: Options) =>
+const transform = (code: string) =>
   transformSync(code, {
     filename: "index.jsx",
-    plugins: [[plugin, { ...options, manifest: { "index.jsx": { file: "index.js", isEntry: true } } } as Options]],
+    plugins: [[plugin, { manifest: { "index.jsx": { file: "index.js", isEntry: true } } } as Options]],
   });
 
 it("babel-plugin-solid", () => {
-  expect(transform({})).toMatchInlineSnapshot(`
+  expect(transform(code)).toMatchInlineSnapshot(`
     import { HydrationScript } from "solid-js/web";
     const Index = () => (
       <html lang="en">
