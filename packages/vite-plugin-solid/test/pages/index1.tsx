@@ -27,6 +27,9 @@ export default () => {
           <li>
             <a href="/index1">index1</a>
           </li>
+          <li>
+            <a href="/users/1">user1</a>
+          </li>
         </ul>
       </body>
     </html>

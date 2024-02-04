@@ -1,6 +1,5 @@
 import { readFileSync } from "node:fs";
-import { readFile } from "node:fs/promises";
-import { dirname, join, relative } from "node:path";
+import { basename, dirname, join, relative } from "node:path";
 import babelPlugin, { Options as BabelPluginOptions } from "@mo36924/babel-plugin-solid";
 import { pascalCase } from "change-case";
 import fastGlob from "fast-glob";
@@ -13,22 +12,50 @@ const serverEntryId = "__server.jsx";
 const serverRenderId = "__render.jsx";
 const clientEntryId = "__clinet.jsx";
 const routerId = "__router.jsx";
-const routerUnhydratableId = "__router._.jsx";
 const clientEntryPathname = `/${clientEntryId}`;
 const pagesDir = "pages";
-const source = "**/*.?(c|m)[jt]sx";
-const isPage = createFilter(`${pagesDir}/${source}`);
+const source = `${pagesDir}/**/*.?(c|m)[jt]sx`;
+const virtualExtname = "._.jsx";
+const isPage = createFilter(source);
 const addDot = (path: string) => (path[0] === "." ? path : `./${path}`);
 const normalizePath = (path: string) => path.replaceAll("\\", "/");
-const trimExtname = (path: string) => path.replace(/\.\w+$/, "");
+const trimVirtualExtname = (path: string) => path.replace(/\._\.jsx$/, "");
+const trimExtname = (path: string) => path.replace(/\.\w+(\._\.jsx)?$/, "");
 const trimIndex = (path: string) => path.replace(/\/index$/, "/");
 const importDirPath = addDot(normalizePath(relative(dirname(routerId), pagesDir)));
-const hydratableJsxRegExp = /\.[cm]?[jt]sx$/;
-const unhydratableJsxRegExp = /\._(\.[cm]?[jt]sx)$/;
-const isHydratableJsx = (path: string) => hydratableJsxRegExp.test(path);
-const isUnhydratableJsx = (path: string) => unhydratableJsxRegExp.test(path);
-const toHydratableJsx = (path: string) => path.replace(unhydratableJsxRegExp, "$1");
-const toUnhydratableJsx = (path: string) => path.replace(hydratableJsxRegExp, "._$&");
+
+const getPages = () => glob(source);
+
+const getVirtualPages = async () => {
+  const paths = await getPages();
+  return paths.map((path) => path + virtualExtname);
+};
+
+const pageToRoute = (path: string) => {
+  const _basename = basename(path, virtualExtname);
+  const normalizedPath = normalizePath(path);
+  const trimmedPagesDirPath = normalizedPath.slice(pagesDir.length);
+  const trimmedExtnamePath = trimExtname(trimmedPagesDirPath);
+  const pathname = trimIndex(trimmedExtnamePath);
+  const name = `Page${pascalCase(trimmedExtnamePath)}`;
+  const importPath = `${importDirPath}/${trimmedExtnamePath}`;
+  const isDynamic = /\[(\w+)\]/.test(pathname);
+  const params: string[] = [];
+
+  const regExp = pathname
+    .replaceAll("/", "\\/")
+    .replace(/\[(\w+)\]/g, (_, param) => {
+      params.push(param);
+      return "([^/]+)";
+    })
+    .replace(/^/, "(")
+    .replace(/$/, ")");
+
+  return { basename: _basename, pathname, name, importPath, isDynamic, params, regExp };
+};
+
+const normalizeManifest = (manifest: Manifest) =>
+  Object.fromEntries(Object.entries(manifest).map(([key, value]) => [trimVirtualExtname(key), value]));
 
 let config: ResolvedConfig;
 
@@ -39,9 +66,14 @@ export type Options = {
 export default ({ buildServer = true, external }: Options = {}): PluginOption => {
   const manifest: Manifest = {};
   return [
+    solid({
+      ssr: true,
+      babel: {
+        plugins: [[babelPlugin, { ssr: true, manifest } as BabelPluginOptions]],
+      },
+    }),
     {
       name: "@mo36924/vite-plugin-solid",
-      enforce: "pre",
       async config(config, { command, isSsrBuild }) {
         if (command !== "build") {
           return config;
@@ -55,7 +87,7 @@ export default ({ buildServer = true, external }: Options = {}): PluginOption =>
             emptyOutDir: !isSsrBuild,
             assetsDir: isSsrBuild ? "" : undefined,
             rollupOptions: {
-              input: isSsrBuild ? serverEntryId : clientEntryId,
+              input: isSsrBuild ? serverEntryId : await getVirtualPages(),
               preserveEntrySignatures: false,
               external: isSsrBuild ? external : undefined,
             },
@@ -67,35 +99,29 @@ export default ({ buildServer = true, external }: Options = {}): PluginOption =>
 
         Object.assign(
           manifest,
-          config.build.ssr
-            ? JSON.parse(readFileSync(join(config.build.outDir, "manifest.json"), "utf-8"))
-            : { [clientEntryId]: { file: clientEntryId, isEntry: true } },
+          normalizeManifest(
+            config.build.ssr
+              ? JSON.parse(readFileSync(join(config.build.outDir, "manifest.json"), "utf-8"))
+              : { [clientEntryId]: { file: clientEntryId, isEntry: true } },
+          ),
         );
       },
-      async resolveId(source, importer) {
+      async resolveId(source) {
         switch (source) {
           case serverEntryId:
           case serverRenderId:
           case clientEntryId:
           case routerId:
-          case routerUnhydratableId:
             return source;
           case clientEntryPathname:
             return clientEntryId;
         }
 
-        if (importer && isUnhydratableJsx(importer)) {
-          const resolved = await this.resolve(source, importer);
-
-          if (resolved && isHydratableJsx(resolved.id)) {
-            return {
-              ...resolved,
-              id: toUnhydratableJsx(resolved.id),
-            };
-          }
+        if (source.endsWith(virtualExtname)) {
+          return source;
         }
       },
-      async load(id, options) {
+      async load(id) {
         if (id === serverEntryId) {
           return `
             import { serve } from "@mo36924/http-server"
@@ -131,95 +157,14 @@ export default ({ buildServer = true, external }: Options = {}): PluginOption =>
           `;
         }
 
-        if (id === clientEntryId) {
-          return `
-            import { createReaction, createSignal } from "solid-js";
-            import { Dynamic, hydrate, render } from "solid-js/web";
-            import { match } from "${routerId}";
-            import { match as _match } from "${routerUnhydratableId}";
-
-            let init = true
-            const origin = location.origin + "/";
-            const initialPathname = location.pathname;
-            const [pathname, setPathname] = createSignal(initialPathname);
-
-            const onchangestate = () => {
-              const _pathname = setPathname(location.pathname)
-              if(init && _pathname !== initialPathname){
-                init = false
-                document.body.innerHTML = ""
-                render(() => <Dynamic component={_match(pathname())} />, document.body);
-              }
-            };
-
-            addEventListener("popstate", onchangestate);
-
-            addEventListener("click", (e) => {
-              if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey || e.button) {
-                return;
-              }
-
-              let t = e.target;
-
-              do {
-                if (t.nodeName[0] === "A") {
-                  if (!t.hasAttribute("download") && t.getAttribute("rel") !== "external" && t.href.startsWith(origin)) {
-                    e.preventDefault();
-                    history.pushState(null, "", t.href);
-                    onchangestate();
-                  }
-
-                  return;
-                }
-              } while ((t = t.parentNode));
-            });
-
-            hydrate(match(initialPathname), document);
-          `;
-        }
-
-        if (id === routerId || id === routerUnhydratableId) {
-          const paths = await glob(source, { cwd: pagesDir });
-
-          const pages = paths.map((path) => {
-            const normalizedPath = normalizePath(path);
-            const trimmedExtnamePath = trimExtname(normalizedPath);
-            const pathname = trimIndex(`/${trimmedExtnamePath}`);
-            const name = `Page${pascalCase(trimmedExtnamePath)}`;
-            const importPath = `${importDirPath}/${trimmedExtnamePath}`;
-            return { pathname, name, importPath, isDynamic: /\[(\w+)\]/.test(pathname) };
-          });
-
+        if (id === routerId) {
+          const paths = await getPages();
+          const pages = paths.map(pageToRoute);
           const staticPages = pages.filter(({ isDynamic }) => !isDynamic);
-
-          const dynamicPages = pages
-            .filter(({ isDynamic }) => isDynamic)
-            .map(({ pathname, name }) => {
-              const params: string[] = [];
-
-              const regExp = pathname
-                .replaceAll("/", "\\/")
-                .replace(/\[(\w+)\]/g, (_, param) => {
-                  params.push(param);
-                  return "([^/]+)";
-                })
-                .replace(/^/, "(")
-                .replace(/$/, ")");
-
-              return { name, params, regExp };
-            });
-
-          const ssr = !!options?.ssr;
+          const dynamicPages = pages.filter(({ isDynamic }) => isDynamic);
 
           return `
-            ${ssr ? "" : `import { lazy } from "solid-js";`}
-            ${pages
-              .map(({ name, importPath }) =>
-                ssr
-                  ? `import ${name} from ${JSON.stringify(importPath)};`
-                  : `const ${name} = lazy(() => import(${JSON.stringify(importPath)}));`,
-              )
-              .join("")}
+            ${pages.map(({ name, importPath }) => `import ${name} from ${JSON.stringify(importPath)};`).join("")}
             const staticPages = {${staticPages
               .map(({ pathname, name }) => `${JSON.stringify(pathname)}:${name}`)
               .join()}};
@@ -253,9 +198,22 @@ export default ({ buildServer = true, external }: Options = {}): PluginOption =>
           `;
         }
 
-        if (isUnhydratableJsx(id)) {
-          const code = await readFile(toHydratableJsx(id), "utf-8");
-          return code;
+        if (id.endsWith(virtualExtname)) {
+          const { isDynamic, basename, regExp, params } = pageToRoute(id);
+
+          return isDynamic
+            ? `
+            import { hydrate } from "solid-js/web";
+            import DynamicPage from "./${basename}"
+            const matches = location.pathname.match(/^${regExp}$/);
+            const params = {${params.map((param, i) => `${param}:matches[${i + 2}]`)}};
+            hydrate(() => <DynamicPage {...params} />, document);
+          `
+            : `
+            import { hydrate } from "solid-js/web";
+            import StaticPage from "./${basename}"
+            hydrate(StaticPage, document);
+          `;
         }
       },
       async writeBundle() {
@@ -301,19 +259,5 @@ export default ({ buildServer = true, external }: Options = {}): PluginOption =>
         };
       },
     },
-    solid({
-      ssr: false,
-      babel: {
-        plugins: [[babelPlugin, { ssr: false, manifest } as BabelPluginOptions]],
-      },
-      include: unhydratableJsxRegExp,
-    }),
-    solid({
-      ssr: true,
-      babel: {
-        plugins: [[babelPlugin, { ssr: true, manifest } as BabelPluginOptions]],
-      },
-      exclude: unhydratableJsxRegExp,
-    }),
   ];
 };

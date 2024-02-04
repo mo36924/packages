@@ -20,11 +20,11 @@ export default () => (
 const transform = (options: Options) =>
   transformSync(code, {
     filename: "index.jsx",
-    plugins: [[plugin, { ...options, manifest: { "/": { file: "index.js", isEntry: true } } } as Options]],
+    plugins: [[plugin, { ...options, manifest: { "index.jsx": { file: "index.js", isEntry: true } } } as Options]],
   });
 
-it("ssr true", () => {
-  expect(transform({ ssr: true })).toMatchInlineSnapshot(`
+it("babel-plugin-solid", () => {
+  expect(transform({})).toMatchInlineSnapshot(`
     import { HydrationScript } from "solid-js/web";
     const Index = () => (
       <html lang="en">
@@ -38,13 +38,6 @@ it("ssr true", () => {
         <body>Hello World!</body>
       </html>
     );
-    export default Index;
-  `);
-});
-
-it("ssr false", () => {
-  expect(transform({ ssr: false })).toMatchInlineSnapshot(`
-    const Index = () => <>Hello World!</>;
     export default Index;
   `);
 });

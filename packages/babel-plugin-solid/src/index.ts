@@ -9,16 +9,13 @@ const isJSX = (path?: string): path is string => !!path && /\.[cm]?[jt]sx$/.test
 
 export type Options = {
   baseDir?: string;
-  ssr?: boolean;
   manifest?: string | Manifest;
 };
 export default ({ types: t }: typeof babel, options: Options): PluginObj => {
-  const { baseDir = "", ssr = false } = options;
+  const { baseDir = "" } = options;
 
   const manifest: Manifest =
     typeof options.manifest === "string" ? JSON.parse(readFileSync(options.manifest, "utf-8")) : options.manifest ?? {};
-
-  const manifestChunks = Object.values(manifest);
 
   return {
     name: "@mo36924/babel-plugin-solid",
@@ -28,34 +25,6 @@ export default ({ types: t }: typeof babel, options: Options): PluginObj => {
         const filename = state.filename;
 
         if (!isJSX(filename)) {
-          return;
-        }
-
-        if (!ssr) {
-          path.traverse({
-            JSXElement(path) {
-              const openingElement = path.get("openingElement");
-              const name = openingElement.get("name");
-
-              if (!name.isJSXIdentifier({ name: "html" })) {
-                return;
-              }
-
-              const body = path
-                .get("children")
-                .find(
-                  (child): child is babel.NodePath<babel.types.JSXElement> =>
-                    child.isJSXElement() && child.get("openingElement").get("name").isJSXIdentifier({ name: "body" }),
-                );
-
-              if (!body) {
-                return;
-              }
-
-              path.replaceWith(t.jsxFragment(t.jsxOpeningFragment(), t.jsxClosingFragment(), body.node.children));
-            },
-          });
-
           return;
         }
 
@@ -71,10 +40,16 @@ export default ({ types: t }: typeof babel, options: Options): PluginObj => {
             }
 
             const relativePath = relative(state.cwd, filename);
-            const deps = manifestChunks.filter(({ isEntry, src }) => isEntry || src === relativePath);
+            const manifestChunk = manifest[relativePath];
+
+            if (!manifestChunk) {
+              return;
+            }
+
+            const { file, imports = [], css = [] } = manifestChunk;
 
             path.pushContainer("children", [
-              ...deps.map(({ file }) =>
+              ...[file, ...imports.map((path) => manifest[path].file)].map((file) =>
                 t.jsxElement(
                   t.jsxOpeningElement(
                     t.jsxIdentifier("script"),
@@ -88,20 +63,18 @@ export default ({ types: t }: typeof babel, options: Options): PluginObj => {
                   [],
                 ),
               ),
-              ...deps.flatMap(({ css = [] }) =>
-                css.map((file) =>
-                  t.jsxElement(
-                    t.jsxOpeningElement(
-                      t.jsxIdentifier("link"),
-                      [
-                        t.jsxAttribute(t.jsxIdentifier("rel"), t.stringLiteral("stylesheet")),
-                        t.jsxAttribute(t.jsxIdentifier("href"), t.stringLiteral(`/${file}`)),
-                      ],
-                      true,
-                    ),
-                    null,
-                    [],
+              ...css.map((file) =>
+                t.jsxElement(
+                  t.jsxOpeningElement(
+                    t.jsxIdentifier("link"),
+                    [
+                      t.jsxAttribute(t.jsxIdentifier("rel"), t.stringLiteral("stylesheet")),
+                      t.jsxAttribute(t.jsxIdentifier("href"), t.stringLiteral(`/${file}`)),
+                    ],
+                    true,
                   ),
+                  null,
+                  [],
                 ),
               ),
               t.jsxElement(t.jsxOpeningElement(t.jsxIdentifier("HydrationScript"), [], true), null, []),
