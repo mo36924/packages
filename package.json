@@ -41,6 +41,7 @@
     "@babel/plugin-syntax-jsx": "^7.23.3",
     "@hono/node-server": "^1.4.1",
     "@mo36924/eslint-config": "^3.0.4",
+    "@mo36924/http-server": "^2.3.1",
     "@prettier/sync": "^0.3.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@types/babel__core": "^7.20.5",

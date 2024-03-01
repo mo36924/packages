@@ -42,7 +42,7 @@
   ],
   "dependencies": {
     "@mo36924/babel-plugin-solid": "^2.5.1",
-    "@mo36924/http-server": "^2.2.0",
+    "@mo36924/http-server": "^2.3.1",
     "change-case": "^5.2.0",
     "fast-glob": "^3.3.2",
     "rollup": "^4.9.1",
