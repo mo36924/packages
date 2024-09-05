@@ -33,9 +33,6 @@
     "publish:lerna": "lerna publish",
     "lerna:from-git": "lerna publish from-git"
   },
-  "prettier": {
-    "printWidth": 120
-  },
   "devDependencies": {
     "@antfu/eslint-config": "3.2.0",
     "@babel/core": "7.25.2",
