@@ -39,10 +39,10 @@
   ],
   "dependencies": {
     "@types/pluralize": "^0.0.33",
-    "change-case": "^5.2.0",
-    "graphql": "^16.8.1",
+    "change-case": "^5.4.4",
+    "graphql": "^16.9.0",
     "pluralize": "^8.0.0",
-    "type-fest": "^4.8.3"
+    "type-fest": "^4.26.0"
   },
   "publishConfig": {
     "access": "public"
