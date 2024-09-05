@@ -15,7 +15,9 @@ export default ({ types: t }: typeof babel, options: Options): PluginObj => {
   const { baseDir = "" } = options;
 
   const manifest: Manifest =
-    typeof options.manifest === "string" ? JSON.parse(readFileSync(options.manifest, "utf-8")) : options.manifest ?? {};
+    typeof options.manifest === "string"
+      ? JSON.parse(readFileSync(options.manifest, "utf-8"))
+      : (options.manifest ?? {});
 
   return {
     name: "@mo36924/babel-plugin-solid",

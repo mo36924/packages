@@ -39,7 +39,7 @@ const pageToRoute = (path: string) => {
   const pathname = trimIndex(trimmedExtnamePath);
   const name = `Page${pascalCase(trimmedExtnamePath)}`;
   const importPath = `${importDirPath}/${trimmedExtnamePath}`;
-  const isDynamic = /\[(\w+)\]/.test(pathname);
+  const isDynamic = /\[\w+\]/.test(pathname);
   const params: string[] = [];
 
   const regExp = pathname
