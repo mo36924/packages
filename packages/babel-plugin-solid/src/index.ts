@@ -11,6 +11,7 @@ export type Options = {
   baseDir?: string;
   manifest?: string | Manifest;
 };
+
 export default ({ types: t }: typeof babel, options: Options): PluginObj => {
   const { baseDir = "" } = options;
 

@@ -64,6 +64,7 @@ export type Options = {
   buildServer?: boolean;
   external?: ExternalOption;
 };
+
 export default ({ buildServer = true, external }: Options = {}): PluginOption => {
   const manifest: Manifest = {};
   return [

@@ -299,6 +299,7 @@ export const sort = (types: Types): Types =>
         },
       ]),
   );
+
 export const fix = (types: Types) => {
   const joinTypeNameSet = new Set<string>();
   const renameJoinTypeFields: Field[] = [];
@@ -375,6 +376,7 @@ export const fix = (types: Types) => {
 
   return types;
 };
+
 export const relation = (types: Types) => {
   for (const [typeName, type] of Object.entries(types)) {
     const fields = (type.fields = createObject(type.fields));
@@ -663,6 +665,7 @@ export const base = (types: Types) => {
 
   return types;
 };
+
 export const build = (types: Types) => {
   let schema = customScalars + schemaDirectives;
   let query = "";
