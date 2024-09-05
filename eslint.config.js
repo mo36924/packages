@@ -1,1 +1,5 @@
-export { default } from "@mo36924/eslint-config";
+import antfu from "@antfu/eslint-config";
+
+export default antfu({
+  stylistic: false,
+});
