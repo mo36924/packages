@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/eslint-config",
   "type": "module",
-  "version": "0.0.1",
+  "version": "5.0.2",
   "description": "eslint-config",
   "author": "mo36924",
   "license": "MIT",
