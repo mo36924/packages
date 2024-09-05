@@ -9,7 +9,7 @@ import { author, devDependencies, name } from "../package.json";
 
 const dir = resolve("packages");
 const names = await readdir(dir);
-const linter = new Linter({ configType: "flat" });
+const linter = new Linter();
 const eslintConfig = await promiseConfig;
 const prettierConfig = await resolveConfig(cwd());
 
