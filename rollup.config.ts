@@ -2,9 +2,9 @@ import { readFileSync, readdirSync } from "node:fs";
 import { basename, join, relative } from "node:path";
 import { cwd } from "node:process";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
+import swc from "@rollup/plugin-swc";
 import { defineConfig } from "rollup";
 import dts from "rollup-plugin-dts";
-import esbuild from "rollup-plugin-esbuild";
 
 const workspaceDir = "packages";
 const external = /^[@\w]/;
@@ -30,7 +30,7 @@ export default defineConfig([
       { dir: ".", format: "cjs", entryFileNames: "[name].[format]" },
     ],
     external,
-    plugins: [esbuild(), resolve],
+    plugins: [swc(), resolve],
   },
   {
     input,
