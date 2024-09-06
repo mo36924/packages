@@ -12,7 +12,6 @@ const factory: typeof antfu = (options, ...userConfigs) =>
       },
       rules: {
         curly: "error",
-        "import/order": ["error", { alphabetize: { order: "asc" } }],
         "ts/consistent-type-definitions": ["error", "type"],
         "ts/consistent-type-imports": ["error", { prefer: "no-type-imports" }],
         "style/padding-line-between-statements": [
