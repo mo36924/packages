@@ -32,7 +32,7 @@
     "lerna:from-git": "lerna publish from-git"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^3.2.0",
+    "@antfu/eslint-config": "^3.3.2",
     "@babel/core": "^7.25.2",
     "@babel/helper-plugin-utils": "^7.24.8",
     "@babel/plugin-syntax-jsx": "^7.24.7",
