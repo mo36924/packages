@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { basename, join, relative } from "node:path";
 import { cwd } from "node:process";
 import { nodeResolve } from "@rollup/plugin-node-resolve";

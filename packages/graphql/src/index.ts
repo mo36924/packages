@@ -1,11 +1,11 @@
 import { camelCase, pascalCase } from "change-case";
 import {
+  buildASTSchema,
   FieldDefinitionNode,
+  getArgumentValues,
   GraphQLSchema,
   Kind,
   ObjectTypeDefinitionNode,
-  buildASTSchema,
-  getArgumentValues,
   parse as parseGraphQLSource,
   print as printGraphQLSource,
   stripIgnoredCharacters,

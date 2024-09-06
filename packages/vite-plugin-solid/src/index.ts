@@ -4,7 +4,7 @@ import babelPlugin, { Options as BabelPluginOptions } from "@mo36924/babel-plugi
 import { pascalCase } from "change-case";
 import fastGlob from "fast-glob";
 import { ExternalOption } from "rollup";
-import { Manifest, PluginOption, ResolvedConfig, build, createFilter } from "vite";
+import { build, createFilter, Manifest, PluginOption, ResolvedConfig } from "vite";
 import solid from "vite-plugin-solid";
 
 const glob = fastGlob.glob;
