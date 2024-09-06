@@ -32,6 +32,7 @@
   "devDependencies": {
     "@antfu/eslint-config": "^3.2.0",
     "@babel/core": "^7.25.2",
+    "@babel/helper-plugin-utils": "^7.24.8",
     "@babel/plugin-syntax-jsx": "^7.24.7",
     "@hono/node-server": "^1.12.2",
     "@mo36924/http-server": "^2.3.1",
@@ -41,6 +42,7 @@
     "@stylistic/eslint-plugin": "^2.7.2",
     "@swc/core": "^1.7.23",
     "@types/babel__core": "^7.20.5",
+    "@types/babel__helper-plugin-utils": "^7.10.3",
     "@types/eslint": "^9.6.1",
     "@types/node": "^20.16.5",
     "@types/pluralize": "^0.0.33",
@@ -54,6 +56,7 @@
     "graphql": "^16.9.0",
     "husky": "^9.1.5",
     "lerna": "^8.1.8",
+    "minify-html-wasm": "^0.1.1",
     "npm-run-all2": "^6.2.2",
     "pluralize": "^8.0.0",
     "prettier": "^3.3.3",
