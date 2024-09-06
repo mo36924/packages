@@ -5,6 +5,7 @@ import depcheck from "depcheck";
 import { Linter } from "eslint";
 import { format, resolveConfig } from "prettier";
 import promiseConfig from "../eslint.config.js";
+import { version } from "../lerna.json";
 import { author, devDependencies, name } from "../package.json";
 
 const dir = resolve("packages");
@@ -41,7 +42,7 @@ await Promise.all(
     const path = join(dir, _name, "package.json");
 
     const data = JSON.stringify({
-      version: "0.0.1",
+      version,
       description: _name,
       keywords: [],
       ...pkg,
