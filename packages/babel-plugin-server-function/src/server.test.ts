@@ -1,3 +1,5 @@
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { transformSync } from "@babel/core";
 import { expect, it } from "vitest";
 import plugin, { Options } from "./index";
@@ -46,5 +48,25 @@ it("babel-plugin-server-function-use-server", () => {
       const result = await Promise.resolve(2);
       return result;
     }
+  `);
+});
+
+it("babel-plugin-server-function-fetch", () => {
+  const fetchPath = join(fileURLToPath(import.meta.url), "..", "fetch.ts");
+
+  const result = transformSync("", {
+    filename: fetchPath,
+    plugins: [
+      [plugin, { server: true, serverFunctionIds: ["_2f696e6465782e6a73_0", "_2f696e6465782e6a73_1"] } as Options],
+    ],
+  });
+
+  expect(result).toMatchInlineSnapshot(`
+    import { _2f696e6465782e6a73_0 } from "/index.js";
+    import { _2f696e6465782e6a73_1 } from "/index.js";
+    const serverFunctions = {
+      _2f696e6465782e6a73_0,
+      _2f696e6465782e6a73_1,
+    };
   `);
 });

@@ -1,9 +1,15 @@
 import { Buffer } from "node:buffer";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { NodePath, PluginObj, PluginPass, types as t } from "@babel/core";
 import { declare } from "@babel/helper-plugin-utils";
 import { deadCodeElimination } from "babel-dead-code-elimination";
 
-export type Options = { server?: boolean; runtime?: string };
+export type Options = {
+  server?: boolean;
+  runtime?: string;
+  serverFunctionIds?: string[];
+};
 
 type State = PluginPass & {
   runtimeId?: string;
@@ -55,7 +61,10 @@ const findProgram = (path: NodePath<t.Node>): NodePath<t.Program> => {
   return program;
 };
 
-const serverPlugin = declare<Record<string, unknown>, PluginObj<State>>(() => {
+const fetchPath = join(fileURLToPath(import.meta.url), "..", "fetch.");
+const fetchPaths = ["js", "cjs", "ts"].map((extname) => fetchPath + extname);
+
+const serverPlugin = declare<Options, PluginObj<State>>((_, { serverFunctionIds }) => {
   const visitServerFunction = (path: NodePath<t.Function>, state: State) => {
     if (!checkServerFunction(path)) {
       return;
@@ -82,6 +91,27 @@ const serverPlugin = declare<Record<string, unknown>, PluginObj<State>>(() => {
 
   return {
     name: "babel-plugin-server-function-use-server",
+    pre(file) {
+      if (!serverFunctionIds || !fetchPaths.includes(this.filename ?? "")) {
+        return;
+      }
+
+      file.path.unshiftContainer("body", [
+        ...serverFunctionIds.map((id) => {
+          const [_, hexFilepath] = id.split("_");
+          const path = Buffer.from(hexFilepath, "hex").toString();
+          return t.importDeclaration([t.importSpecifier(t.identifier(id), t.identifier(id))], t.stringLiteral(path));
+        }),
+        t.variableDeclaration("const", [
+          t.variableDeclarator(
+            t.identifier("serverFunctions"),
+            t.objectExpression(
+              serverFunctionIds.map((id) => t.objectProperty(t.identifier(id), t.identifier(id), false, true)),
+            ),
+          ),
+        ]),
+      ]);
+    },
     visitor: {
       FunctionDeclaration: visitServerFunction,
       FunctionExpression: visitServerFunction,

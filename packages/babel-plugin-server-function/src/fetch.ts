@@ -1,33 +1,51 @@
-import { Buffer } from "node:buffer";
+const basePath = "/server/";
+const basePathLength = basePath.length;
 
-const base = "/server/";
+const createResponse = (data = null) =>
+  new Response(JSON.stringify(data), {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
 const fetchRequestHandler = (request: Request) => {
   const url = request.url;
 
-  if (!url.includes(base)) {
+  if (!url.includes(basePath)) {
     return;
   }
 
   const pathname = new URL(url).pathname;
 
-  if (!pathname.startsWith(base)) {
+  if (!pathname.startsWith(basePath)) {
     return;
   }
 
-  const name = pathname.slice(base.length);
-  const [_, hexFilepath] = name.split("_");
+  const id = pathname.slice(basePathLength);
 
-  const response = Promise.all([import(Buffer.from(hexFilepath, "hex").toString()), request.json()])
-    .then(([mod, json]) => mod[name](...json))
-    .then(
-      (result = null) =>
-        new Response(JSON.stringify(result), {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }),
-    );
+  // eslint-disable-next-line node/prefer-global/process
+  if (process.env.NODE_ENV !== "production") {
+    const [_, hexFilepath] = id.split("_");
+
+    // eslint-disable-next-line node/prefer-global/buffer
+    const response = Promise.all([import(Buffer.from(hexFilepath, "hex").toString()), request.json()])
+      .then(([mod, data]) => mod[id](...data))
+      .then(createResponse);
+
+    return response;
+  }
+
+  // @ts-expect-error serverFunction is translated by babel
+  const serverFunction = (serverFunctions as { [id: string]: (...args: any[]) => Promise<any> })[id];
+
+  if (!serverFunction) {
+    return;
+  }
+
+  const response = request
+    .json()
+    .then((data) => serverFunction(...data))
+    .then(createResponse);
 
   return response;
 };
