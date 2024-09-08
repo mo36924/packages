@@ -1,9 +1,11 @@
 import { Buffer } from "node:buffer";
+import { createHash } from "node:crypto";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { NodePath, PluginObj, PluginPass, types as t } from "@babel/core";
 import { declare } from "@babel/helper-plugin-utils";
 import { deadCodeElimination } from "babel-dead-code-elimination";
+import basex from "base-x";
 
 export type Options = {
   server?: boolean;
@@ -15,6 +17,9 @@ type State = PluginPass & {
   runtimeId?: string;
   createServerFunctionIndex?: number;
 };
+
+const base52 = basex("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
+const hash = (data: string) => base52.encode(createHash("sha256").update(data).digest());
 
 const checkServerFunction = (
   path: NodePath<t.Function>,
@@ -106,7 +111,7 @@ const serverPlugin = declare<Options, PluginObj<State>>((_, { serverFunctionIds 
           t.variableDeclarator(
             t.identifier("serverFunctions"),
             t.objectExpression(
-              serverFunctionIds.map((id) => t.objectProperty(t.identifier(id), t.identifier(id), false, true)),
+              serverFunctionIds.map((id) => t.objectProperty(t.identifier(hash(id)), t.identifier(id))),
             ),
           ),
         ]),
@@ -120,59 +125,64 @@ const serverPlugin = declare<Options, PluginObj<State>>((_, { serverFunctionIds 
   };
 });
 
-const clientPlugin = declare<Options, PluginObj<State>>((_api, options) => {
-  const runtime = options.runtime ?? "@mo36924/babel-plugin-server-function/runtime";
+const clientPlugin = declare<Options, PluginObj<State>>(
+  (_api, { runtime = "@mo36924/babel-plugin-server-function/runtime", serverFunctionIds }) => {
+    const visitServerFunction = (path: NodePath<t.Function>, state: State) => {
+      if (!checkServerFunction(path)) {
+        return;
+      }
 
-  const visitServerFunction = (path: NodePath<t.Function>, state: State) => {
-    if (!checkServerFunction(path)) {
-      return;
-    }
+      const program = findProgram(path);
 
-    const program = findProgram(path);
+      if (!state.runtimeId) {
+        state.runtimeId = path.scope.generateUid("runtime");
 
-    if (!state.runtimeId) {
-      state.runtimeId = path.scope.generateUid("runtime");
+        program.unshiftContainer(
+          "body",
+          t.importDeclaration([t.importDefaultSpecifier(t.identifier(state.runtimeId))], t.stringLiteral(runtime)),
+        );
+      }
+
+      const serverFunctionId = getServerFunctionId(path, state);
+      const serverFunctionPath = serverFunctionIds ? hash(serverFunctionId) : serverFunctionId;
+
+      if (serverFunctionIds) {
+        serverFunctionIds.push(serverFunctionId);
+      }
 
       program.unshiftContainer(
         "body",
-        t.importDeclaration([t.importDefaultSpecifier(t.identifier(state.runtimeId))], t.stringLiteral(runtime)),
+        t.variableDeclaration("const", [
+          t.variableDeclarator(
+            t.identifier(serverFunctionId),
+            t.callExpression(t.identifier(state.runtimeId), [t.stringLiteral(serverFunctionPath)]),
+          ),
+        ]),
       );
-    }
 
-    const serverFunctionId = getServerFunctionId(path, state);
-
-    program.unshiftContainer(
-      "body",
-      t.variableDeclaration("const", [
-        t.variableDeclarator(
-          t.identifier(serverFunctionId),
-          t.callExpression(t.identifier(state.runtimeId), [t.stringLiteral(serverFunctionId)]),
-        ),
-      ]),
-    );
-
-    if (t.isFunctionDeclaration(path.node) && path.node.id) {
-      path.scope.rename(path.node.id.name, serverFunctionId);
-      path.remove();
-    } else {
-      path.replaceWith(t.identifier(serverFunctionId));
-    }
-  };
-
-  return {
-    name: "babel-plugin-server-function-use-client",
-    post(file) {
-      if (this.runtimeId) {
-        deadCodeElimination({ ...file.ast, errors: [] });
+      if (t.isFunctionDeclaration(path.node) && path.node.id) {
+        path.scope.rename(path.node.id.name, serverFunctionId);
+        path.remove();
+      } else {
+        path.replaceWith(t.identifier(serverFunctionId));
       }
-    },
-    visitor: {
-      FunctionDeclaration: visitServerFunction,
-      FunctionExpression: visitServerFunction,
-      ArrowFunctionExpression: visitServerFunction,
-    },
-  };
-});
+    };
+
+    return {
+      name: "babel-plugin-server-function-use-client",
+      post(file) {
+        if (this.runtimeId) {
+          deadCodeElimination({ ...file.ast, errors: [] });
+        }
+      },
+      visitor: {
+        FunctionDeclaration: visitServerFunction,
+        FunctionExpression: visitServerFunction,
+        ArrowFunctionExpression: visitServerFunction,
+      },
+    };
+  },
+);
 
 export default declare<Options>((api, options, dirname) => {
   if (options.server) {

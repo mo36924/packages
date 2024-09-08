@@ -21,11 +21,24 @@ it("babel-plugin-server-function-use-client", () => {
     export const result = await Promise.all([serverFunction(), serverFunction1()]);
   `;
 
-  const result = transformSync(code, { filename: "/index.js", plugins: [[plugin, {} satisfies Options]] });
+  let result = transformSync(code, { filename: "/index.js", plugins: [[plugin, {} satisfies Options]] });
 
   expect(result).toMatchInlineSnapshot(`
     const _2f696e6465782e6a73_1 = _runtime("_2f696e6465782e6a73_1");
     const _2f696e6465782e6a73_0 = _runtime("_2f696e6465782e6a73_0");
+    import _runtime from "@mo36924/babel-plugin-server-function/runtime";
+    const serverFunction = _2f696e6465782e6a73_0;
+    export const result = await Promise.all([serverFunction(), _2f696e6465782e6a73_1()]);
+  `);
+
+  result = transformSync(code, {
+    filename: "/index.js",
+    plugins: [[plugin, { serverFunctionIds: [] } satisfies Options]],
+  });
+
+  expect(result).toMatchInlineSnapshot(`
+    const _2f696e6465782e6a73_1 = _runtime("EXfhzWjFLhitZcmWlSTDSaStAOWBqElbLlbrPkPCxmXCs");
+    const _2f696e6465782e6a73_0 = _runtime("btQZTjkHBzOaWBkGnwEdPtLKnTdFZGtiBXFOjsQmXOARm");
     import _runtime from "@mo36924/babel-plugin-server-function/runtime";
     const serverFunction = _2f696e6465782e6a73_0;
     export const result = await Promise.all([serverFunction(), _2f696e6465782e6a73_1()]);

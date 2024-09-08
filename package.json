@@ -50,6 +50,7 @@
     "@types/pluralize": "^0.0.33",
     "@types/validate-npm-package-name": "^4.0.2",
     "babel-dead-code-elimination": "^1.0.6",
+    "base-x": "^5.0.0",
     "change-case": "^5.4.4",
     "del-cli": "^5.1.0",
     "depcheck": "^1.4.7",

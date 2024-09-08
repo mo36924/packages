@@ -65,8 +65,8 @@ it("babel-plugin-server-function-fetch", () => {
     import { _2f696e6465782e6a73_0 } from "/index.js";
     import { _2f696e6465782e6a73_1 } from "/index.js";
     const serverFunctions = {
-      _2f696e6465782e6a73_0,
-      _2f696e6465782e6a73_1,
+      btQZTjkHBzOaWBkGnwEdPtLKnTdFZGtiBXFOjsQmXOARm: _2f696e6465782e6a73_0,
+      EXfhzWjFLhitZcmWlSTDSaStAOWBqElbLlbrPkPCxmXCs: _2f696e6465782e6a73_1,
     };
   `);
 });
