@@ -4,24 +4,39 @@ import plugin, { Options } from "./index";
 
 it("babel-plugin-replace-jsx-elements", () => {
   const code = `
-    <>
-      <A href="/">top</A>
-      <a href="/user">user</a>
-      <title>title</title>
-      <header>header</header>
-    </>
+    const Component = () => (
+      <>
+        <A href="/">top</A>
+        <a href="/user">user</a>
+        <title>title</title>
+        <header>header</header>
+      </>
+    );
+
+    const Body = ({ children, ...props }) => (
+      <body {...props}>
+        <div id="app">{children}</div>
+      </body>
+    );
   `;
 
   const result = transformSync(code, {
-    plugins: [[plugin, { A: "a", title: "Title", header: "Fragment" } satisfies Options]],
+    plugins: [[plugin, { A: "a", title: "Title", header: "Fragment", body: "Body" } satisfies Options]],
   });
 
   expect(result).toMatchInlineSnapshot(`
-    <>
-      <a href="/">top</a>
-      <a href="/user">user</a>
-      <Title>title</Title>
-      <>header</>
-    </>;
+    const Component = () => (
+      <>
+        <a href="/">top</a>
+        <a href="/user">user</a>
+        <Title>title</Title>
+        <>header</>
+      </>
+    );
+    const Body = ({ children, ...props }) => (
+      <body {...props}>
+        <div id="app">{children}</div>
+      </body>
+    );
   `);
 });

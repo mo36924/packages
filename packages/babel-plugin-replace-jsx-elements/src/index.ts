@@ -2,7 +2,7 @@ import { types as t } from "@babel/core";
 import { declare } from "@babel/helper-plugin-utils";
 import jsx from "@babel/plugin-syntax-jsx";
 
-export type Options = Record<string, string>;
+export type Options = Record<string, string | null | undefined>;
 
 export default declare<Options>((_, options) => {
   return {
@@ -28,6 +28,10 @@ export default declare<Options>((_, options) => {
         }
 
         const replacedTag = options[tag];
+
+        if (!replacedTag || path.scope.hasBinding(replacedTag)) {
+          return;
+        }
 
         path.replaceWith(
           replacedTag === "Fragment"
