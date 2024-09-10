@@ -17,7 +17,7 @@ export const generateRoutes = async ({
   include = "**/*.tsx",
   exclude,
   importPrefix = "~/pages",
-}: Options) => {
+}: Options = {}) => {
   const ignore = typeof exclude === "string" ? [exclude] : exclude;
   const paths = await glob(include, { cwd: rootDir, ignore });
 
