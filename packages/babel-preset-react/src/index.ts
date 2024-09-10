@@ -20,7 +20,7 @@ export default (
 ): Pick<TransformOptions, "plugins"> => {
   return {
     plugins: [
-      [serverFunction, { server, serverFunctionIds: development ? undefined : [] } satisfies ServerFunctionOptions],
+      [serverFunction, { development, server } satisfies ServerFunctionOptions],
       [injectAssetJsxElements, manifest satisfies InjectAssetJsxElementsOptions],
       [
         replaceJsxElements,

@@ -29,7 +29,10 @@ const code = `
 
 describe("babel-plugin-server-function", () => {
   it("client-development", () => {
-    const result = transformSync(code, { filename: "/index.js", plugins: [[plugin, {} satisfies Options]] });
+    const result = transformSync(code, {
+      filename: "/index.js",
+      plugins: [[plugin, { development: true } satisfies Options]],
+    });
 
     expect(result).toMatchInlineSnapshot(`
       const _2f696e6465782e6a73_1 = _runtime("_2f696e6465782e6a73_1");
@@ -72,7 +75,7 @@ describe("babel-plugin-server-function", () => {
   it("client-production", () => {
     const result = transformSync(code, {
       filename: "/index.js",
-      plugins: [[plugin, { serverFunctionIds: [] } satisfies Options]],
+      plugins: [[plugin, {} satisfies Options]],
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -91,7 +94,7 @@ describe("babel-plugin-server-function", () => {
   it("server-production", () => {
     const result = transformSync(code, {
       filename: "/index.js",
-      plugins: [[plugin, { server: true, serverFunctionIds: [] } satisfies Options]],
+      plugins: [[plugin, { server: true } satisfies Options]],
     });
 
     expect(result).toMatchInlineSnapshot(`
@@ -118,12 +121,7 @@ describe("babel-plugin-server-function", () => {
 
     const result = transformSync("", {
       filename: fetchPath,
-      plugins: [
-        [
-          plugin,
-          { server: true, serverFunctionIds: ["_2f696e6465782e6a73_0", "_2f696e6465782e6a73_1"] } satisfies Options,
-        ],
-      ],
+      plugins: [[plugin, { server: true } satisfies Options]],
     });
 
     expect(result).toMatchInlineSnapshot(`

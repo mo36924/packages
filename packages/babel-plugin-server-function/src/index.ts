@@ -8,9 +8,9 @@ import { deadCodeElimination } from "babel-dead-code-elimination";
 import basex from "base-x";
 
 export type Options = {
+  development?: boolean;
   server?: boolean;
   runtime?: string;
-  serverFunctionIds?: string[];
 };
 
 type State = PluginPass & {
@@ -20,6 +20,8 @@ type State = PluginPass & {
 
 const base52 = basex("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
 const hash = (data: string) => base52.encode(createHash("sha256").update(data).digest());
+
+const serverFunctionSet = new Set<string>();
 
 const checkServerFunction = (
   path: NodePath<t.Function>,
@@ -69,7 +71,7 @@ const findProgram = (path: NodePath<t.Node>): NodePath<t.Program> => {
 const fetchPath = join(fileURLToPath(import.meta.url), "..", "fetch.");
 const fetchPaths = ["js", "cjs", "ts"].map((extname) => fetchPath + extname);
 
-const serverPlugin = declare<Options, PluginObj<State>>((_, { serverFunctionIds }) => {
+const serverPlugin = declare<Options, PluginObj<State>>(() => {
   const visitServerFunction = (path: NodePath<t.Function>, state: State) => {
     if (!checkServerFunction(path)) {
       return;
@@ -97,9 +99,11 @@ const serverPlugin = declare<Options, PluginObj<State>>((_, { serverFunctionIds 
   return {
     name: "babel-plugin-server-function-use-server",
     pre(file) {
-      if (!serverFunctionIds || !fetchPaths.includes(this.filename ?? "")) {
+      if (!fetchPaths.includes(this.filename ?? "")) {
         return;
       }
+
+      const serverFunctionIds = [...serverFunctionSet];
 
       file.path.unshiftContainer("body", [
         ...serverFunctionIds.map((id) => {
@@ -126,7 +130,7 @@ const serverPlugin = declare<Options, PluginObj<State>>((_, { serverFunctionIds 
 });
 
 const clientPlugin = declare<Options, PluginObj<State>>(
-  (_api, { runtime = "@mo36924/babel-plugin-server-function/runtime", serverFunctionIds }) => {
+  (_api, { development, runtime = "@mo36924/babel-plugin-server-function/runtime" }) => {
     const visitServerFunction = (path: NodePath<t.Function>, state: State) => {
       if (!checkServerFunction(path)) {
         return;
@@ -144,11 +148,9 @@ const clientPlugin = declare<Options, PluginObj<State>>(
       }
 
       const serverFunctionId = getServerFunctionId(path, state);
-      const serverFunctionPath = serverFunctionIds ? hash(serverFunctionId) : serverFunctionId;
+      const serverFunctionPath = development ? serverFunctionId : hash(serverFunctionId);
 
-      if (serverFunctionIds) {
-        serverFunctionIds.push(serverFunctionId);
-      }
+      serverFunctionSet.add(serverFunctionId);
 
       program.unshiftContainer(
         "body",
