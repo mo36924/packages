@@ -41,7 +41,7 @@ export default (
             } satisfies ReplaceJsxElementsOptions),
       ],
       flattenNestedFragments,
-      [jsxDisplayName, development],
+      [jsxDisplayName, development ? undefined : false],
     ],
   };
 };
