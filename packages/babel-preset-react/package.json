@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/babel-preset-react",
   "type": "module",
-  "version": "5.0.20",
+  "version": "5.0.21",
   "description": "babel-preset-react",
   "author": "mo36924",
   "license": "MIT",
