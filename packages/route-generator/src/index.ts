@@ -62,6 +62,7 @@ export const generateRoutes = async ({
     .sort((a, b) => (a.rank < b.rank ? 1 : a.rank > b.rank ? -1 : 0));
 
   const code = `
+    /* eslint-disable */
     import { FC, JSX, lazy } from "react";
 
     ${routes.map(({ name, type, importPath }) => `const ${name}: FC<${type}> = lazy(() => import(${JSON.stringify(importPath)}))`).join("\n")}
@@ -70,12 +71,10 @@ export const generateRoutes = async ({
       .map(({ pathname, name }) => `${JSON.stringify(pathname)}:${name}`)
       .join()}}
 
-    // eslint-disable-next-line no-sparse-arrays
     const dynamicRoutes: Array<FC<any> | string | undefined> = [,${dynamicRoutes
       .flatMap(({ name, params }) => [name, ...params.map((param) => JSON.stringify(param))])
       .join()}]
 
-    // eslint-disable-next-line regexp/no-empty-group, regexp/no-empty-capturing-group
     const dynamicRouteRegExp = /^\\/(?:${dynamicRoutes.map(({ regExp }) => regExp).join("|")})$/
 
     export const match = (pathname: string): JSX.Element | null => {
@@ -114,9 +113,9 @@ export const generateRoutes = async ({
           ? never
           : S;
 
-    type StaticRoutes = ${staticRoutes.map(({ pathname }) => `"${pathname}"`).join("|")};
+    type StaticRoutes = ${staticRoutes.map(({ pathname }) => `"${pathname}"`).join("|") || "never"};
 
-    type DynamicRoutes<T extends string = string> = ${dynamicRoutes.map(({ route }) => `${route}`).join("|")};
+    type DynamicRoutes<T extends string = string> = ${dynamicRoutes.map(({ route }) => `${route}`).join("|") || "never"};
 
     export type Route<T> =
       | StaticRoutes
