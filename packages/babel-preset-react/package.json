@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/babel-preset-react",
   "type": "module",
-  "version": "5.0.19",
+  "version": "5.0.20",
   "description": "babel-preset-react",
   "author": "mo36924",
   "license": "MIT",
@@ -45,8 +45,8 @@
     "@mo36924/babel-plugin-flatten-nested-fragments": "^5.0.6",
     "@mo36924/babel-plugin-inject-asset-jsx-elements": "^5.0.6",
     "@mo36924/babel-plugin-jsx-display-name": "^5.0.6",
-    "@mo36924/babel-plugin-replace-jsx-elements": "^5.0.6",
-    "@mo36924/babel-plugin-server-function": "^5.0.13",
+    "@mo36924/babel-plugin-replace-jsx-elements": "^5.0.20",
+    "@mo36924/babel-plugin-server-function": "^5.0.20",
     "@types/babel__core": "^7.20.5",
     "vite": "^5.4.3"
   }
