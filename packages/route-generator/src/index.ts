@@ -63,7 +63,7 @@ export const generateRoutes = async ({
 
   const code = `
     /* eslint-disable */
-    import { FC, JSX, lazy } from "react";
+    import { FC, lazy } from "react";
 
     ${routes.map(({ name, type, importPath }) => `const ${name}: FC<${type}> = lazy(() => import(${JSON.stringify(importPath)}))`).join("\n")}
 
