@@ -77,7 +77,7 @@ export const generateRoutes = async ({
 
     const dynamicRouteRegExp = /^\\/(?:${dynamicRoutes.map(({ regExp }) => regExp).join("|")})$/
 
-    export const match = (pathname: string): JSX.Element | null => {
+    export const match = (pathname: string): [FC | null] | [FC, Record<string, string>] => {
       const StaticRoute = staticRoutes[pathname];
 
       if (StaticRoute) {
