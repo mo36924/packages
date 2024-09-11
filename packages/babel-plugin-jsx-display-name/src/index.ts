@@ -6,7 +6,7 @@ export type Options = {
   rootDir?: string;
 };
 
-export default ({ types: t }: typeof babel, { rootDir = "." }: Options): PluginObj => {
+export default ({ types: t }: typeof babel, { rootDir = "src/components" }: Options): PluginObj => {
   return {
     name: "babel-plugin-jsx-display-name",
     visitor: {
