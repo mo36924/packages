@@ -25,3 +25,5 @@ export const parse = (text: string) =>
 
     return value;
   });
+
+export const transformer = { serialize: stringify, deserialize: parse };
