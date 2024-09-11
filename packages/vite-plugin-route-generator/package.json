@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/vite-plugin-route-generator",
   "type": "module",
-  "version": "5.0.29",
+  "version": "5.0.30",
   "description": "vite-plugin-route-generator",
   "author": "mo36924",
   "license": "MIT",
@@ -41,7 +41,7 @@
     "dist"
   ],
   "dependencies": {
-    "@mo36924/route-generator": "^5.0.29",
+    "@mo36924/route-generator": "^5.0.30",
     "vite": "^5.4.3"
   }
 }

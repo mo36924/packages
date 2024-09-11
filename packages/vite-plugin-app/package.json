@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/vite-plugin-app",
   "type": "module",
-  "version": "5.0.29",
+  "version": "5.0.30",
   "description": "vite-plugin-app",
   "author": "mo36924",
   "license": "MIT",
@@ -45,7 +45,7 @@
     "@mo36924/jsx-precompile": "^0.1.4",
     "@mo36924/vite-plugin-babel": "^5.0.27",
     "@mo36924/vite-plugin-config": "^5.0.26",
-    "@mo36924/vite-plugin-route-generator": "^5.0.29",
+    "@mo36924/vite-plugin-route-generator": "^5.0.30",
     "@mo36924/vite-plugin-ssr-build": "^5.0.22",
     "vite": "^5.4.3",
     "vite-tsconfig-paths": "^5.0.1"
