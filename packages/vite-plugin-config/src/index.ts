@@ -1,16 +1,12 @@
 import { Plugin } from "vite";
 
 export type Options = {
-  server?: string;
-  client?: string;
-  assets?: string[];
+  server: string;
+  client: string;
+  assets: string[];
 };
 
-export default ({
-  server = "src/server/index.tsx",
-  client = "src/client/index.tsx",
-  assets = ["src/styles/index.css"],
-}: Options = {}): Plugin => ({
+export default ({ server, client, assets }: Options): Plugin => ({
   name: "vite-plugin-config",
   config: (_, { command, isSsrBuild }) => ({
     build: {

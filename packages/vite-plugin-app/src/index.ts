@@ -1,5 +1,5 @@
 import devServer from "@hono/vite-dev-server";
-import { precompile } from "@mo36924/jsx-precompile/vite";
+import { precompile as jsxPrecompile } from "@mo36924/jsx-precompile/vite";
 import babel from "@mo36924/vite-plugin-babel";
 import config from "@mo36924/vite-plugin-config";
 import routeGenerator from "@mo36924/vite-plugin-route-generator";
@@ -14,12 +14,17 @@ export type Options = {
   precompile?: boolean;
 };
 
-export default (options: Options = {}): Plugin[] => [
+export default ({
+  server = "src/server/index.tsx",
+  client = "src/client/index.tsx",
+  assets = ["src/styles/index.css"],
+  precompile,
+}: Options = {}): Plugin[] => [
   tsconfigPaths(),
-  config(options),
+  config({ server, client, assets }),
   routeGenerator(),
   babel(),
-  ...(options.precompile ? [precompile()] : []),
+  ...(precompile ? [jsxPrecompile()] : []),
   ssrBuild(),
-  devServer({ entry: options.server }),
+  devServer({ entry: server }),
 ];
