@@ -123,7 +123,6 @@ export const generateRoutes = async ({
       | (T extends \`\${DynamicRoutes<infer _>}\${Suffix}\` ? T : never);
 
     export const Title = (props: { children?: ReactNode }) => {
-      // eslint-disable-next-line react/no-children-to-array
       document.title = Children.toArray(props.children).join(" ");
       return null;
     };
