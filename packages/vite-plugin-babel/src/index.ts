@@ -23,10 +23,7 @@ export default (): Plugin => {
       if (!isSsrBuild) {
         const input = config.build?.rollupOptions?.input;
         const inputs = typeof input === "string" ? [input] : Object.values(input ?? {});
-
-        manifest = Object.fromEntries(
-          ["@vite/client", ...inputs].map((file) => [file, { file, isEntry: true } satisfies ManifestChunk]),
-        );
+        manifest = Object.fromEntries(inputs.map((file) => [file, { file, isEntry: true } satisfies ManifestChunk]));
       }
     },
     generateBundle: {
