@@ -29,7 +29,7 @@ export default ({
   devServer({ entry: server }),
   tsconfigPaths(),
   autoImport({
-    imports: ["react", { "~/lib/routes": ["match", "A", "Router"] }],
+    imports: ["react", { "~/lib/routes": ["match", "Title", "Body", "A", "Router"] }],
     dirs: ["src/components"],
     dts: "src/types/imports.d.ts",
   }),
