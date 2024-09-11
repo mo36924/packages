@@ -1,0 +1,53 @@
+{
+  "name": "@mo36924/babel-preset-app",
+  "type": "module",
+  "version": "5.0.22",
+  "description": "babel-preset-app",
+  "author": "mo36924",
+  "license": "MIT",
+  "homepage": "https://github.com/mo36924/packages#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mo36924/packages.git",
+    "directory": "packages/babel-preset-app"
+  },
+  "bugs": {
+    "url": "https://github.com/mo36924/packages/issues"
+  },
+  "keywords": [],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/*.d.ts",
+        "*"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@babel/core": "^7.25.2",
+    "@mo36924/babel-plugin-flatten-nested-fragments": "^5.0.6",
+    "@mo36924/babel-plugin-inject-asset-jsx-elements": "^5.0.6",
+    "@mo36924/babel-plugin-jsx-display-name": "^5.0.6",
+    "@mo36924/babel-plugin-replace-jsx-elements": "^5.0.20",
+    "@mo36924/babel-plugin-server-function": "^5.0.20",
+    "@types/babel__core": "^7.20.5",
+    "vite": "^5.4.3"
+  }
+}
