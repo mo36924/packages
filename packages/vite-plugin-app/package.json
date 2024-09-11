@@ -47,6 +47,7 @@
     "@mo36924/vite-plugin-config": "^5.0.26",
     "@mo36924/vite-plugin-route-generator": "^5.0.30",
     "@mo36924/vite-plugin-ssr-build": "^5.0.22",
+    "unplugin-auto-import": "^0.18.2",
     "vite": "^5.4.3",
     "vite-tsconfig-paths": "^5.0.1"
   }
