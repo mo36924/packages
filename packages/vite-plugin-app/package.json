@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/vite-plugin-app",
   "type": "module",
-  "version": "5.0.34",
+  "version": "5.0.35",
   "description": "vite-plugin-app",
   "author": "mo36924",
   "license": "MIT",
@@ -43,7 +43,7 @@
   "dependencies": {
     "@hono/vite-dev-server": "^0.16.0",
     "@mo36924/jsx-precompile": "^0.1.4",
-    "@mo36924/vite-plugin-babel": "^5.0.27",
+    "@mo36924/vite-plugin-babel": "^5.0.35",
     "@mo36924/vite-plugin-config": "^5.0.26",
     "@mo36924/vite-plugin-route-generator": "^5.0.30",
     "@mo36924/vite-plugin-ssr-build": "^5.0.22",
