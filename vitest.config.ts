@@ -4,7 +4,10 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [tsconfigPaths()],
   test: {
-    setupFiles: "scripts/setup.ts",
+    snapshotSerializers: [
+      "./packages/vitest-snapshot-serializer-babel/src/index.ts",
+      "./packages/vitest-snapshot-serializer-raw/src/index.ts",
+    ],
     poolMatchGlobs: [["**/vite-plugin-solid/**", "forks"]],
   },
 });
