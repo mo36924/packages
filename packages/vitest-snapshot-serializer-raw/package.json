@@ -21,6 +21,12 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
+    },
+    "./wrap": {
+      "types": "./dist/wrap.d.ts",
+      "import": "./dist/wrap.js",
+      "require": "./dist/wrap.cjs",
+      "default": "./dist/wrap.js"
     }
   },
   "main": "./dist/index.js",

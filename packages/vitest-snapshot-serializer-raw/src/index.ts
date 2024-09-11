@@ -1,8 +1,5 @@
 import { SnapshotSerializer } from "vitest";
-
-const Raw = Symbol.for("vitest-snapshot-serializer-raw");
-
-export const raw = (value: string) => ({ [Raw]: value });
+import { Raw } from "./wrap";
 
 export default {
   test: (value) => !!value && typeof value[Raw] === "string",
