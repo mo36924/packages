@@ -2,12 +2,14 @@ import { Plugin } from "vite";
 
 export type Options = {
   server?: string;
-  client?: string[];
+  client?: string;
+  assets?: string[];
 };
 
 export default ({
   server = "src/server/index.tsx",
-  client = ["src/styles/index.css", "src/client/index.tsx"],
+  client = "src/client/index.tsx",
+  assets = ["src/styles/index.css"],
 }: Options = {}): Plugin => ({
   name: "vite-plugin-config",
   config: (_, { command, isSsrBuild }) => ({
@@ -15,7 +17,7 @@ export default ({
       emptyOutDir: !isSsrBuild,
       minify: command === "build",
       rollupOptions: {
-        input: isSsrBuild ? server : client,
+        input: isSsrBuild ? server : [client, ...assets],
         output: {
           inlineDynamicImports: isSsrBuild,
           entryFileNames: isSsrBuild ? "index.js" : "public/assets/[hash].js",
