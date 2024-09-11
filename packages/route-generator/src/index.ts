@@ -13,7 +13,7 @@ export type Options = {
 
 export const generateRoutes = async ({
   rootDir = "src/pages",
-  outFile = "src/routes.ts",
+  outFile = "src/lib/routes.tsx",
   include = "**/*.tsx",
   exclude,
   importPrefix = "~/pages",
@@ -63,7 +63,7 @@ export const generateRoutes = async ({
 
   const code = `
     /* eslint-disable */
-    import { FC, lazy } from "react";
+    import { FC, HTMLAttributes, lazy, ReactNode, Suspense } from "react";
 
     ${routes.map(({ name, type, importPath }) => `const ${name}: FC<${type}> = lazy(() => import(${JSON.stringify(importPath)}))`).join("\n")}
 
@@ -121,6 +121,33 @@ export const generateRoutes = async ({
       | StaticRoutes
       | \`\${StaticRoutes}\${SearchOrHash}\`
       | (T extends \`\${DynamicRoutes<infer _>}\${Suffix}\` ? T : never);
+
+    export const Title = (props: { children?: ReactNode }) => {
+      // eslint-disable-next-line react/no-children-to-array
+      document.title = Children.toArray(props.children).join(" ");
+      return null;
+    };
+
+    export const Body = ({ children, ...props }: HTMLAttributes<HTMLBodyElement>) => (
+      <body {...props}>
+        <div id="app">{children}</div>
+      </body>
+    );
+
+    export const A = <T extends string>(props: { href: Route<T> } & Omit<HTMLAttributes<HTMLAnchorElement>, "href">) => (
+      <a {...props} />
+    );
+
+    export const Router = ({ pathname }: { pathname: string }) => {
+      const [Route, params] = match(pathname);
+      return (
+        Route && (
+          <Suspense>
+            <Route {...params} />
+          </Suspense>
+        )
+      );
+    };
   `;
 
   const config = await resolveConfig(outFile);
