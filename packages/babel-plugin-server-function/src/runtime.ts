@@ -1,3 +1,5 @@
+import { parse, stringify } from "@mo36924/json";
+
 export type Runtime = (id: string) => (...args: any[]) => Promise<any>;
 
 const runtime: Runtime =
@@ -8,7 +10,9 @@ const runtime: Runtime =
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(args),
-    }).then((response) => response.json());
+      body: stringify(args),
+    })
+      .then((response) => response.text())
+      .then(parse);
 
 export default runtime;

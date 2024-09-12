@@ -55,6 +55,7 @@
   "dependencies": {
     "@babel/core": "^7.25.2",
     "@babel/helper-plugin-utils": "^7.24.8",
+    "@mo36924/json": "^5.0.38",
     "@types/babel__core": "^7.20.5",
     "@types/babel__helper-plugin-utils": "^7.10.3",
     "babel-dead-code-elimination": "^1.0.6",

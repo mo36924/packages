@@ -1,8 +1,10 @@
+import { stringify } from "@mo36924/json";
+
 const basePath = "/server/";
 const basePathLength = basePath.length;
 
 const createResponse = (data = null) =>
-  new Response(JSON.stringify(data), {
+  new Response(stringify(data), {
     headers: {
       "Content-Type": "application/json",
     },
