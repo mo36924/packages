@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/vite-plugin-babel",
   "type": "module",
-  "version": "5.0.35",
+  "version": "5.0.39",
   "description": "vite-plugin-babel",
   "author": "mo36924",
   "license": "MIT",
@@ -42,7 +42,7 @@
   ],
   "dependencies": {
     "@babel/core": "^7.25.2",
-    "@mo36924/babel-preset-app": "^5.0.27",
+    "@mo36924/babel-preset-app": "^5.0.39",
     "@types/babel__core": "^7.20.5",
     "vite": "^5.4.3"
   }
