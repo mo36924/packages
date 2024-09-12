@@ -1,29 +1,27 @@
 export const stringify = (value: any) =>
   JSON.stringify(value, function (key, value) {
-    if (Array.isArray(value)) {
-      return [0, ...value];
+    if (typeof value !== "string") {
+      return value;
     }
 
     if (this[key] instanceof Date) {
-      return [1, value];
+      return `1${value}`;
     }
 
-    return value;
+    return `0${value}`;
   });
 
 export const parse = (text: string) =>
-  JSON.parse(text, (key, value) => {
-    if (Array.isArray(value)) {
-      if (value[0] === 0) {
-        return value.slice(1);
-      }
-
-      if (value[0] === 1) {
-        return new Date(value[1]);
-      }
+  JSON.parse(text, (_key, value) => {
+    if (typeof value !== "string") {
+      return value;
     }
 
-    return value;
+    if (value[0] === "1") {
+      return new Date(value.slice(1));
+    }
+
+    return value.slice(1);
   });
 
 export const transformer = { serialize: stringify, deserialize: parse };
