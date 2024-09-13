@@ -1,3 +1,4 @@
+import { format as formatWithPrettier, resolveConfig } from "@prettier/sync";
 import { camelCase, pascalCase } from "change-case";
 import {
   buildASTSchema,
@@ -56,13 +57,12 @@ const comparisonOperators = ["eq", "ne", "gt", "lt", "ge", "le", "in", "like"] a
 const logicalOperators = ["not", "and", "or"] as const;
 const schemaTypeNames = ["Query", "Mutation", "Subscription"] as const;
 const reservedTypeNames = [...schemaTypeNames, ...scalarTypeNames] as const;
-const baseFieldNames = ["id", "version", "createdAt", "updatedAt"] as const;
+const baseFieldNames = ["id", "createdAt", "updatedAt"] as const;
 const reservedFieldNames = [...baseFieldNames, ...logicalOperators] as const;
 
 const baseType = /* GraphQL */ `
   type BaseType {
     id: ID!
-    version: Int!
     createdAt: Date!
     updatedAt: Date!
   }
@@ -139,7 +139,11 @@ const getDirectives = <T extends ObjectTypeDefinitionNode | FieldDefinitionNode>
     return directives;
   }, Object.create(null));
 
-const format = (source: string) => printGraphQLSource(parseGraphQLSource(stripIgnoredCharacters(source)));
+export const format = (source: string) =>
+  formatWithPrettier(printGraphQLSource(parseGraphQLSource(stripIgnoredCharacters(source))), {
+    ...resolveConfig("index.gql"),
+    filepath: "index.gql",
+  });
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 const clone = (types: Types): Types =>
@@ -235,8 +239,7 @@ const printDirectives = (directives: TypeDirectives | FieldDirectives): string =
 const printFieldType = (field: Pick<Field, "type" | "list" | "nullable">): string =>
   `${field.list ? `[${field.type}!]` : field.type}${field.nullable ? "" : "!"}`;
 
-// eslint-disable-next-line unused-imports/no-unused-vars
-const print = (types: Types): string => {
+export const print = (types: Types): string => {
   let source = "";
 
   for (const { name, directives, fields } of Object.values(types)) {
@@ -312,7 +315,11 @@ export const fix = (types: Types) => {
       continue;
     }
 
-    const { fields } = (types[typeName] = { ...type, name: typeName, directives: {} });
+    const { fields } = (types[typeName] = {
+      ...type,
+      name: typeName,
+      directives: {},
+    });
 
     for (let [fieldName, field] of Object.entries(fields)) {
       delete fields[fieldName];
@@ -324,7 +331,12 @@ export const fix = (types: Types) => {
       }
 
       const fieldType = getTypeName(type);
-      field = fields[fieldName] = { ...field, name: fieldName, type: fieldType };
+
+      field = fields[fieldName] = {
+        ...field,
+        name: fieldName,
+        type: fieldType,
+      };
 
       if (scalar) {
         field.directives = {};
@@ -782,13 +794,8 @@ export const build = (types: Types) => {
             updateInput += `${fieldName}: ${fieldType}\n`;
             deleteInput += `${fieldName}: ${fieldType}\n`;
             break;
-          case "version":
-            updateInput += `${fieldName}: ${fieldType}\n`;
-            deleteInput += `${fieldName}: ${fieldType}\n`;
-            break;
           case "createdAt":
           case "updatedAt":
-          case "isDeleted":
             break;
           default:
             createInput += `${fieldName}: ${fieldType}\n`;

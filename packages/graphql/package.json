@@ -38,6 +38,7 @@
     "dist"
   ],
   "dependencies": {
+    "@prettier/sync": "^0.5.2",
     "@types/pluralize": "^0.0.33",
     "change-case": "^5.4.4",
     "graphql": "^16.9.0",
