@@ -21,7 +21,7 @@ export const generateRoutes = async ({
   const ignore = typeof exclude === "string" ? [exclude] : exclude;
   const paths = await glob(include, { cwd: rootDir, ignore });
 
-  const routes = paths.map((path: string) => {
+  const routes = paths.sort().map((path: string) => {
     const trimmedExtnamePath = path.replace(/\.\w+$/, "");
     const indexName = "index";
 
