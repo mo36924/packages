@@ -36,6 +36,7 @@
     "@babel/core": "^7.25.2",
     "@babel/helper-plugin-utils": "^7.24.8",
     "@babel/plugin-syntax-jsx": "^7.24.7",
+    "@electric-sql/pglite": "^0.2.7",
     "@hono/node-server": "^1.12.2",
     "@hono/vite-dev-server": "^0.16.0",
     "@mo36924/http-server": "^2.3.1",
