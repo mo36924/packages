@@ -1,54 +1,12 @@
 import { expect, it } from "vitest";
-import { base, build, fix, parse, print, relation } from "./index";
+import { buildSchema, getSchemaSource } from "./schema";
+import { model } from "./test/model";
 
-const model = /* GraphQL */ `
-  type User {
-    name: String!
-    profile: Profile
-    classes: Class!
-    club: [Club]
-  }
-  type Profile {
-    age: Int
-  }
-  type Class {
-    name: String!
-    users: [User!]!
-  }
-  type Club {
-    name: String!
-    users: [User!]!
-  }
-`;
+it("buildSchema", () => {
+  const schema = buildSchema(model);
+  const source = getSchemaSource(schema);
 
-it("fix", () => {
-  expect(print(fix(parse(model)))).toMatchInlineSnapshot(`
-    "type User {
-      name: String!
-      profile: Profile
-      class: Class!
-      clubs: [Club!]!
-    }
-
-    type Profile {
-      age: Int
-    }
-
-    type Class {
-      name: String!
-      users: [User!]!
-    }
-
-    type Club {
-      name: String!
-      users: [User!]!
-    }
-    "
-  `);
-});
-
-it("schema", () => {
-  expect(build(base(relation(fix(parse(model)))))).toMatchInlineSnapshot(`
+  expect(source).toMatchInlineSnapshot(`
     "scalar Date
 
     scalar JSON
@@ -66,14 +24,14 @@ it("schema", () => {
     directive @type(name: String!, keys: [String!]!) on FIELD_DEFINITION
 
     type Query {
-      user(where: WhereUser, order: OrderUser, offset: Int): User
-      users(where: WhereUser, order: OrderUser, limit: Int, offset: Int): [User!]!
-      profile(where: WhereProfile, order: OrderProfile, offset: Int): Profile
-      profiles(where: WhereProfile, order: OrderProfile, limit: Int, offset: Int): [Profile!]!
       class(where: WhereClass, order: OrderClass, offset: Int): Class
       classes(where: WhereClass, order: OrderClass, limit: Int, offset: Int): [Class!]!
       club(where: WhereClub, order: OrderClub, offset: Int): Club
       clubs(where: WhereClub, order: OrderClub, limit: Int, offset: Int): [Club!]!
+      profile(where: WhereProfile, order: OrderProfile, offset: Int): Profile
+      profiles(where: WhereProfile, order: OrderProfile, limit: Int, offset: Int): [Profile!]!
+      user(where: WhereUser, order: OrderUser, offset: Int): User
+      users(where: WhereUser, order: OrderUser, limit: Int, offset: Int): [User!]!
     }
 
     type Mutation {
@@ -83,29 +41,8 @@ it("schema", () => {
       read: Query!
     }
 
-    type User {
-      id: ID!
-      createdAt: Date!
-      updatedAt: Date!
-      name: String!
-      profile(where: WhereProfile): Profile @field(name: "user", key: "userId")
-      class(where: WhereClass): Class @key(name: "classId")
-      clubs(where: WhereClub, order: OrderClub, limit: Int, offset: Int): [Club!]!
-        @type(name: "ClubToUser", keys: ["userId", "clubId"])
-      classId: ID @ref(name: "Class")
-    }
-
-    type Profile {
-      id: ID!
-      createdAt: Date!
-      updatedAt: Date!
-      age: Int
-      user(where: WhereUser): User @key(name: "userId")
-      userId: ID @ref(name: "User") @unique
-    }
-
     type Class {
-      id: ID!
+      id: String!
       createdAt: Date!
       updatedAt: Date!
       name: String!
@@ -113,7 +50,7 @@ it("schema", () => {
     }
 
     type Club {
-      id: ID!
+      id: String!
       createdAt: Date!
       updatedAt: Date!
       name: String!
@@ -121,57 +58,66 @@ it("schema", () => {
         @type(name: "ClubToUser", keys: ["clubId", "userId"])
     }
 
-    type ClubToUser @join {
-      id: ID!
+    type Profile {
+      id: String!
       createdAt: Date!
       updatedAt: Date!
-      clubId: ID! @ref(name: "Club")
-      userId: ID! @ref(name: "User")
+      age: Int
+      user(where: WhereUser): User @key(name: "userId")
+      userId: String @ref(name: "User") @unique
+    }
+
+    type User {
+      id: String!
+      createdAt: Date!
+      updatedAt: Date!
+      class(where: WhereClass): Class @key(name: "classId")
+      classId: String @ref(name: "Class")
+      clubs(where: WhereClub, order: OrderClub, limit: Int, offset: Int): [Club!]!
+        @type(name: "ClubToUser", keys: ["userId", "clubId"])
+      name: String!
+      profile(where: WhereProfile): Profile @field(name: "user", key: "userId")
+    }
+
+    type ClubToUser @join {
+      id: String!
+      createdAt: Date!
+      updatedAt: Date!
+      clubId: String! @ref(name: "Club")
+      userId: String! @ref(name: "User")
     }
 
     input CreateData {
-      user: CreateDataUser
-      users: [CreateDataUser!]
-      profile: CreateDataProfile
-      profiles: [CreateDataProfile!]
       class: CreateDataClass
       classes: [CreateDataClass!]
       club: CreateDataClub
       clubs: [CreateDataClub!]
+      profile: CreateDataProfile
+      profiles: [CreateDataProfile!]
+      user: CreateDataUser
+      users: [CreateDataUser!]
     }
 
     input UpdateData {
-      user: UpdateDataUser
-      users: [UpdateDataUser!]
-      profile: UpdateDataProfile
-      profiles: [UpdateDataProfile!]
       class: UpdateDataClass
       classes: [UpdateDataClass!]
       club: UpdateDataClub
       clubs: [UpdateDataClub!]
+      profile: UpdateDataProfile
+      profiles: [UpdateDataProfile!]
+      user: UpdateDataUser
+      users: [UpdateDataUser!]
     }
 
     input DeleteData {
-      user: DeleteDataUser
-      users: [DeleteDataUser!]
-      profile: DeleteDataProfile
-      profiles: [DeleteDataProfile!]
       class: DeleteDataClass
       classes: [DeleteDataClass!]
       club: DeleteDataClub
       clubs: [DeleteDataClub!]
-    }
-
-    input CreateDataUser {
-      name: String!
-      profile: CreateDataProfile
-      class: CreateDataClass
-      clubs: [CreateDataClub!]
-    }
-
-    input CreateDataProfile {
-      age: Int
-      user: CreateDataUser
+      profile: DeleteDataProfile
+      profiles: [DeleteDataProfile!]
+      user: DeleteDataUser
+      users: [DeleteDataUser!]
     }
 
     input CreateDataClass {
@@ -184,78 +130,68 @@ it("schema", () => {
       users: [CreateDataUser!]
     }
 
-    input UpdateDataUser {
-      id: ID!
-      name: String
-      profile: UpdateDataProfile
-      class: UpdateDataClass
-      clubs: [UpdateDataClub!]
+    input CreateDataProfile {
+      age: Int
+      user: CreateDataUser
     }
 
-    input UpdateDataProfile {
-      id: ID!
-      age: Int
-      user: UpdateDataUser
+    input CreateDataUser {
+      class: CreateDataClass
+      clubs: [CreateDataClub!]
+      name: String!
+      profile: CreateDataProfile
     }
 
     input UpdateDataClass {
-      id: ID!
+      id: String!
       name: String
       users: [UpdateDataUser!]
     }
 
     input UpdateDataClub {
-      id: ID!
+      id: String!
       name: String
       users: [UpdateDataUser!]
     }
 
-    input DeleteDataUser {
-      id: ID!
-      profile: DeleteDataProfile
-      class: DeleteDataClass
-      clubs: [DeleteDataClub!]
+    input UpdateDataProfile {
+      id: String!
+      age: Int
+      user: UpdateDataUser
     }
 
-    input DeleteDataProfile {
-      id: ID!
-      user: DeleteDataUser
+    input UpdateDataUser {
+      id: String!
+      class: UpdateDataClass
+      clubs: [UpdateDataClub!]
+      name: String
+      profile: UpdateDataProfile
     }
 
     input DeleteDataClass {
-      id: ID!
+      id: String!
       users: [DeleteDataUser!]
     }
 
     input DeleteDataClub {
-      id: ID!
+      id: String!
       users: [DeleteDataUser!]
     }
 
-    input WhereUser {
-      id: WhereID
-      createdAt: WhereDate
-      updatedAt: WhereDate
-      name: WhereString
-      classId: WhereID
-      and: WhereUser
-      or: WhereUser
-      not: WhereUser
+    input DeleteDataProfile {
+      id: String!
+      user: DeleteDataUser
     }
 
-    input WhereProfile {
-      id: WhereID
-      createdAt: WhereDate
-      updatedAt: WhereDate
-      age: WhereInt
-      userId: WhereID
-      and: WhereProfile
-      or: WhereProfile
-      not: WhereProfile
+    input DeleteDataUser {
+      id: String!
+      class: DeleteDataClass
+      clubs: [DeleteDataClub!]
+      profile: DeleteDataProfile
     }
 
     input WhereClass {
-      id: WhereID
+      id: WhereString
       createdAt: WhereDate
       updatedAt: WhereDate
       name: WhereString
@@ -265,13 +201,35 @@ it("schema", () => {
     }
 
     input WhereClub {
-      id: WhereID
+      id: WhereString
       createdAt: WhereDate
       updatedAt: WhereDate
       name: WhereString
       and: WhereClub
       or: WhereClub
       not: WhereClub
+    }
+
+    input WhereProfile {
+      id: WhereString
+      createdAt: WhereDate
+      updatedAt: WhereDate
+      age: WhereInt
+      userId: WhereString
+      and: WhereProfile
+      or: WhereProfile
+      not: WhereProfile
+    }
+
+    input WhereUser {
+      id: WhereString
+      createdAt: WhereDate
+      updatedAt: WhereDate
+      classId: WhereString
+      name: WhereString
+      and: WhereUser
+      or: WhereUser
+      not: WhereUser
     }
 
     input WhereID {
@@ -345,22 +303,6 @@ it("schema", () => {
       like: String
     }
 
-    input OrderUser {
-      id: Order
-      createdAt: Order
-      updatedAt: Order
-      name: Order
-      classId: Order
-    }
-
-    input OrderProfile {
-      id: Order
-      createdAt: Order
-      updatedAt: Order
-      age: Order
-      userId: Order
-    }
-
     input OrderClass {
       id: Order
       createdAt: Order
@@ -372,6 +314,22 @@ it("schema", () => {
       id: Order
       createdAt: Order
       updatedAt: Order
+      name: Order
+    }
+
+    input OrderProfile {
+      id: Order
+      createdAt: Order
+      updatedAt: Order
+      age: Order
+      userId: Order
+    }
+
+    input OrderUser {
+      id: Order
+      createdAt: Order
+      updatedAt: Order
+      classId: Order
       name: Order
     }
 

@@ -1,21 +1,18 @@
 import { FieldNode, getArgumentValues, GraphQLError, GraphQLSchema, OperationDefinitionNode } from "graphql";
 import { ExecutionContext } from "graphql/execution/execute";
-import {
-  ComparisonOperator,
-  createObject,
-  getFieldDef,
-  getSchemaTypes,
-  isSchemaTypeName,
-  LogicalOperator,
-  ScalarTypeName,
-} from "./index";
+import { getFieldDef } from "./fields";
+import { ComparisonOperator, LogicalOperator } from "./operators";
+import { ScalarTypeName } from "./scalars";
+import { getSchemaTypes } from "./schema";
+import { isSchemaTypeName } from "./types";
+import { createObject } from "./utils";
 
 type QueryContext = ExecutionContext & { values: any[]; ids?: { [type: string]: string[] | undefined } };
 type Queries = [sql: string, values: any[]];
 
-export const identifier = (value: string) => `"${value.replaceAll('"', '""')}"`;
+const identifier = (value: string) => `"${value.replaceAll('"', '""')}"`;
 
-export const literal = (value: string | number | boolean | Date | null | undefined) => {
+const literal = (value: string | number | boolean | Date | null | undefined) => {
   if (value == null) {
     return "null";
   }
@@ -246,6 +243,7 @@ export const buildSchema = (schema: GraphQLSchema) => {
     String: "text",
     Boolean: "boolean",
     Date: "timestamp(3) with time zone",
+    JSON: "jsonb",
   });
 
   for (const [typeName, type] of Object.entries(types)) {

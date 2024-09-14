@@ -21,6 +21,12 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
+    },
+    "./postgres": {
+      "types": "./dist/postgres.d.ts",
+      "import": "./dist/postgres.js",
+      "require": "./dist/postgres.cjs",
+      "default": "./dist/postgres.js"
     }
   },
   "main": "./dist/index.js",
@@ -42,8 +48,7 @@
     "@types/pluralize": "^0.0.33",
     "change-case": "^5.4.4",
     "graphql": "^16.9.0",
-    "pluralize": "^8.0.0",
-    "type-fest": "^4.26.0"
+    "pluralize": "^8.0.0"
   },
   "publishConfig": {
     "access": "public"
