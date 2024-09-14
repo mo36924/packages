@@ -12,6 +12,7 @@ export default antfu({
     curly: "error",
     "ts/consistent-type-definitions": ["error", "type"],
     "ts/consistent-type-imports": ["error", { prefer: "no-type-imports" }],
+    "ts/no-use-before-define": "off",
     "style/padding-line-between-statements": [
       "error",
       {
