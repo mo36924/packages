@@ -26,8 +26,17 @@ export default defineConfig([
   {
     input,
     output: [
-      { dir: ".", format: "module" },
-      { dir: ".", format: "cjs", entryFileNames: "[name].[format]" },
+      {
+        dir: ".",
+        format: "module",
+        chunkFileNames: ({ moduleIds }) => `${relative(cwd(), join(moduleIds[0], "..", "..", "dist"))}/[name].js`,
+      },
+      {
+        dir: ".",
+        format: "cjs",
+        entryFileNames: "[name].cjs",
+        chunkFileNames: ({ moduleIds }) => `${relative(cwd(), join(moduleIds[0], "..", "..", "dist"))}/[name].cjs`,
+      },
     ],
     external,
     plugins: [swc(), resolve],

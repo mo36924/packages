@@ -71,7 +71,6 @@
     "solid-js": "^1.8.22",
     "ts-essentials": "^10.0.2",
     "tsx": "^4.19.0",
-    "type-fest": "^4.26.0",
     "typescript": "^5.5.4",
     "unplugin-auto-import": "^0.18.2",
     "validate-npm-package-name": "^5.0.1",
