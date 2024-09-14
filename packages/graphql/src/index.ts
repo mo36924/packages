@@ -4,7 +4,14 @@ import {
   buildASTSchema,
   FieldDefinitionNode,
   getArgumentValues,
+  getNamedType,
+  getNullableType,
+  GraphQLError,
   GraphQLSchema,
+  isListType,
+  isNullableType,
+  isObjectType,
+  isScalarType,
   Kind,
   ObjectTypeDefinitionNode,
   parse as parseGraphQLSource,
@@ -46,9 +53,19 @@ type FieldDirectives = {
   unique?: object;
 };
 type CustomScalarTypeName = (typeof customScalarTypeNames)[number];
-type ScalarTypeName = (typeof scalarTypeNames)[number];
+
+export type ScalarTypeName = (typeof scalarTypeNames)[number];
+
 type ReservedTypeName = (typeof reservedTypeNames)[number];
 type ReservedFieldName = (typeof reservedFieldNames)[number];
+
+export type ComparisonOperator = (typeof comparisonOperators)[number];
+
+export type LogicalOperator = (typeof logicalOperators)[number];
+
+export type SchemaTypeName = (typeof schemaTypeNames)[number];
+
+export type BaseFieldName = (typeof baseFieldNames)[number];
 
 const primaryKeyTypeName = "ID";
 const customScalarTypeNames = ["Date", "JSON"] as const;
@@ -59,6 +76,10 @@ const schemaTypeNames = ["Query", "Mutation", "Subscription"] as const;
 const reservedTypeNames = [...schemaTypeNames, ...scalarTypeNames] as const;
 const baseFieldNames = ["id", "createdAt", "updatedAt"] as const;
 const reservedFieldNames = [...baseFieldNames, ...logicalOperators] as const;
+
+export const isSchemaTypeName = (name: string): name is SchemaTypeName => schemaTypeNames.includes(name as any);
+
+export const isBaseFieldName = (type: string): type is BaseFieldName => baseFieldNames.includes(type as BaseFieldName);
 
 const baseType = /* GraphQL */ `
   type BaseType {
@@ -861,3 +882,69 @@ export const build = (types: Types) => {
 
   return format(schema);
 };
+
+export const getSchemaTypes = (schema: GraphQLSchema) => {
+  const source = schema.getQueryType()?.astNode?.loc?.source.body ?? "";
+  const types = parse(source);
+  return types;
+};
+
+const memoize3 = <T extends (a1: any, a2: any, a3: any) => any>(fn: T): T => {
+  const cache0 = new WeakMap<WeakKey, Map<any, Map<any, any>>>();
+  return ((a1: any, a2: any, a3: any): any => {
+    let cache1 = cache0.get(a1);
+
+    if (cache1 === undefined) {
+      cache1 = new Map();
+      cache0.set(a1, cache1);
+    }
+
+    let cache2 = cache1.get(a2);
+
+    if (cache2 === undefined) {
+      cache2 = new Map();
+      cache1.set(a2, cache2);
+    }
+
+    if (cache2.has(a3)) {
+      return cache2.get(a3);
+    }
+
+    const fnResult = fn(a1, a2, a3);
+    cache2.set(a3, fnResult);
+
+    return fnResult;
+  }) as any;
+};
+
+export const getFieldDef = memoize3((schema: GraphQLSchema, type: string, field: string) => {
+  const objectType = schema.getType(type);
+
+  if (!isObjectType(objectType)) {
+    throw new GraphQLError(`${type} is not an object type`);
+  }
+
+  const def = objectType.getFields()[field];
+  const name = field;
+  const fieldType = def.type;
+  const nullable = isNullableType(fieldType);
+  const nullableType = getNullableType(fieldType);
+  const list = isListType(nullableType);
+  const namedType = getNamedType(nullableType);
+  const scalar = isScalarType(namedType);
+  const _type = namedType.name;
+  const directives = getDirectives(schema, def.astNode!);
+  const _isBaseFieldName = isBaseFieldName(name);
+  return {
+    schema,
+    parent: type,
+    def,
+    name,
+    type: _type,
+    scalar,
+    list,
+    nullable,
+    directives,
+    isBaseFieldName: _isBaseFieldName,
+  };
+});
