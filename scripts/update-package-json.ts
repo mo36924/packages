@@ -15,18 +15,20 @@ const eslintConfig = await promiseConfig;
 const prettierConfig = await resolveConfig(cwd());
 
 const pkgs = await Promise.all(
-  names.map(async (name) => {
-    const packageDir = join(dir, name);
-    const code = await readFile(join(packageDir, "package.json"), "utf-8");
-    const pkg = JSON.parse(code);
+  names
+    .filter((name) => name[0] !== ".")
+    .map(async (name) => {
+      const packageDir = join(dir, name);
+      const code = await readFile(join(packageDir, "package.json"), "utf-8");
+      const pkg = JSON.parse(code);
 
-    const result = await depcheck(packageDir, {
-      ignoreDirs: ["dist"],
-      ignorePatterns: ["*.test.*"],
-    });
+      const result = await depcheck(packageDir, {
+        ignoreDirs: ["dist"],
+        ignorePatterns: ["*.test.*"],
+      });
 
-    return { name, code, pkg, result };
-  }),
+      return { name, code, pkg, result };
+    }),
 );
 
 const deps = Object.assign(
