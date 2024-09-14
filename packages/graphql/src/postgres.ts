@@ -1,5 +1,6 @@
 import { FieldNode, getArgumentValues, GraphQLError, GraphQLSchema, OperationDefinitionNode } from "graphql";
 import { ExecutionContext } from "graphql/execution/execute";
+import { buildData as buildDatabaseData } from "./data";
 import { getFieldDef } from "./fields";
 import { ComparisonOperator, LogicalOperator } from "./operators";
 import { ScalarTypeName } from "./scalars";
@@ -65,8 +66,10 @@ const field = (context: QueryContext, parent: string, node: FieldNode) => {
 
   if (scalar) {
     switch (type) {
+      case "String":
+        return `'0'||${identifier(name)}`;
       case "Date":
-        return `jsonb_build_array(1,${identifier(name)})`;
+        return `'1'||${identifier(name)}`;
       default:
         return identifier(name);
     }
@@ -100,7 +103,7 @@ const field = (context: QueryContext, parent: string, node: FieldNode) => {
       )} = ${identifier(parent)}.id)`,
     );
   } else if (directives.field) {
-    predicates.push(`${identifier(directives.field.key)} = ${identifier(parent)}.id}`);
+    predicates.push(`${identifier(directives.field.key)} = ${identifier(parent)}.id`);
   } else if (directives.key) {
     predicates.push(`id = ${identifier(parent)}.${identifier(directives.key.name)}`);
   }
@@ -132,7 +135,9 @@ const field = (context: QueryContext, parent: string, node: FieldNode) => {
   }
 
   if (list) {
-    query = `jsonb_insert(coalesce((select jsonb_agg(data) from (${query}) as t),jsonb_build_array()),'{0}',0)`;
+    query = `coalesce((select jsonb_agg(data) from (${query}) as t),jsonb_build_array())`;
+  } else {
+    query = `(${query})`;
   }
 
   return query;
@@ -287,4 +292,24 @@ export const buildSchema = (schema: GraphQLSchema) => {
   }
 
   return [create, unique, index].flat().join("");
+};
+
+export const buildData = (schema: GraphQLSchema) => {
+  const data = buildDatabaseData(schema);
+  let insert = "";
+
+  for (const { name, fields, values } of data) {
+    const table = identifier(name);
+    const columns = fields.map(identifier).join();
+
+    const _values = values
+      .map((v) => v.map(({ value }) => literal(value)))
+      .map((v) => `(${v.join()})`)
+      .join(",\n");
+
+    insert += `insert into ${table} (${columns}) values \n${_values};\n`;
+  }
+
+  const sql = insert;
+  return sql;
 };
