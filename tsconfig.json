@@ -7,6 +7,7 @@
     "module": "es2022",
     "moduleResolution": "bundler",
     "paths": {
+      "@mo36924/graphql/*": ["packages/graphql/src/*"],
       "@mo36924/*": ["packages/*/src"]
     },
     "resolveJsonModule": true,
