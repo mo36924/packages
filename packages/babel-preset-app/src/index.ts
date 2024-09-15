@@ -6,17 +6,20 @@ import injectAssetJsxElements, {
 import jsxDisplayName from "@mo36924/babel-plugin-jsx-display-name";
 import replaceJsxElements, { Options as ReplaceJsxElementsOptions } from "@mo36924/babel-plugin-replace-jsx-elements";
 import serverFunction, { Options as ServerFunctionOptions } from "@mo36924/babel-plugin-server-function";
+import graphql, { Options as GraphQLOptions } from "@mo36924/graphql/babel";
+import { GraphQLSchema } from "graphql";
 import { Manifest } from "vite";
 
 export type Options = {
   development?: boolean;
   server?: boolean;
   manifest?: Manifest;
+  schema?: GraphQLSchema;
 };
 
 export default (
   _: any = {},
-  { development, server, manifest = {} }: Options = {},
+  { development, server, manifest = {}, schema }: Options = {},
 ): Pick<TransformOptions, "plugins"> => {
   return {
     plugins: [
@@ -42,6 +45,7 @@ export default (
       ],
       flattenNestedFragments,
       [jsxDisplayName, development ? undefined : false],
+      [graphql, schema ? ({ development, schema } satisfies GraphQLOptions) : false],
     ],
   };
 };
