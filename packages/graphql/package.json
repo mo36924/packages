@@ -28,6 +28,12 @@
       "require": "./dist/babel.cjs",
       "default": "./dist/babel.js"
     },
+    "./fetch": {
+      "types": "./dist/fetch.d.ts",
+      "import": "./dist/fetch.js",
+      "require": "./dist/fetch.cjs",
+      "default": "./dist/fetch.js"
+    },
     "./postgres": {
       "types": "./dist/postgres.d.ts",
       "import": "./dist/postgres.js",
