@@ -42,11 +42,13 @@
   ],
   "dependencies": {
     "@hono/vite-dev-server": "^0.16.0",
+    "@mo36924/graphql": "^5.0.49",
     "@mo36924/jsx-precompile": "^0.1.4",
     "@mo36924/vite-plugin-babel": "^5.0.39",
     "@mo36924/vite-plugin-config": "^5.0.26",
     "@mo36924/vite-plugin-route-generator": "^5.0.42",
     "@mo36924/vite-plugin-ssr-build": "^5.0.22",
+    "graphql": "^16.9.0",
     "unplugin-auto-import": "^0.18.2",
     "vite": "^5.4.3",
     "vite-tsconfig-paths": "^5.0.1"
