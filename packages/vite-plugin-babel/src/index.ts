@@ -1,11 +1,16 @@
 import { transformSync } from "@babel/core";
 import presetApp, { Options as PresetAppOptions } from "@mo36924/babel-preset-app";
+import { GraphQLSchema } from "graphql";
 import { Manifest, ManifestChunk, Plugin } from "vite";
+
+export type Options = {
+  schema?: GraphQLSchema;
+};
 
 const manifestPath = "manifest.json";
 let manifest: Manifest = {};
 
-export default (): Plugin => {
+export default (options: Options = {}): Plugin => {
   let isBuild: boolean | undefined;
   let isSsrBuild: boolean | undefined;
   return {
@@ -48,7 +53,12 @@ export default (): Plugin => {
         parserOpts: {
           plugins: ["jsx", "typescript"],
         },
-        presets: [[presetApp, { server: ssr, development: !isBuild, manifest } satisfies PresetAppOptions]],
+        presets: [
+          [
+            presetApp,
+            { server: ssr, development: !isBuild, manifest, schema: options.schema } satisfies PresetAppOptions,
+          ],
+        ],
       });
 
       return { code: result?.code ?? code, map: result?.map };
