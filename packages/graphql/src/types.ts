@@ -1,4 +1,4 @@
-import { pascalCase } from "change-case";
+import { pascalCase } from "@mo36924/change-case";
 import { buildASTSchema, Kind, parse } from "graphql";
 import pluralize from "pluralize";
 import { getDirectives, printDirectives, TypeDirectives } from "./directives";

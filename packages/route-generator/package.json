@@ -41,7 +41,7 @@
     "dist"
   ],
   "dependencies": {
-    "change-case": "^5.4.4",
+    "@mo36924/change-case": "^0.0.1",
     "fast-glob": "^3.3.2",
     "prettier": "^3.3.3"
   }

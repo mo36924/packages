@@ -1,4 +1,4 @@
-import { camelCase } from "change-case";
+import { camelCase } from "@mo36924/change-case";
 import {
   getNamedType,
   getNullableType,

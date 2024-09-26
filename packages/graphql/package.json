@@ -58,12 +58,12 @@
   "dependencies": {
     "@babel/core": "^7.25.2",
     "@babel/helper-plugin-utils": "^7.24.8",
+    "@mo36924/change-case": "^0.0.1",
     "@prettier/sync": "^0.5.2",
     "@types/babel__core": "^7.20.5",
     "@types/babel__helper-plugin-utils": "^7.10.3",
     "@types/pluralize": "^0.0.33",
     "base-x": "^5.0.0",
-    "change-case": "^5.4.4",
     "graphql": "^16.9.0",
     "pluralize": "^8.0.0"
   },

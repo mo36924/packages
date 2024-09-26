@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { relative } from "node:path";
 import babel, { PluginObj } from "@babel/core";
 import jsx from "@babel/plugin-syntax-jsx";
-import { pascalCase } from "change-case";
+import { pascalCase } from "@mo36924/change-case";
 import { Manifest } from "vite";
 
 const isJSX = (path?: string): path is string => !!path && /\.[cm]?[jt]sx$/.test(path);

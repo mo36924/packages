@@ -1,5 +1,5 @@
 import { writeFileSync } from "node:fs";
-import { pascalCase } from "change-case";
+import { pascalCase } from "@mo36924/change-case";
 import glob from "fast-glob";
 import { format, resolveConfig } from "prettier";
 

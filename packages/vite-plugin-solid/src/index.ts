@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { basename, dirname, join, relative } from "node:path";
 import babelPlugin, { Options as BabelPluginOptions } from "@mo36924/babel-plugin-solid";
-import { pascalCase } from "change-case";
+import { pascalCase } from "@mo36924/change-case";
 import fastGlob from "fast-glob";
 import { ExternalOption } from "rollup";
 import { build, createFilter, Manifest, PluginOption, ResolvedConfig } from "vite";

@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { types as t } from "@babel/core";
 import { declare } from "@babel/helper-plugin-utils";
-import { snakeCase } from "change-case";
+import { snakeCase } from "@mo36924/change-case";
 import { Config, initSync, minify } from "minify-html-wasm";
 
 type CamelCase<S extends string> = S extends `${infer P1}_${infer P2}${infer P3}`
