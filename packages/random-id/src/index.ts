@@ -1,17 +1,29 @@
 const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+const uint8Array = new Uint8Array(65536);
+let i = 0;
 
-export default () => {
+export const randomId = () => {
   let id = "";
-  let length = 22;
+  let j = 21;
 
-  while (length) {
-    crypto.getRandomValues(new Uint8Array(44)).forEach((byte) => {
-      if (length && byte < 248) {
-        id += chars[byte % 62];
-        length--;
+  do {
+    if (i) {
+      i--;
+    } else {
+      crypto.getRandomValues(uint8Array);
+      i = 65535;
+    }
+
+    const byte = uint8Array[i];
+
+    if (byte < 248) {
+      id += chars[byte % 62];
+
+      if (j) {
+        j--;
+      } else {
+        return id;
       }
-    });
-  }
-
-  return id;
+    }
+  } while (true);
 };

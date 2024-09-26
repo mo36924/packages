@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import randomId from "./index";
+import { randomId } from "./index";
 
 it("random-id", () => {
   const ids = Array.from({ length: 1000 }).map(randomId);
