@@ -1,6 +1,6 @@
 import { relative } from "node:path";
 import babel, { PluginObj } from "@babel/core";
-import { pascalCase } from "change-case";
+import camelCase from "camelcase";
 
 export type Options = {
   rootDir?: string;
@@ -33,7 +33,7 @@ export default ({ types: t }: typeof babel, { rootDir = "src/components" }: Opti
         }
 
         if ((t.isFunctionDeclaration(declaration) || t.isClassDeclaration(declaration)) && !declaration.id) {
-          let displayName = pascalCase(relative(rootDir, filename.replace(/\.\w+$/, "")));
+          let displayName = camelCase(relative(rootDir, filename.replace(/\.\w+$/, "")), { pascalCase: true });
 
           if (!t.isValidIdentifier(displayName)) {
             displayName = `Component${displayName}`;

@@ -43,6 +43,6 @@
   "dependencies": {
     "@babel/core": "^7.25.2",
     "@types/babel__core": "^7.20.5",
-    "change-case": "^5.4.4"
+    "camelcase": "^8.0.0"
   }
 }
