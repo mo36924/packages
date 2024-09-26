@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/vitest-snapshot-serializer-babel",
   "type": "module",
-  "version": "5.0.53",
+  "version": "5.0.54",
   "description": "vitest-snapshot-serializer-babel",
   "author": "mo36924",
   "license": "MIT",
