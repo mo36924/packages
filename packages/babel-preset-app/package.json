@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/babel-preset-app",
   "type": "module",
-  "version": "5.0.50",
+  "version": "5.0.55",
   "description": "babel-preset-app",
   "author": "mo36924",
   "license": "MIT",
@@ -43,8 +43,8 @@
   "dependencies": {
     "@babel/core": "^7.25.2",
     "@mo36924/babel-plugin-flatten-nested-fragments": "^5.0.6",
-    "@mo36924/babel-plugin-inject-asset-jsx-elements": "^5.0.6",
-    "@mo36924/babel-plugin-jsx-display-name": "^5.0.27",
+    "@mo36924/babel-plugin-inject-asset-jsx-elements": "^5.0.55",
+    "@mo36924/babel-plugin-jsx-display-name": "^5.0.55",
     "@mo36924/babel-plugin-replace-jsx-elements": "^5.0.20",
     "@mo36924/babel-plugin-server-function": "^5.0.39",
     "@mo36924/graphql": "^5.0.49",
