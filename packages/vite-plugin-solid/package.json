@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/vite-plugin-solid",
   "type": "module",
-  "version": "5.0.55",
+  "version": "5.0.57",
   "description": "vite-plugin-solid",
   "author": "mo36924",
   "license": "MIT",
@@ -41,7 +41,7 @@
     "dist"
   ],
   "dependencies": {
-    "@mo36924/babel-plugin-solid": "^5.0.55",
+    "@mo36924/babel-plugin-solid": "^5.0.57",
     "@mo36924/change-case": "^0.0.1",
     "@mo36924/http-server": "^2.3.1",
     "fast-glob": "^3.3.2",
