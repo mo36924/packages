@@ -1,5 +1,7 @@
-import { format, resolveConfig } from "@prettier/sync";
+import prettier from "@prettier/sync";
 import { SnapshotSerializer } from "vitest";
+
+const { resolveConfig, format } = prettier;
 
 const config = { ...resolveConfig("index.tsx"), filepath: "index.tsx" };
 
