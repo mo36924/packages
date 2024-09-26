@@ -42,6 +42,7 @@
   ],
   "dependencies": {
     "@mo36924/change-case": "^0.0.1",
+    "@mo36924/import-path": "^5.0.58",
     "fast-glob": "^3.3.2",
     "prettier": "^3.3.3"
   }

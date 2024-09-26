@@ -1,25 +1,27 @@
 import { writeFileSync } from "node:fs";
 import { pascalCase } from "@mo36924/change-case";
+import { relative } from "@mo36924/import-path";
 import glob from "fast-glob";
 import { format, resolveConfig } from "prettier";
 
 export type Options = {
   rootDir?: string;
   outFile?: string;
-  include?: string | string[];
-  exclude?: string | string[];
+  include?: string[];
+  exclude?: string[];
+  dynamicImport?: boolean;
   importPrefix?: string;
 };
 
-export const generateRoutes = async ({
+export const getRoutes = async ({
   rootDir = "src/pages",
-  outFile = "src/lib/routes.tsx",
-  include = "**/*.tsx",
-  exclude,
-  importPrefix = "~/pages",
-}: Options = {}) => {
-  const ignore = typeof exclude === "string" ? [exclude] : exclude;
-  const paths = await glob(include, { cwd: rootDir, ignore });
+  outFile = "src/routes.ts",
+  include = ["**/*.tsx"],
+  exclude = [],
+  dynamicImport = true,
+  importPrefix = relative(outFile, rootDir),
+}: Options) => {
+  const paths = await glob(include, { cwd: rootDir, ignore: exclude });
 
   const routes = paths.sort().map((path: string) => {
     const trimmedExtnamePath = path.replace(/\.\w+$/, "");
@@ -62,10 +64,11 @@ export const generateRoutes = async ({
     .sort((a, b) => (a.rank < b.rank ? 1 : a.rank > b.rank ? -1 : 0));
 
   const code = `
+    /* eslint-disable eslint-comments/no-unlimited-disable */
     /* eslint-disable */
-    import { Children, FC, HTMLAttributes, lazy, ReactNode, Suspense } from "react";
+    import { FC, lazy } from "react";
 
-    ${routes.map(({ name, type, importPath }) => `const ${name}: FC<${type}> = lazy(() => import(${JSON.stringify(importPath)}))`).join("\n")}
+    ${routes.map(({ name, type, importPath }) => (dynamicImport ? `const ${name}: FC<${type}> = lazy(() => import(${JSON.stringify(importPath)}))` : `import ${name} from ${JSON.stringify(importPath)}`)).join("\n")}
 
     const staticRoutes: Record<string, FC> = {${staticRoutes
       .map(({ pathname, name }) => `${JSON.stringify(pathname)}:${name}`)
@@ -121,34 +124,14 @@ export const generateRoutes = async ({
       | StaticRoutes
       | \`\${StaticRoutes}\${SearchOrHash}\`
       | (T extends \`\${DynamicRoutes<infer _>}\${Suffix}\` ? T : never);
-
-    export const Title = (props: { children?: ReactNode }) => {
-      document.title = Children.toArray(props.children).join(" ");
-      return null;
-    };
-
-    export const Body = ({ children, ...props }: HTMLAttributes<HTMLBodyElement>) => (
-      <body {...props}>
-        <div id="app">{children}</div>
-      </body>
-    );
-
-    export const A = <T extends string>(props: { href: Route<T> } & Omit<HTMLAttributes<HTMLAnchorElement>, "href">) => (
-      <a {...props} />
-    );
-
-    export const Router = ({ pathname }: { pathname: string }) => {
-      const [Route, params] = match(pathname);
-      return (
-        Route && (
-          <Suspense>
-            <Route {...params} />
-          </Suspense>
-        )
-      );
-    };
   `;
 
+  return code;
+};
+
+export const generateRoutes = async (options: Options) => {
+  const outFile = options.outFile ?? "src/routes.ts";
+  const code = await getRoutes(options);
   const config = await resolveConfig(outFile);
   const formattedCode = await format(code, { ...config, filepath: outFile });
   writeFileSync(outFile, formattedCode);
