@@ -21,6 +21,12 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
+    },
+    "./schema.gql": {
+      "types": "./dist/schema.gql.d.ts",
+      "import": "./dist/schema.gql.js",
+      "require": "./dist/schema.gql.cjs",
+      "default": "./dist/schema.gql.js"
     }
   },
   "main": "./dist/index.js",
@@ -45,8 +51,7 @@
     "fast-glob": "^3.3.2",
     "graphql": "^16.9.0",
     "pluralize": "^8.0.0",
-    "tsx": "^4.19.1",
-    "vite": "^5.4.8"
+    "tsx": "^4.19.1"
   },
   "publishConfig": {
     "access": "public"
