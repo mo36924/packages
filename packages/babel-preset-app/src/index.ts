@@ -1,12 +1,12 @@
 import { TransformOptions } from "@babel/core";
 import flattenNestedFragments from "@mo36924/babel-plugin-flatten-nested-fragments";
+import graphql, { Options as GraphQLOptions } from "@mo36924/babel-plugin-graphql-tagged-template";
 import injectAssetJsxElements, {
   Options as InjectAssetJsxElementsOptions,
 } from "@mo36924/babel-plugin-inject-asset-jsx-elements";
 import jsxDisplayName from "@mo36924/babel-plugin-jsx-display-name";
 import replaceJsxElements, { Options as ReplaceJsxElementsOptions } from "@mo36924/babel-plugin-replace-jsx-elements";
 import serverFunction, { Options as ServerFunctionOptions } from "@mo36924/babel-plugin-server-function";
-import graphql, { Options as GraphQLOptions } from "@mo36924/graphql/babel";
 import { GraphQLSchema } from "graphql";
 import { Manifest } from "vite";
 
