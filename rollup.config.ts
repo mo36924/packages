@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { readdirSync, readFileSync, statSync } from "node:fs";
 import { basename, join, relative } from "node:path";
 import { cwd } from "node:process";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
@@ -10,6 +10,11 @@ const workspaceDir = "packages";
 const external = /^[@\w]/;
 const resolve = nodeResolve({ extensions: [".tsx", ".ts"] });
 
+const resolvePath = (path: string) =>
+  [".tsx", ".ts", "/index.tsx", "/index.ts"]
+    .map((ext) => path + ext)
+    .find((path) => statSync(path, { throwIfNoEntry: false })?.isFile()) ?? path;
+
 const input = Object.fromEntries(
   readdirSync(workspaceDir)
     .filter((name) => name[0] !== ".")
@@ -18,7 +23,8 @@ const input = Object.fromEntries(
       Object.values<{ [type: string]: string }>(JSON.parse(readFileSync(`${packageDir}/package.json`, "utf-8")).exports)
         .flatMap((_export) => Object.values(_export))
         .map((path) => basename(path).replace(/\.(js|cjs|d\.ts)$/, ""))
-        .map((name): [string, string] => [`${packageDir}/dist/${name}`, `${packageDir}/src/${name}`]),
+        .filter((name, index, self) => self.indexOf(name) === index)
+        .map((name): [string, string] => [`${packageDir}/dist/${name}`, resolvePath(`${packageDir}/src/${name}`)]),
     ),
 );
 
