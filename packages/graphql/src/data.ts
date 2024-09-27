@@ -1,11 +1,10 @@
 import { GraphQLSchema } from "graphql";
 import { ScalarTypeName } from "./scalars";
-import { getSchemaTypes } from "./schema";
-import { isSchemaTypeName } from "./types";
+import { getTypes, isSchemaTypeName } from "./types";
 import { createObject } from "./utils";
 
 export const buildData = (schema: GraphQLSchema, baseRecordCount = 3) => {
-  const types = getSchemaTypes(schema);
+  const types = getTypes(schema);
   const recordCounts = createObject<{ [typeName: string]: number }>();
 
   const getRecordCount = (dep: string, deps: string[] = []): number => {

@@ -1,12 +1,15 @@
 import { expect, it } from "vitest";
-import { buildSchema, getSchemaSource } from "./schema";
+import { formatGraphQL } from "./format";
+import { buildSchema } from "./schema";
+import { getSource } from "./source";
 import { model } from "./test/model";
 
 it("buildSchema", () => {
   const schema = buildSchema(model);
-  const source = getSchemaSource(schema);
+  const source = getSource(schema);
+  const formattedSource = formatGraphQL(source);
 
-  expect(source).toMatchInlineSnapshot(`
+  expect(formattedSource).toMatchInlineSnapshot(`
     "scalar Date
 
     scalar JSON

@@ -1,15 +1,15 @@
 import { buildSchema as buildGraphQLSchema, GraphQLSchema } from "graphql";
 import { printDirectives, schemaDirectives } from "./directives";
 import { getFieldName, getListFieldName } from "./fields";
-import { formatGraphQL } from "./format";
+import { mergeCustomScalars } from "./merge";
 import { buildModel } from "./model";
 import { comparisonOperators } from "./operators";
-import { customScalars, mergeCustomScalars, scalarTypeNames } from "./scalars";
+import { customScalars, scalarTypeNames } from "./scalars";
 import { buildTypes, printFieldType } from "./types";
 
-export const buildSchema = (graphql: string): GraphQLSchema => {
-  const model = buildModel(graphql);
-  const types = buildTypes(model);
+export const buildSchema = (model: string): GraphQLSchema => {
+  const buildedModel = buildModel(model);
+  const types = buildTypes(buildedModel);
   let schema = customScalars + schemaDirectives;
   let query = "";
   let mutation = "";
@@ -195,19 +195,6 @@ export const buildSchema = (graphql: string): GraphQLSchema => {
     orderInput +
     orderEnum;
 
-  const formattedSchema = formatGraphQL(schema);
-  const graphQLSchema = buildGraphQLSchema(formattedSchema);
-  mergeCustomScalars(graphQLSchema);
+  const graphQLSchema = mergeCustomScalars(buildGraphQLSchema(schema));
   return graphQLSchema;
-};
-
-export const getSchemaSource = (schema: GraphQLSchema) => {
-  const source = schema.getQueryType()?.astNode?.loc?.source.body ?? "";
-  return source;
-};
-
-export const getSchemaTypes = (schema: GraphQLSchema) => {
-  const source = getSchemaSource(schema);
-  const types = buildTypes(source);
-  return types;
 };

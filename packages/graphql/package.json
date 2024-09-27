@@ -21,24 +21,6 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
-    },
-    "./babel": {
-      "types": "./dist/babel.d.ts",
-      "import": "./dist/babel.js",
-      "require": "./dist/babel.cjs",
-      "default": "./dist/babel.js"
-    },
-    "./fetch": {
-      "types": "./dist/fetch.d.ts",
-      "import": "./dist/fetch.js",
-      "require": "./dist/fetch.cjs",
-      "default": "./dist/fetch.js"
-    },
-    "./postgres": {
-      "types": "./dist/postgres.d.ts",
-      "import": "./dist/postgres.js",
-      "require": "./dist/postgres.cjs",
-      "default": "./dist/postgres.js"
     }
   },
   "main": "./dist/index.js",
@@ -56,14 +38,9 @@
     "dist"
   ],
   "dependencies": {
-    "@babel/core": "^7.25.2",
-    "@babel/helper-plugin-utils": "^7.24.8",
     "@mo36924/change-case": "^0.0.1",
     "@prettier/sync": "^0.5.2",
-    "@types/babel__core": "^7.20.5",
-    "@types/babel__helper-plugin-utils": "^7.10.3",
     "@types/pluralize": "^0.0.33",
-    "base-x": "^5.0.0",
     "graphql": "^16.9.0",
     "pluralize": "^8.0.0"
   },

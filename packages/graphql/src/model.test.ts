@@ -1,9 +1,13 @@
 import { expect, it } from "vitest";
+import { formatGraphQL } from "./format";
 import { buildModel, fixModel } from "./model";
 import { model } from "./test/model";
 
 it("fixModel", () => {
-  expect(fixModel(model)).toMatchInlineSnapshot(`
+  const fixedModel = fixModel(model);
+  const formattedModel = formatGraphQL(fixedModel);
+
+  expect(formattedModel).toMatchInlineSnapshot(`
     "type Class {
       name: String!
       users: [User!]!
@@ -29,7 +33,10 @@ it("fixModel", () => {
 });
 
 it("buildModel", () => {
-  expect(buildModel(model)).toMatchInlineSnapshot(`
+  const buildedModel = buildModel(model);
+  const formattedModel = formatGraphQL(buildedModel);
+
+  expect(formattedModel).toMatchInlineSnapshot(`
     "scalar Date
 
     scalar JSON

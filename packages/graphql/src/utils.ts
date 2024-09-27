@@ -13,7 +13,7 @@ export const memoize2 = <T extends (a1: any, a2: any) => any>(fn: T): T => {
       cache0.set(a1, cache1);
     }
 
-    if (cache1.hash(a2)) {
+    if (cache1.has(a2)) {
       return cache1.get(a2);
     }
 

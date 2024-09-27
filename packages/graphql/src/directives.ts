@@ -1,4 +1,5 @@
 import { FieldDefinitionNode, getArgumentValues, GraphQLSchema, ObjectTypeDefinitionNode } from "graphql";
+import { memoize2 } from "./utils";
 
 export type TypeDirectives = {
   join?: Record<string, never>;
@@ -26,18 +27,20 @@ export const schemaDirectives = /* GraphQL */ `
   directive @type(name: String!, keys: [String!]!) on FIELD_DEFINITION
 `;
 
-export const getDirectives = <T extends ObjectTypeDefinitionNode | FieldDefinitionNode>(
-  schema: GraphQLSchema,
-  node: T,
-): T extends ObjectTypeDefinitionNode ? TypeDirectives : FieldDirectives => {
-  const directives: any = Object.create(null);
+export const getDirectives = memoize2(
+  <T extends ObjectTypeDefinitionNode | FieldDefinitionNode>(
+    schema: GraphQLSchema,
+    node: T,
+  ): T extends ObjectTypeDefinitionNode ? TypeDirectives : FieldDirectives => {
+    const directives: any = Object.create(null);
 
-  for (const directive of node.directives ?? []) {
-    directives[directive.name.value] = getArgumentValues(schema.getDirective(directive.name.value)!, directive);
-  }
+    for (const directive of node.directives ?? []) {
+      directives[directive.name.value] = getArgumentValues(schema.getDirective(directive.name.value)!, directive);
+    }
 
-  return directives;
-};
+    return directives;
+  },
+);
 
 export const printDirectives = (directives: TypeDirectives | FieldDirectives): string => {
   let _directives = "";

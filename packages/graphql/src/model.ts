@@ -9,7 +9,6 @@ import {
   getListFieldName,
   isReservedFieldName,
 } from "./fields";
-import { formatGraphQL } from "./format";
 import { customScalars, primaryKeyTypeName } from "./scalars";
 import { buildTypes, getJoinTypeName, getTypeName, isReservedTypeName, printTypes, sortTypes } from "./types";
 import { createObject } from "./utils";
@@ -381,7 +380,7 @@ export const buildModel = (graphql: string) => {
     }
   }
 
-  const model = formatGraphQL(customScalars + schemaDirectives + printTypes(sortTypes(types)));
+  const model = customScalars + schemaDirectives + printTypes(sortTypes(types));
   buildSchema(model);
   return model;
 };

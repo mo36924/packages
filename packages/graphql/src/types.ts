@@ -1,10 +1,10 @@
 import { pascalCase } from "@mo36924/change-case";
-import { buildASTSchema, Kind, parse } from "graphql";
+import { buildASTSchema, GraphQLSchema, Kind, parse } from "graphql";
 import pluralize from "pluralize";
 import { getDirectives, printDirectives, TypeDirectives } from "./directives";
 import { Field, Fields, sortFields } from "./fields";
-import { formatGraphQL } from "./format";
 import { isScalarTypeName, scalarTypeNames } from "./scalars";
+import { getSource } from "./source";
 import { createObject } from "./utils";
 
 export type Types = {
@@ -124,6 +124,12 @@ export const buildTypes = (graphql: string): Types => {
   return types;
 };
 
+export const getTypes = (schema: GraphQLSchema): Types => {
+  const source = getSource(schema);
+  const types = buildTypes(source);
+  return types;
+};
+
 export const sortTypes = (types: Types): Types =>
   createObject(
     Object.fromEntries(
@@ -149,5 +155,5 @@ export const printTypes = (types: Types): string => {
     schema += "}";
   }
 
-  return formatGraphQL(schema);
+  return schema;
 };
