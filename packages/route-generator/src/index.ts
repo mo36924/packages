@@ -1,4 +1,5 @@
 import { writeFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { pascalCase } from "@mo36924/change-case";
 import { relative } from "@mo36924/import-path";
 import glob from "fast-glob";
@@ -14,8 +15,8 @@ export type Options = {
 };
 
 export const getOptions = (options: Options = {}) => {
-  const rootDir = options.rootDir ?? "src/pages";
-  const outFile = options.outFile ?? "src/routes.ts";
+  const rootDir = resolve(options.rootDir ?? "src/pages");
+  const outFile = resolve(options.outFile ?? "src/routes.ts");
 
   const defaultOptions: Required<Options> = {
     rootDir,
