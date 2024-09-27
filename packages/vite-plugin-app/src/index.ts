@@ -1,11 +1,11 @@
 import { readFileSync } from "node:fs";
 import devServer from "@hono/vite-dev-server";
 import { buildSchema } from "@mo36924/graphql";
-import { precompile as jsxPrecompile } from "@mo36924/jsx-precompile/vite";
 import babel from "@mo36924/vite-plugin-babel";
 import config from "@mo36924/vite-plugin-config";
-import routeGenerator from "@mo36924/vite-plugin-route-generator";
 import ssrBuild from "@mo36924/vite-plugin-ssr-build";
+import precompileJsx from "@mo36924/vite-precompile-jsx";
+import routeGenerator from "@mo36924/vite-route-generator";
 import { GraphQLSchema } from "graphql";
 import autoImport from "unplugin-auto-import/vite";
 import { Plugin } from "vite";
@@ -41,7 +41,7 @@ export default ({
     config({ server, client, assets }),
     routeGenerator(),
     babel({ schema: graphQLSchema }),
-    ...(precompile ? [jsxPrecompile()] : []),
+    ...(precompile ? [precompileJsx()] : []),
     ssrBuild(),
     devServer({ entry: server }),
     tsconfigPaths(),
