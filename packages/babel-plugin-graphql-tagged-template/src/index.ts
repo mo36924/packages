@@ -32,34 +32,38 @@ export default declare<Options>((_, { schema, development, queries = queriesCach
   return {
     name: "babel-plugin-graphql-tagged-template",
     visitor: {
-      VariableDeclarator(path, { filename = "" }) {
-        if (
-          !(
-            queriesPaths.includes(filename) &&
-            path.get("id").isIdentifier({ name: "queries" }) &&
-            path.get("init").isObjectExpression()
-          )
-        ) {
-          return;
-        }
+      ...(development
+        ? {}
+        : {
+            VariableDeclarator(path, { filename = "" }) {
+              if (
+                !(
+                  queriesPaths.includes(filename) &&
+                  path.get("id").isIdentifier({ name: "queries" }) &&
+                  path.get("init").isObjectExpression()
+                )
+              ) {
+                return;
+              }
 
-        path
-          .get("init")
-          .replaceWith(
-            t.objectExpression(
-              [...new Set(queries)]
-                .sort()
-                .map((query) =>
-                  t.objectProperty(
-                    t.identifier(hash(query)),
-                    t.callExpression(t.memberExpression(t.identifier("JSON"), t.identifier("parse")), [
-                      t.stringLiteral(JSON.stringify(parse(query, { noLocation: true }))),
-                    ]),
+              path
+                .get("init")
+                .replaceWith(
+                  t.objectExpression(
+                    queries
+                      .sort()
+                      .map((query) =>
+                        t.objectProperty(
+                          t.identifier(hash(query)),
+                          t.callExpression(t.memberExpression(t.identifier("JSON"), t.identifier("parse")), [
+                            t.stringLiteral(JSON.stringify(parse(query, { noLocation: true }))),
+                          ]),
+                        ),
+                      ),
                   ),
-                ),
-            ),
-          );
-      },
+                );
+            },
+          }),
       TaggedTemplateExpression(path) {
         const {
           tag,
@@ -149,7 +153,9 @@ export default declare<Options>((_, { schema, development, queries = queriesCach
 
         query = stripIgnoredCharacters(query);
 
-        queries.push(query);
+        if (!development && !queries.includes(query)) {
+          queries.push(query);
+        }
 
         const id = development ? query : hash(query);
 
