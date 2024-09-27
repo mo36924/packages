@@ -13,14 +13,24 @@ export type Options = {
   importPrefix?: string;
 };
 
-export const getRoutes = async ({
-  rootDir = "src/pages",
-  outFile = "src/routes.ts",
-  include = ["**/*.tsx"],
-  exclude = [],
-  dynamicImport = true,
-  importPrefix = relative(outFile, rootDir),
-}: Options) => {
+export const getOptions = (options: Options = {}) => {
+  const rootDir = options.rootDir ?? "src/pages";
+  const outFile = options.outFile ?? "src/routes.ts";
+
+  const defaultOptions: Required<Options> = {
+    rootDir,
+    outFile,
+    include: options.include ?? ["**/*.tsx"],
+    exclude: options.exclude ?? [],
+    dynamicImport: options.dynamicImport ?? true,
+    importPrefix: options.importPrefix ?? relative(outFile, rootDir),
+  };
+
+  return defaultOptions;
+};
+
+export const getRoutes = async (options: Options = {}) => {
+  const { rootDir, include, exclude, dynamicImport, importPrefix } = getOptions(options);
   const paths = await glob(include, { cwd: rootDir, ignore: exclude });
 
   const routes = paths.sort().map((path: string) => {
@@ -129,8 +139,8 @@ export const getRoutes = async ({
   return code;
 };
 
-export const generateRoutes = async (options: Options) => {
-  const outFile = options.outFile ?? "src/routes.ts";
+export const generateRoutes = async (options: Options = {}) => {
+  const { outFile } = getOptions(options);
   const code = await getRoutes(options);
   const config = await resolveConfig(outFile);
   const formattedCode = await format(code, { ...config, filepath: outFile });
