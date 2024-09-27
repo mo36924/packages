@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { cosmiconfigSync, getDefaultSearchPlaces } from "cosmiconfig";
 import glob from "fast-glob";
 import { buildSchema as buildGraphQLSchema, GraphQLSchema } from "graphql";
@@ -26,11 +26,10 @@ const explorerSync = cosmiconfigSync(moduleName, {
 
 export const getConfig = (searchFrom?: string) => explorerSync.search(searchFrom);
 
-export const getSchema = (searchFrom?: string) => {
+export const getSchemaPath = (searchFrom?: string) => {
   const result = getConfig(searchFrom);
 
   let schemaPath: string | undefined;
-  let schema: GraphQLSchema | undefined;
 
   try {
     if (result && result.config?.schema) {
@@ -40,11 +39,21 @@ export const getSchema = (searchFrom?: string) => {
         .globSync("**/schema.gql", { absolute: true, cwd: searchFrom, ignore: ["**/node_modules/**"] })
         .sort()[0];
     }
+  } catch {}
 
-    if (schemaPath) {
-      const model = readFileSync(schemaPath, "utf-8");
-      schema = buildSchema(model);
-    }
+  schemaPath ??= resolve("schema.gql");
+
+  return schemaPath;
+};
+
+export const getSchema = (searchFrom?: string) => {
+  const schemaPath = getSchemaPath(searchFrom);
+
+  let schema: GraphQLSchema | undefined;
+
+  try {
+    const model = readFileSync(schemaPath, "utf-8");
+    schema = buildSchema(model);
   } catch {}
 
   schema ??= buildGraphQLSchema("scalar _");
