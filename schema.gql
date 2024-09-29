@@ -1,0 +1,20 @@
+type Class {
+  name: String!
+  users: [User!]!
+}
+
+type Club {
+  name: String!
+  users: [User!]!
+}
+
+type Profile {
+  age: Int
+}
+
+type User {
+  class: Class!
+  clubs: [Club!]!
+  name: String!
+  profile: Profile
+}
