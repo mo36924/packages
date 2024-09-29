@@ -47,6 +47,7 @@ await Promise.all(
       version,
       description: _name,
       keywords: [],
+      main: "./dist/index.js",
       ...pkg,
       license: "MIT",
       name: `@${author}/${_name}`,
@@ -61,7 +62,6 @@ await Promise.all(
         url: `git+https://github.com/${author}/${name}.git`,
         directory: `packages/${_name}`,
       },
-      main: "./dist/index.js",
       module: "./dist/index.js",
       types: "./dist/index.d.ts",
       publishConfig: {
