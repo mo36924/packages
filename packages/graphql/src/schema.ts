@@ -1,16 +1,24 @@
-import { buildSchema as buildGraphQLSchema, GraphQLSchema } from "graphql";
+import { buildASTSchema, DocumentNode, GraphQLSchema, parse } from "graphql";
 import { printDirectives, schemaDirectives } from "./directives";
 import { getFieldName, getListFieldName } from "./fields";
 import { mergeCustomScalars } from "./merge";
 import { buildModel } from "./model";
 import { comparisonOperators } from "./operators";
 import { customScalars, scalarTypeNames } from "./scalars";
-import { buildTypes, printFieldType } from "./types";
+import { buildTypes, printFieldType, Types } from "./types";
 
-export const buildSchema = (model: string): GraphQLSchema => {
+export type Result = {
+  model: string;
+  types: Types;
+  source: string;
+  documentNode: DocumentNode;
+  schema: GraphQLSchema;
+};
+
+export const build = (model: string): Result => {
   const buildedModel = buildModel(model);
   const types = buildTypes(buildedModel);
-  let schema = customScalars + schemaDirectives;
+  let source = customScalars + schemaDirectives;
   let query = "";
   let mutation = "";
   let objectType = "";
@@ -181,7 +189,7 @@ export const buildSchema = (model: string): GraphQLSchema => {
   updateData += `}`;
   deleteData += `}`;
 
-  schema +=
+  source +=
     query +
     mutation +
     objectType +
@@ -195,6 +203,14 @@ export const buildSchema = (model: string): GraphQLSchema => {
     orderInput +
     orderEnum;
 
-  const graphQLSchema = mergeCustomScalars(buildGraphQLSchema(schema));
-  return graphQLSchema;
+  const documentNode = parse(source);
+
+  const schema = mergeCustomScalars(buildASTSchema(documentNode));
+
+  return { model, types, source, documentNode, schema };
+};
+
+export const buildSchema = (model: string): GraphQLSchema => {
+  const { schema } = build(model);
+  return schema;
 };

@@ -1,12 +1,10 @@
 import { expect, it } from "vitest";
 import { formatGraphQL } from "./format";
-import { buildSchema } from "./schema";
-import { getSource } from "./source";
+import { build } from "./schema";
 import { model } from "./test/model";
 
 it("buildSchema", () => {
-  const schema = buildSchema(model);
-  const source = getSource(schema);
+  const { source } = build(model);
   const formattedSource = formatGraphQL(source);
 
   expect(formattedSource).toMatchInlineSnapshot(`

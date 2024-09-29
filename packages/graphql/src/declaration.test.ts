@@ -7,7 +7,7 @@ import { model } from "./test/model";
 it("buildDeclaration", () => {
   const schema = buildSchema(model);
   const declaration = buildDeclaration(schema);
-  const formattedDeclaration = formatDeclaration(declaration);
+  const formattedDeclaration = formatDeclaration("index.d.ts", declaration);
 
   expect(formattedDeclaration).toMatchInlineSnapshot(`
     "export type {};

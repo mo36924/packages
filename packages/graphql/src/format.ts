@@ -7,8 +7,11 @@ export const formatGraphQL = (graphql: string) =>
     filepath: "index.gql",
   });
 
-export const formatDeclaration = (declaration: string) =>
-  prettier.format(declaration, {
-    ...prettier.resolveConfig("index.d.ts"),
-    filepath: "index.d.ts",
+export const formatDeclaration = (path: string, declaration: string) => {
+  const formattedDeclaration = prettier.format(declaration, {
+    ...prettier.resolveConfig(path),
+    filepath: path,
   });
+
+  return formattedDeclaration;
+};
