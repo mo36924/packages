@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { cosmiconfigSync, getDefaultSearchPlaces } from "cosmiconfig";
 import glob from "fast-glob";
+import { buildSchema } from "graphql";
 import { require } from "tsx/cjs/api";
 import { build, Result } from "./schema";
 
@@ -23,6 +24,8 @@ const explorerSync = cosmiconfigSync(moduleName, {
   },
 });
 
+const defaultSchema = buildSchema("scalar _");
+
 export const getConfig = (searchFrom?: string) => {
   const result = explorerSync.search(searchFrom);
 
@@ -42,5 +45,5 @@ export const getConfig = (searchFrom?: string) => {
     buildResult = build(model);
   } catch {}
 
-  return { path, ...buildResult };
+  return { path, schema: defaultSchema, ...buildResult };
 };

@@ -1,4 +1,3 @@
-import { buildSchema } from "graphql";
 import { getConfig } from "./config";
 
-export const schema = getConfig().schema ?? buildSchema("scalar _");
+export const { schema } = getConfig();

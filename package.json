@@ -53,6 +53,7 @@
     "@types/node": "^20.16.5",
     "@types/pluralize": "^0.0.33",
     "@types/validate-npm-package-name": "^4.0.2",
+    "@volar/typescript": "^2.4.5",
     "babel-dead-code-elimination": "^1.0.6",
     "base-x": "^5.0.0",
     "cosmiconfig": "^9.0.0",

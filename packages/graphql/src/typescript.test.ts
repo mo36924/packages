@@ -1,8 +1,9 @@
-import { expect, it } from "vitest";
-import { buildDeclaration } from "./declaration";
+import ts from "typescript";
+import { assert, expect, it } from "vitest";
 import { formatDeclaration } from "./format";
 import { buildSchema } from "./schema";
 import { model } from "./test/model";
+import { buildDeclaration, getGqlTypeArguments } from "./typescript";
 
 it("buildDeclaration", () => {
   const schema = buildSchema(model);
@@ -231,6 +232,66 @@ it("buildDeclaration", () => {
         };
       }
     }
+    "
+  `);
+});
+
+it("getGqlTypeArguments", () => {
+  const schema = buildSchema(model);
+
+  const query = `
+    gql\`{
+      users(limit: $_0) {
+        id
+        name
+        profile {
+          age
+          createdAt
+        }
+      }
+    }\`
+  `;
+
+  const statement = ts.createSourceFile("index.ts", query, ts.ScriptTarget.Latest).statements[0];
+  assert(ts.isExpressionStatement(statement));
+  const node = statement.expression;
+  assert(ts.isTaggedTemplateExpression(node));
+  const typeArguments = getGqlTypeArguments(schema, node);
+
+  const sourceFile = ts.createSourceFile(
+    "type.ts",
+    query.replace("gql", () => `gql${typeArguments}`),
+    ts.ScriptTarget.Latest,
+  );
+
+  const source = ts.createPrinter().printFile(sourceFile);
+
+  expect(source).toMatchInlineSnapshot(`
+    "gql<{
+        values: [
+            number | null
+        ];
+        data: {
+            users: {
+                id: string;
+                name: string;
+                profile: {
+                    age: number | null;
+                    createdAt: Date;
+                } | null;
+            }[];
+        };
+        operation: "query";
+    }> \`{
+          users(limit: $_0) {
+            id
+            name
+            profile {
+              age
+              createdAt
+            }
+          }
+        }\`;
     "
   `);
 });
