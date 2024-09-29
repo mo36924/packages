@@ -9,6 +9,7 @@ export const formatGraphQL = (graphql: string) => {
 export const format = (path: string, declaration: string) => {
   const formattedCode = prettier.format(declaration, {
     ...prettier.resolveConfig(path),
+    plugins: [],
     filepath: path,
   });
 
