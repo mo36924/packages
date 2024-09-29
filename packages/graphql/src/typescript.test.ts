@@ -1,16 +1,14 @@
 import ts from "typescript";
 import { assert, expect, it } from "vitest";
-import { formatDeclaration } from "./format";
 import { buildSchema } from "./schema";
 import { model } from "./test/model";
 import { buildDeclaration, getGqlTypeArguments } from "./typescript";
 
 it("buildDeclaration", () => {
   const schema = buildSchema(model);
-  const declaration = buildDeclaration(schema);
-  const formattedDeclaration = formatDeclaration("index.d.ts", declaration);
+  const declaration = buildDeclaration("index.d.ts", schema);
 
-  expect(formattedDeclaration).toMatchInlineSnapshot(`
+  expect(declaration).toMatchInlineSnapshot(`
     "export type {};
     declare global {
       namespace GraphQL {
