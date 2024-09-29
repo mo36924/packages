@@ -4,7 +4,7 @@ import { expect, it } from "vitest";
 import { buildDrizzleSchema } from "./drizzle";
 
 it("buildDrizzleSchema", async () => {
-  const drizzleSchema = await buildDrizzleSchema(schema);
+  const drizzleSchema = buildDrizzleSchema(schema);
   const config = await resolveConfig("schema.ts");
   const formattedCode = await format(drizzleSchema, { ...config, filepath: "schema.ts" });
 

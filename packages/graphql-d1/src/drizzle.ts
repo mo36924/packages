@@ -22,7 +22,7 @@ const configs: Record<ScalarTypeName, string> = {
   JSON: "{ mode: 'json' }",
 };
 
-export const buildDrizzleSchema = async (schema: GraphQLSchema) => {
+export const buildDrizzleSchema = (schema: GraphQLSchema) => {
   const schemaTypes = getTypes(schema);
   let code = "";
 
@@ -106,7 +106,7 @@ export const buildDrizzleSchema = async (schema: GraphQLSchema) => {
     import { relations } from "drizzle-orm";
     import { sqliteTable, uniqueIndex, index, ${Object.values(types)} } from "drizzle-orm/sqlite-core";
     import { randomId } from "@mo36924/random-id";
-    
+
     ${code}
   `;
 
