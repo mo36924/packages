@@ -40,7 +40,7 @@
       ]
     }
   },
-  "bin": "./dist/tsc.js",
+  "bin": "./dist/tsc.cjs",
   "publishConfig": {
     "access": "public"
   },
