@@ -27,8 +27,15 @@ const explorerSync = cosmiconfigSync(moduleName, {
 
 const defaultSchema = buildSchema("scalar _");
 
+export type Config = {
+  schema?: string;
+  dts?: string;
+  drizzle?: string;
+};
+
 export const getConfig = (searchFrom: string = cwd()) => {
   const result = explorerSync.search(searchFrom);
+  const config: Config = result?.config ?? {};
   const dir = result?.filepath ? dirname(result.filepath) : searchFrom;
 
   let path: string | undefined;
@@ -37,18 +44,18 @@ export const getConfig = (searchFrom: string = cwd()) => {
   let buildResult: Result | undefined;
 
   try {
-    if (result?.config?.schema) {
-      path = resolve(dir, result.config.schema);
+    if (config.schema) {
+      path = resolve(dir, config.schema);
     } else {
       path = glob.globSync("**/schema.gql", { absolute: true, cwd: dir, ignore: ["**/node_modules/**"] }).sort()[0];
     }
 
-    if (result?.config?.dts) {
-      dts = resolve(dir, result.config.dts);
+    if (config.dts) {
+      dts = resolve(dir, config.dts);
     }
 
-    if (result?.config?.drizzle) {
-      drizzle = resolve(dir, result.config.drizzle);
+    if (config.drizzle) {
+      drizzle = resolve(dir, config.drizzle);
     }
 
     const model = readFileSync(path, "utf-8");
