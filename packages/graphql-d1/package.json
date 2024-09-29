@@ -1,0 +1,56 @@
+{
+  "name": "@mo36924/graphql-d1",
+  "type": "module",
+  "version": "5.1.0",
+  "description": "graphql-d1",
+  "author": "mo36924",
+  "license": "MIT",
+  "homepage": "https://github.com/mo36924/packages#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mo36924/packages.git",
+    "directory": "packages/graphql-d1"
+  },
+  "bugs": {
+    "url": "https://github.com/mo36924/packages/issues"
+  },
+  "keywords": [],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    },
+    "./query": {
+      "types": "./dist/query.d.ts",
+      "import": "./dist/query.js",
+      "require": "./dist/query.cjs",
+      "default": "./dist/query.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/*.d.ts",
+        "*"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.20240925.0",
+    "@mo36924/change-case": "^0.0.1",
+    "@mo36924/graphql": "^5.1.0",
+    "graphql": "^16.9.0",
+    "miniflare": "^3.20240925.0"
+  }
+}
