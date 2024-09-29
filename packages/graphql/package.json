@@ -22,6 +22,12 @@
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
     },
+    "./definitions": {
+      "types": "./dist/definitions.d.ts",
+      "import": "./dist/definitions.js",
+      "require": "./dist/definitions.cjs",
+      "default": "./dist/definitions.js"
+    },
     "./merge": {
       "types": "./dist/merge.d.ts",
       "import": "./dist/merge.js",
