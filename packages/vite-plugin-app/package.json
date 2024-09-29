@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/vite-plugin-app",
   "type": "module",
-  "version": "5.0.65",
+  "version": "5.0.66",
   "description": "vite-plugin-app",
   "author": "mo36924",
   "license": "MIT",
@@ -42,7 +42,7 @@
   ],
   "dependencies": {
     "@hono/vite-dev-server": "^0.16.0",
-    "@mo36924/graphql": "^5.0.65",
+    "@mo36924/graphql": "^5.0.66",
     "@mo36924/vite-plugin-babel": "^5.0.63",
     "@mo36924/vite-plugin-config": "^5.0.55",
     "@mo36924/vite-plugin-ssr-build": "^5.0.55",
