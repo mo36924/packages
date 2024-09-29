@@ -89,7 +89,7 @@ const init: ts.server.PluginModuleFactory = ({ typescript: ts }) => {
 
   return {
     create(info) {
-      const { path, schema } = getConfig();
+      const { path, schema } = getConfig(info.project.getCurrentDirectory());
       const languageService = info.languageService;
 
       if (!path) {
