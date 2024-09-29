@@ -2,7 +2,7 @@ import { buildASTSchema, DocumentNode, GraphQLSchema, parse } from "graphql";
 import { printDirectives, schemaDirectives } from "./directives";
 import { getFieldName, getListFieldName } from "./fields";
 import { mergeCustomScalars } from "./merge";
-import { buildModel } from "./model";
+import { buildModel, fixModel } from "./model";
 import { comparisonOperators } from "./operators";
 import { customScalars, scalarTypeNames } from "./scalars";
 import { buildTypes, printFieldType, Types } from "./types";
@@ -16,7 +16,8 @@ export type Result = {
 };
 
 export const build = (model: string): Result => {
-  const buildedModel = buildModel(model);
+  const fixedModel = fixModel(model);
+  const buildedModel = buildModel(fixedModel);
   const types = buildTypes(buildedModel);
   let source = customScalars + schemaDirectives;
   let query = "";
@@ -207,7 +208,7 @@ export const build = (model: string): Result => {
 
   const schema = mergeCustomScalars(buildASTSchema(documentNode));
 
-  return { model, types, source, documentNode, schema };
+  return { model: fixedModel, types, source, documentNode, schema };
 };
 
 export const buildSchema = (model: string): GraphQLSchema => {

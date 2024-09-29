@@ -5,9 +5,8 @@ import { model } from "./test/model";
 
 it("fixModel", () => {
   const fixedModel = fixModel(model);
-  const formattedModel = formatGraphQL(fixedModel);
 
-  expect(formattedModel).toMatchInlineSnapshot(`
+  expect(fixedModel).toMatchInlineSnapshot(`
     "type Class {
       name: String!
       users: [User!]!
@@ -33,7 +32,7 @@ it("fixModel", () => {
 });
 
 it("buildModel", () => {
-  const buildedModel = buildModel(model);
+  const buildedModel = buildModel(fixModel(model));
   const formattedModel = formatGraphQL(buildedModel);
 
   expect(formattedModel).toMatchInlineSnapshot(`

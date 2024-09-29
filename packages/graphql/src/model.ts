@@ -9,12 +9,13 @@ import {
   getListFieldName,
   isReservedFieldName,
 } from "./fields";
+import { formatGraphQL } from "./format";
 import { customScalars, primaryKeyTypeName } from "./scalars";
 import { buildTypes, getJoinTypeName, getTypeName, isReservedTypeName, printTypes, sortTypes } from "./types";
 import { createObject } from "./utils";
 
-export const fixModel = (graphql: string) => {
-  const types = buildTypes(graphql + customScalars + modelDirectives);
+export const fixModel = (model: string) => {
+  const types = buildTypes(model + customScalars + modelDirectives);
   const joinTypeNameSet = new Set<string>();
   const renameJoinTypeFields: Field[] = [];
 
@@ -97,14 +98,13 @@ export const fixModel = (graphql: string) => {
     }
   }
 
-  const model = printTypes(sortTypes(types));
-  buildSchema(customScalars + modelDirectives + model);
-  return model;
+  const fixedModel = printTypes(sortTypes(types));
+  buildSchema(customScalars + modelDirectives + fixedModel);
+  return formatGraphQL(fixedModel);
 };
 
-export const buildModel = (graphql: string) => {
-  const fixedModel = fixModel(graphql);
-  const types = buildTypes(fixedModel + customScalars + modelDirectives);
+export const buildModel = (model: string) => {
+  const types = buildTypes(model + customScalars + modelDirectives);
   const baseFields = Object.values(buildTypes(baseType + customScalars))[0].fields;
 
   for (const [typeName, { fields }] of Object.entries(types)) {
@@ -380,7 +380,7 @@ export const buildModel = (graphql: string) => {
     }
   }
 
-  const model = customScalars + schemaDirectives + printTypes(sortTypes(types));
-  buildSchema(model);
-  return model;
+  const buildedModel = customScalars + schemaDirectives + printTypes(sortTypes(types));
+  buildSchema(buildedModel);
+  return buildedModel;
 };

@@ -24,11 +24,15 @@ const getCodeMappings = (text: string): CodeMapping[] => [
 ];
 
 export const getLanguagePlugin = (cwd?: string) => {
-  const { path, schema, dts, drizzle } = getConfig(cwd);
+  const { path, model, schema, dts, drizzle } = getConfig(cwd);
 
   if (path) {
     const declaration = buildDeclaration(dts, schema);
     writeFileSync(dts, declaration);
+
+    if (model) {
+      writeFileSync(path, model);
+    }
 
     if (drizzle) {
       const drizzleSchema = buildDrizzleSchema(drizzle, schema);
