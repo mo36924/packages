@@ -1,7 +1,6 @@
 /// <reference types="@volar/typescript" />
 
-import { writeFileSync } from "node:fs";
-import { buildDeclaration, getConfig, getGqlTypeArguments } from "@mo36924/graphql";
+import { getConfig, getGqlTypeArguments } from "@mo36924/graphql";
 import { CodeInformation, CodeMapping, LanguagePlugin, VirtualCode } from "@volar/language-core";
 import ts from "typescript";
 
@@ -23,12 +22,7 @@ const getCodeMappings = (text: string): CodeMapping[] => [
 ];
 
 export const getLanguagePlugin = (cwd?: string) => {
-  const { path, schema, dts } = getConfig(cwd);
-
-  if (path) {
-    const declaration = buildDeclaration(dts, schema);
-    writeFileSync(dts, declaration);
-  }
+  const { schema } = getConfig(cwd);
 
   const transform = (sourceFile: ts.SourceFile): { snapshot: ts.IScriptSnapshot; mappings: CodeMapping[] } => {
     const code = sourceFile.text;

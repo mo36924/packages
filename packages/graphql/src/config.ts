@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { join } from "node:path";
 import { cwd } from "node:process";
 import { cosmiconfigSync, getDefaultSearchPlaces } from "cosmiconfig";
 import glob from "fast-glob";
@@ -31,7 +31,6 @@ export const getConfig = (searchFrom: string = cwd()) => {
   const result = explorerSync.search(searchFrom);
 
   let path: string | undefined;
-  let dts = "graphql.d.ts";
   let buildResult: Result | undefined;
 
   try {
@@ -43,19 +42,9 @@ export const getConfig = (searchFrom: string = cwd()) => {
         .sort()[0];
     }
 
-    if (result?.config?.dts) {
-      dts = result.config.dts;
-    }
-
-    if (result?.filepath) {
-      dts = resolve(dirname(result.filepath), dts);
-    } else {
-      dts = resolve(searchFrom, dts);
-    }
-
     const model = readFileSync(path, "utf-8");
     buildResult = build(model);
   } catch {}
 
-  return { path, dts, schema: defaultSchema, ...buildResult };
+  return { path, schema: defaultSchema, ...buildResult };
 };

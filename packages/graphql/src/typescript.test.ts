@@ -1,14 +1,17 @@
+import { format, resolveConfig } from "prettier";
 import ts from "typescript";
 import { assert, expect, it } from "vitest";
 import { buildSchema } from "./schema";
 import { model } from "./test/model";
 import { buildDeclaration, getGqlTypeArguments } from "./typescript";
 
-it("buildDeclaration", () => {
+it("buildDeclaration", async () => {
   const schema = buildSchema(model);
-  const declaration = buildDeclaration("index.d.ts", schema);
+  const declaration = buildDeclaration(schema);
+  const config = await resolveConfig("index.d.ts");
+  const formattedDeclaration = await format(declaration, { ...config, filepath: "index.d.ts" });
 
-  expect(declaration).toMatchInlineSnapshot(`
+  expect(formattedDeclaration).toMatchInlineSnapshot(`
     "export type {};
     declare global {
       namespace GraphQL {
