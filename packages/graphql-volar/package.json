@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/graphql-volar",
   "type": "module",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "description": "graphql-volar",
   "author": "mo36924",
   "license": "MIT",
@@ -48,7 +48,7 @@
     "dist"
   ],
   "dependencies": {
-    "@mo36924/graphql": "^5.1.0",
+    "@mo36924/graphql": "^5.1.1",
     "@volar/typescript": "^2.4.5",
     "typescript": "^5.5.4"
   }
