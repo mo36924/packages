@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 import { runTsc } from "@volar/typescript/lib/quickstart/runTsc";
 import { getLanguagePlugin } from "./plugin";
 
-const tscPath = fileURLToPath(import.meta.resolve("typescript/lib/tsc"));
+const require = createRequire(import.meta.url);
+const tscPath = require.resolve("typescript/lib/tsc");
 runTsc(tscPath, [], () => [getLanguagePlugin()]);
