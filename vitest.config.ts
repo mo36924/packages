@@ -8,6 +8,5 @@ export default defineConfig({
       "./packages/vitest-snapshot-serializer-babel/src/index.ts",
       "./packages/vitest-snapshot-serializer-raw/src/index.ts",
     ],
-    poolMatchGlobs: [["**/vite-plugin-solid/**", "forks"]],
   },
 });
