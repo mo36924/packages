@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/babel-plugin-server-function",
   "type": "module",
-  "version": "5.0.39",
+  "version": "5.1.0",
   "description": "babel-plugin-server-function",
   "author": "mo36924",
   "license": "MIT",
@@ -55,7 +55,7 @@
   "dependencies": {
     "@babel/core": "^7.25.2",
     "@babel/helper-plugin-utils": "^7.24.8",
-    "@mo36924/json": "^5.0.38",
+    "@mo36924/json": "^5.1.0",
     "@types/babel__core": "^7.20.5",
     "@types/babel__helper-plugin-utils": "^7.10.3",
     "babel-dead-code-elimination": "^1.0.6",
