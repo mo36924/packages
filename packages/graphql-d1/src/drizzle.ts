@@ -2,7 +2,7 @@ import { camelCase } from "@mo36924/change-case";
 import { format, getTypes, isSchemaTypeName, ScalarTypeName } from "@mo36924/graphql";
 import { GraphQLSchema } from "graphql";
 
-const types: Record<ScalarTypeName, string> = {
+const types: Record<string, string> = {
   ID: "text",
   Int: "integer",
   Float: "real",
@@ -10,9 +10,9 @@ const types: Record<ScalarTypeName, string> = {
   Boolean: "integer",
   Date: "integer",
   JSON: "text",
-};
+} satisfies Record<ScalarTypeName, string>;
 
-const configs: Record<ScalarTypeName, string> = {
+const configs: Record<string, string> = {
   ID: "",
   Int: "{ mode: 'number' }",
   Float: "",
@@ -20,7 +20,7 @@ const configs: Record<ScalarTypeName, string> = {
   Boolean: "{ mode: 'boolean' }",
   Date: "{ mode: 'timestamp_ms' }",
   JSON: "{ mode: 'json' }",
-};
+} satisfies Record<ScalarTypeName, string>;
 
 export const buildDrizzleSchema = (path: string, schema: GraphQLSchema) => {
   const schemaTypes = getTypes(schema);
@@ -56,8 +56,8 @@ export const buildDrizzleSchema = (path: string, schema: GraphQLSchema) => {
       } = field;
 
       if (scalar) {
-        const type = types[fieldTypeName as ScalarTypeName];
-        const config = configs[fieldTypeName as ScalarTypeName];
+        const type = types[fieldTypeName];
+        const config = configs[fieldTypeName];
 
         let column = `${fieldName}: ${type}("${fieldName}", ${config})`;
 
@@ -103,9 +103,9 @@ export const buildDrizzleSchema = (path: string, schema: GraphQLSchema) => {
   }
 
   code = `
-    import { relations } from "drizzle-orm";
-    import { sqliteTable, uniqueIndex, index, ${Object.values(types)} } from "drizzle-orm/sqlite-core";
     import { randomId } from "@mo36924/random-id";
+    import { relations } from "drizzle-orm";
+    import { ${["sqliteTable", "uniqueIndex", "index", ...new Set(Object.values(types))].sort().filter((type) => code.includes(` ${type}`))} } from "drizzle-orm/sqlite-core";
 
     ${code}
   `;

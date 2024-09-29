@@ -6,20 +6,9 @@ it("buildDrizzleSchema", async () => {
   const drizzleSchema = buildDrizzleSchema("schema.ts", schema);
 
   expect(drizzleSchema).toMatchInlineSnapshot(`
-    "import { relations } from "drizzle-orm";
-    import {
-      sqliteTable,
-      uniqueIndex,
-      index,
-      text,
-      integer,
-      real,
-      text,
-      integer,
-      integer,
-      text,
-    } from "drizzle-orm/sqlite-core";
-    import { randomId } from "@mo36924/random-id";
+    "import { randomId } from "@mo36924/random-id";
+    import { relations } from "drizzle-orm";
+    import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
     export const Class = sqliteTable("Class", {
       id: text("id").notNull().primaryKey().$default(randomId),
