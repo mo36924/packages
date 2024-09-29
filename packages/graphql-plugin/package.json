@@ -1,0 +1,50 @@
+{
+  "name": "@mo36924/graphql-plugin",
+  "type": "module",
+  "version": "5.0.68",
+  "description": "graphql-plugin",
+  "author": "mo36924",
+  "license": "MIT",
+  "homepage": "https://github.com/mo36924/packages#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mo36924/packages.git",
+    "directory": "packages/graphql-plugin"
+  },
+  "bugs": {
+    "url": "https://github.com/mo36924/packages/issues"
+  },
+  "keywords": [],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/*.d.ts",
+        "*"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@mo36924/graphql": "^5.0.68",
+    "graphql": "^16.9.0",
+    "graphql-language-service": "^5.3.0",
+    "typescript": "^5.5.4",
+    "vscode-languageserver-types": "^3.17.5"
+  }
+}
