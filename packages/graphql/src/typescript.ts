@@ -17,6 +17,7 @@ import {
   visitWithTypeInfo,
 } from "graphql";
 import ts from "typescript";
+import { format } from "./format";
 import { ScalarTypeName } from "./scalars";
 import { createObject } from "./utils";
 
@@ -44,8 +45,8 @@ const getFieldType = (field: GraphQLInputField) => {
   return `${name}${isNonNull ? "" : "?"}:${typescriptType}${isList ? "[]" : ""}${isNonNull ? "" : "|null"}\n`;
 };
 
-export const buildDeclaration = (schema: GraphQLSchema) => {
-  let declaration = "export type {}\ndeclare global {\nnamespace GraphQL {\n";
+export const buildDeclaration = (path: string, schema: GraphQLSchema) => {
+  let declaration = "export type {}\n\ndeclare global {\nnamespace GraphQL {\n";
 
   for (const type of Object.values(schema.getTypeMap())) {
     if (isInputObjectType(type)) {
@@ -55,13 +56,13 @@ export const buildDeclaration = (schema: GraphQLSchema) => {
         declaration += getFieldType(field);
       }
 
-      declaration += "}\n";
+      declaration += "}\n\n";
     }
   }
 
   declaration += "}}";
 
-  return declaration;
+  return format(path, declaration);
 };
 
 export const getGqlTypeArguments = (schema: GraphQLSchema, node: ts.TaggedTemplateExpression) => {

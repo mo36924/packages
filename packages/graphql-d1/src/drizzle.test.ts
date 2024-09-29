@@ -1,14 +1,11 @@
 import { schema } from "@mo36924/graphql/schema.gql";
-import { format, resolveConfig } from "prettier";
 import { expect, it } from "vitest";
 import { buildDrizzleSchema } from "./drizzle";
 
 it("buildDrizzleSchema", async () => {
-  const drizzleSchema = buildDrizzleSchema(schema);
-  const config = await resolveConfig("schema.ts");
-  const formattedCode = await format(drizzleSchema, { ...config, filepath: "schema.ts" });
+  const drizzleSchema = buildDrizzleSchema("schema.ts", schema);
 
-  expect(formattedCode).toMatchInlineSnapshot(`
+  expect(drizzleSchema).toMatchInlineSnapshot(`
     "import { relations } from "drizzle-orm";
     import {
       sqliteTable,

@@ -1,5 +1,5 @@
 import { camelCase } from "@mo36924/change-case";
-import { getTypes, isSchemaTypeName, ScalarTypeName } from "@mo36924/graphql";
+import { format, getTypes, isSchemaTypeName, ScalarTypeName } from "@mo36924/graphql";
 import { GraphQLSchema } from "graphql";
 
 const types: Record<ScalarTypeName, string> = {
@@ -22,7 +22,7 @@ const configs: Record<ScalarTypeName, string> = {
   JSON: "{ mode: 'json' }",
 };
 
-export const buildDrizzleSchema = (schema: GraphQLSchema) => {
+export const buildDrizzleSchema = (path: string, schema: GraphQLSchema) => {
   const schemaTypes = getTypes(schema);
   let code = "";
 
@@ -110,5 +110,5 @@ export const buildDrizzleSchema = (schema: GraphQLSchema) => {
     ${code}
   `;
 
-  return code;
+  return format(path, code);
 };

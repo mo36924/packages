@@ -1,4 +1,3 @@
-import { format, resolveConfig } from "prettier";
 import ts from "typescript";
 import { assert, expect, it } from "vitest";
 import { buildSchema } from "./schema";
@@ -7,12 +6,11 @@ import { buildDeclaration, getGqlTypeArguments } from "./typescript";
 
 it("buildDeclaration", async () => {
   const schema = buildSchema(model);
-  const declaration = buildDeclaration(schema);
-  const config = await resolveConfig("index.d.ts");
-  const formattedDeclaration = await format(declaration, { ...config, filepath: "index.d.ts" });
+  const declaration = buildDeclaration("index.d.ts", schema);
 
-  expect(formattedDeclaration).toMatchInlineSnapshot(`
+  expect(declaration).toMatchInlineSnapshot(`
     "export type {};
+
     declare global {
       namespace GraphQL {
         export type CreateData = {
@@ -25,6 +23,7 @@ it("buildDeclaration", async () => {
           user?: CreateDataUser | null;
           users?: CreateDataUser[] | null;
         };
+
         export type UpdateData = {
           class?: UpdateDataClass | null;
           classes?: UpdateDataClass[] | null;
@@ -35,6 +34,7 @@ it("buildDeclaration", async () => {
           user?: UpdateDataUser | null;
           users?: UpdateDataUser[] | null;
         };
+
         export type DeleteData = {
           class?: DeleteDataClass | null;
           classes?: DeleteDataClass[] | null;
@@ -45,39 +45,47 @@ it("buildDeclaration", async () => {
           user?: DeleteDataUser | null;
           users?: DeleteDataUser[] | null;
         };
+
         export type CreateDataClass = {
           name: string;
           users?: CreateDataUser[] | null;
         };
+
         export type CreateDataClub = {
           name: string;
           users?: CreateDataUser[] | null;
         };
+
         export type CreateDataProfile = {
           age?: number | null;
           user?: CreateDataUser | null;
         };
+
         export type CreateDataUser = {
           class?: CreateDataClass | null;
           clubs?: CreateDataClub[] | null;
           name: string;
           profile?: CreateDataProfile | null;
         };
+
         export type UpdateDataClass = {
           id: string;
           name?: string | null;
           users?: UpdateDataUser[] | null;
         };
+
         export type UpdateDataClub = {
           id: string;
           name?: string | null;
           users?: UpdateDataUser[] | null;
         };
+
         export type UpdateDataProfile = {
           id: string;
           age?: number | null;
           user?: UpdateDataUser | null;
         };
+
         export type UpdateDataUser = {
           id: string;
           class?: UpdateDataClass | null;
@@ -85,24 +93,29 @@ it("buildDeclaration", async () => {
           name?: string | null;
           profile?: UpdateDataProfile | null;
         };
+
         export type DeleteDataClass = {
           id: string;
           users?: DeleteDataUser[] | null;
         };
+
         export type DeleteDataClub = {
           id: string;
           users?: DeleteDataUser[] | null;
         };
+
         export type DeleteDataProfile = {
           id: string;
           user?: DeleteDataUser | null;
         };
+
         export type DeleteDataUser = {
           id: string;
           class?: DeleteDataClass | null;
           clubs?: DeleteDataClub[] | null;
           profile?: DeleteDataProfile | null;
         };
+
         export type WhereClass = {
           id?: WhereString | null;
           createdAt?: WhereDate | null;
@@ -112,6 +125,7 @@ it("buildDeclaration", async () => {
           or?: WhereClass | null;
           not?: WhereClass | null;
         };
+
         export type WhereClub = {
           id?: WhereString | null;
           createdAt?: WhereDate | null;
@@ -121,6 +135,7 @@ it("buildDeclaration", async () => {
           or?: WhereClub | null;
           not?: WhereClub | null;
         };
+
         export type WhereProfile = {
           id?: WhereString | null;
           createdAt?: WhereDate | null;
@@ -131,6 +146,7 @@ it("buildDeclaration", async () => {
           or?: WhereProfile | null;
           not?: WhereProfile | null;
         };
+
         export type WhereUser = {
           id?: WhereString | null;
           createdAt?: WhereDate | null;
@@ -141,6 +157,7 @@ it("buildDeclaration", async () => {
           or?: WhereUser | null;
           not?: WhereUser | null;
         };
+
         export type WhereID = {
           eq?: string | null;
           ne?: string | null;
@@ -151,6 +168,7 @@ it("buildDeclaration", async () => {
           in?: string[] | null;
           like?: string | null;
         };
+
         export type WhereInt = {
           eq?: number | null;
           ne?: number | null;
@@ -161,6 +179,7 @@ it("buildDeclaration", async () => {
           in?: number[] | null;
           like?: string | null;
         };
+
         export type WhereFloat = {
           eq?: number | null;
           ne?: number | null;
@@ -171,6 +190,7 @@ it("buildDeclaration", async () => {
           in?: number[] | null;
           like?: string | null;
         };
+
         export type WhereString = {
           eq?: string | null;
           ne?: string | null;
@@ -181,10 +201,12 @@ it("buildDeclaration", async () => {
           in?: string[] | null;
           like?: string | null;
         };
+
         export type WhereBoolean = {
           eq?: boolean | null;
           ne?: boolean | null;
         };
+
         export type WhereDate = {
           eq?: Date | null;
           ne?: Date | null;
@@ -195,6 +217,7 @@ it("buildDeclaration", async () => {
           in?: Date[] | null;
           like?: string | null;
         };
+
         export type WhereJSON = {
           eq?: object | null;
           ne?: object | null;
@@ -205,18 +228,21 @@ it("buildDeclaration", async () => {
           in?: object[] | null;
           like?: string | null;
         };
+
         export type OrderClass = {
           id?: Order | null;
           createdAt?: Order | null;
           updatedAt?: Order | null;
           name?: Order | null;
         };
+
         export type OrderClub = {
           id?: Order | null;
           createdAt?: Order | null;
           updatedAt?: Order | null;
           name?: Order | null;
         };
+
         export type OrderProfile = {
           id?: Order | null;
           createdAt?: Order | null;
@@ -224,6 +250,7 @@ it("buildDeclaration", async () => {
           age?: Order | null;
           userId?: Order | null;
         };
+
         export type OrderUser = {
           id?: Order | null;
           createdAt?: Order | null;
