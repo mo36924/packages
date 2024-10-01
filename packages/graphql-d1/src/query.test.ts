@@ -51,24 +51,24 @@ it("query", async () => {
       "class": {
         "users": [
           {
-            "name": "0name-1",
+            "name": "name-1 ",
             "profile": {
               "age": 0,
-              "createdAt": "11970-01-01T00:00:00.000Z",
+              "createdAt": "1970-01-01T00:00:00.000Z",
             },
           },
           {
-            "name": "0name-4",
+            "name": "name-4 ",
             "profile": {
               "age": 0,
-              "createdAt": "11970-01-01T00:00:00.000Z",
+              "createdAt": "1970-01-01T00:00:00.000Z",
             },
           },
           {
-            "name": "0name-7",
+            "name": "name-7 ",
             "profile": {
               "age": 0,
-              "createdAt": "11970-01-01T00:00:00.000Z",
+              "createdAt": "1970-01-01T00:00:00.000Z",
             },
           },
         ],

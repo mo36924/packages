@@ -1,14 +1,10 @@
 export const stringify = (value: any) =>
   JSON.stringify(value, function (key, value) {
-    if (typeof value !== "string") {
+    if (typeof value !== "string" || this[key] instanceof Date) {
       return value;
     }
 
-    if (this[key] instanceof Date) {
-      return `1${value}`;
-    }
-
-    return `0${value}`;
+    return `${value} `;
   });
 
 export const parse = (text: string) =>
@@ -17,11 +13,11 @@ export const parse = (text: string) =>
       return value;
     }
 
-    if (value[0] === "1") {
-      return new Date(value.slice(1));
+    if (value[value.length - 1] === "Z") {
+      return new Date(value);
     }
 
-    return value.slice(1);
+    return value.slice(0, -1);
   });
 
 export const transformer = { serialize: stringify, deserialize: parse };
