@@ -59,7 +59,7 @@ export const buildDrizzleSchema = (path: string, schema: GraphQLSchema) => {
         const type = types[fieldTypeName];
         const config = configs[fieldTypeName];
 
-        let column = `${fieldName}: ${type}("${fieldName}", ${config})`;
+        let column = `${fieldName}: ${type}(${config})`;
 
         if (!nullable) {
           column += ".notNull()";

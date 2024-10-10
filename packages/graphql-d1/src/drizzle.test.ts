@@ -11,14 +11,14 @@ it("buildDrizzleSchema", async () => {
     import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
     export const Class = sqliteTable("Class", {
-      id: text("id").notNull().primaryKey().$default(randomId),
-      createdAt: integer("createdAt", { mode: "timestamp_ms" })
+      id: text().notNull().primaryKey().$default(randomId),
+      createdAt: integer({ mode: "timestamp_ms" })
         .notNull()
         .$default(() => new Date()),
-      updatedAt: integer("updatedAt", { mode: "timestamp_ms" })
+      updatedAt: integer({ mode: "timestamp_ms" })
         .notNull()
         .$onUpdate(() => new Date()),
-      name: text("name").notNull(),
+      name: text().notNull(),
     });
 
     export const ClassRelations = relations(Class, ({ many }) => ({
@@ -26,14 +26,14 @@ it("buildDrizzleSchema", async () => {
     }));
 
     export const Club = sqliteTable("Club", {
-      id: text("id").notNull().primaryKey().$default(randomId),
-      createdAt: integer("createdAt", { mode: "timestamp_ms" })
+      id: text().notNull().primaryKey().$default(randomId),
+      createdAt: integer({ mode: "timestamp_ms" })
         .notNull()
         .$default(() => new Date()),
-      updatedAt: integer("updatedAt", { mode: "timestamp_ms" })
+      updatedAt: integer({ mode: "timestamp_ms" })
         .notNull()
         .$onUpdate(() => new Date()),
-      name: text("name").notNull(),
+      name: text().notNull(),
     });
 
     export const ClubRelations = relations(Club, ({ many }) => ({
@@ -43,15 +43,15 @@ it("buildDrizzleSchema", async () => {
     export const Profile = sqliteTable(
       "Profile",
       {
-        id: text("id").notNull().primaryKey().$default(randomId),
-        createdAt: integer("createdAt", { mode: "timestamp_ms" })
+        id: text().notNull().primaryKey().$default(randomId),
+        createdAt: integer({ mode: "timestamp_ms" })
           .notNull()
           .$default(() => new Date()),
-        updatedAt: integer("updatedAt", { mode: "timestamp_ms" })
+        updatedAt: integer({ mode: "timestamp_ms" })
           .notNull()
           .$onUpdate(() => new Date()),
-        age: integer("age", { mode: "number" }),
-        userId: text("userId"),
+        age: integer({ mode: "number" }),
+        userId: text(),
       },
       (table) => ({
         userId: uniqueIndex("Profile_userId").on(table.userId),
@@ -65,15 +65,15 @@ it("buildDrizzleSchema", async () => {
     export const User = sqliteTable(
       "User",
       {
-        id: text("id").notNull().primaryKey().$default(randomId),
-        createdAt: integer("createdAt", { mode: "timestamp_ms" })
+        id: text().notNull().primaryKey().$default(randomId),
+        createdAt: integer({ mode: "timestamp_ms" })
           .notNull()
           .$default(() => new Date()),
-        updatedAt: integer("updatedAt", { mode: "timestamp_ms" })
+        updatedAt: integer({ mode: "timestamp_ms" })
           .notNull()
           .$onUpdate(() => new Date()),
-        classId: text("classId"),
-        name: text("name").notNull(),
+        classId: text(),
+        name: text().notNull(),
       },
       (table) => ({
         classId: index("User_classId").on(table.classId),
@@ -89,15 +89,15 @@ it("buildDrizzleSchema", async () => {
     export const ClubToUser = sqliteTable(
       "ClubToUser",
       {
-        id: text("id").notNull().primaryKey().$default(randomId),
-        createdAt: integer("createdAt", { mode: "timestamp_ms" })
+        id: text().notNull().primaryKey().$default(randomId),
+        createdAt: integer({ mode: "timestamp_ms" })
           .notNull()
           .$default(() => new Date()),
-        updatedAt: integer("updatedAt", { mode: "timestamp_ms" })
+        updatedAt: integer({ mode: "timestamp_ms" })
           .notNull()
           .$onUpdate(() => new Date()),
-        clubId: text("clubId").notNull(),
-        userId: text("userId").notNull(),
+        clubId: text().notNull(),
+        userId: text().notNull(),
       },
       (table) => ({
         clubId: index("ClubToUser_clubId").on(table.clubId),
