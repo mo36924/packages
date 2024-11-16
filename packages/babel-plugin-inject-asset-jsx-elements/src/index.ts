@@ -6,6 +6,10 @@ import { Manifest } from "vite";
 
 export type Options = Manifest;
 
+const compareBooleans = (a: boolean = false, b: boolean = false) => (a === b ? 0 : a ? -1 : 1);
+
+const isCss = (path: string) => path.endsWith(".css");
+
 const jsxElement = (tag: string, attrs: Record<string, string> = {}) =>
   t.jsxElement(
     t.jsxOpeningElement(
@@ -37,32 +41,14 @@ export default declare((_, manifest: Options) => {
             .filter(({ isEntry, src }) => isEntry || src === file)
             .flatMap((chunk) => [chunk, ...(chunk.imports ?? []).map((src) => manifest[src])])
             .filter((chunk, i, self) => self.indexOf(chunk) === i)
-            .sort((a, b) => {
-              const aIsCss = a.file.endsWith(".css");
-              const bIsCss = b.file.endsWith(".css");
-
-              if (aIsCss && !bIsCss) {
-                return -1;
-              } else if (!aIsCss && bIsCss) {
-                return 1;
-              }
-
-              if (a.isEntry && !b.isEntry) {
-                return -1;
-              } else if (!a.isEntry && b.isEntry) {
-                return 1;
-              }
-
-              if (a.isDynamicEntry && !b.isDynamicEntry) {
-                return -1;
-              } else if (!a.isDynamicEntry && b.isDynamicEntry) {
-                return 1;
-              }
-
-              return 0;
-            })
+            .sort(
+              (a, b) =>
+                compareBooleans(isCss(a.file), isCss(b.file)) ||
+                compareBooleans(a.isEntry, b.isEntry) ||
+                compareBooleans(a.isDynamicEntry, b.isDynamicEntry),
+            )
             .map(({ file }) =>
-              file.endsWith(".css")
+              isCss(file)
                 ? jsxElement("link", { rel: "stylesheet", href: `/${file}` })
                 : jsxElement("script", { type: "module", src: `/${file}` }),
             ),

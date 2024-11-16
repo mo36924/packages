@@ -1,12 +1,13 @@
 import { relative } from "node:path";
-import babel, { PluginObj } from "@babel/core";
+import { types as t } from "@babel/core";
+import { declare } from "@babel/helper-plugin-utils";
 import { pascalCase } from "@mo36924/change-case";
 
 export type Options = {
   rootDir?: string;
 };
 
-export default ({ types: t }: typeof babel, { rootDir = "src/components" }: Options): PluginObj => {
+export default declare<Options>((_api, { rootDir = "src/components" }) => {
   return {
     name: "babel-plugin-jsx-display-name",
     visitor: {
@@ -47,10 +48,8 @@ export default ({ types: t }: typeof babel, { rootDir = "src/components" }: Opti
             displayName += "$";
           }
 
-          const identifier = t.identifier(displayName);
-          declaration.id = identifier;
-
-          path.insertAfter(
+          path.replaceWithMultiple([
+            t.exportDefaultDeclaration({ ...declaration, id: t.identifier(displayName) }),
             t.expressionStatement(
               t.assignmentExpression(
                 "??=",
@@ -58,11 +57,9 @@ export default ({ types: t }: typeof babel, { rootDir = "src/components" }: Opti
                 t.stringLiteral(displayName),
               ),
             ),
-          );
-
-          scope.registerDeclaration(path);
+          ]);
         }
       },
     },
   };
-};
+});
