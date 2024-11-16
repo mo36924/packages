@@ -13,7 +13,7 @@ export const parse = (text: string) =>
       return value;
     }
 
-    if (value[value.length - 1] === "Z") {
+    if (value.at(-1) === "Z") {
       return new Date(value);
     }
 
