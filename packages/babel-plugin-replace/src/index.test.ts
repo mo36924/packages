@@ -14,11 +14,24 @@ it("babel-plugin-replace", () => {
     if(import.meta.env.PROD){
       console.log("import.meta.env.PROD")
     }
+    if(process.env.NODE_ENV){
+      console.log("process.env.NODE_ENV")
+    }
   `;
 
   const result = transformSync(code, {
     parserOpts: { plugins: ["jsx"] },
-    plugins: [[plugin, { __DEV__: true, __PROD__: true, "import.meta.env.PROD": true } satisfies Options]],
+    plugins: [
+      [
+        plugin,
+        {
+          __DEV__: true,
+          __PROD__: true,
+          "import.meta.env.PROD": true,
+          "process.env.NODE_ENV": JSON.stringify("production"),
+        } satisfies Options,
+      ],
+    ],
   });
 
   expect(result).toMatchInlineSnapshot(`
@@ -31,6 +44,9 @@ it("babel-plugin-replace", () => {
     }
     if (true) {
       console.log("import.meta.env.PROD");
+    }
+    if ("production") {
+      console.log("process.env.NODE_ENV");
     }
   `);
 });
