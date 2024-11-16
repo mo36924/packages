@@ -56,6 +56,7 @@
     "@types/validate-npm-package-name": "^4.0.2",
     "@volar/typescript": "^2.4.10",
     "babel-dead-code-elimination": "^1.0.6",
+    "babel-plugin-minify-dead-code-elimination": "^0.5.2",
     "base-x": "^5.0.0",
     "cosmiconfig": "^9.0.0",
     "del-cli": "^6.0.0",
