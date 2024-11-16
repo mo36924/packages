@@ -13,17 +13,18 @@ import { Manifest } from "vite";
 export type Options = {
   development?: boolean;
   server?: boolean;
+  serverFunctionIds?: string[];
   manifest?: Manifest;
   schema?: GraphQLSchema;
 };
 
 export default (
   _: any = {},
-  { development, server, manifest = {}, schema }: Options = {},
+  { serverFunctionIds, development = !!serverFunctionIds, server, manifest = {}, schema }: Options = {},
 ): Pick<TransformOptions, "plugins"> => {
   return {
     plugins: [
-      [serverFunction, { development, server } satisfies ServerFunctionOptions],
+      [serverFunction, { server, serverFunctionIds } satisfies ServerFunctionOptions],
       [injectAssetJsxElements, manifest satisfies InjectAssetJsxElementsOptions],
       [
         replaceJsxElements,
