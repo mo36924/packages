@@ -42,10 +42,12 @@
   ],
   "dependencies": {
     "@babel/core": "^7.26.0",
+    "@mo36924/babel-plugin-dead-code-elimination": "^5.2.3",
     "@mo36924/babel-plugin-flatten-nested-fragments": "^5.1.14",
     "@mo36924/babel-plugin-graphql-tagged-template": "^5.1.14",
     "@mo36924/babel-plugin-inject-asset-jsx-elements": "^5.2.1",
     "@mo36924/babel-plugin-jsx-display-name": "^5.2.1",
+    "@mo36924/babel-plugin-replace": "^5.2.2",
     "@mo36924/babel-plugin-replace-jsx-elements": "^5.1.14",
     "@mo36924/babel-plugin-server-function": "^5.2.0",
     "@types/babel__core": "^7.20.5",
