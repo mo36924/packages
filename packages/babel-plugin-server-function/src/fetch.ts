@@ -1,7 +1,11 @@
 import { stringify } from "@mo36924/json";
+import { BASE_PATHNAME } from "./constants";
+import { hexToText } from "./utils";
 
-const basePath = "/server/";
-const basePathLength = basePath.length;
+// __SERVER_FUNCTIONS__ is set to a value by Babel
+const __SERVER_FUNCTIONS__: { [id: string]: (...args: any[]) => Promise<any> } | undefined = undefined as any;
+
+const basePathLength = BASE_PATHNAME.length;
 
 const createResponse = (data = null) =>
   new Response(stringify(data), {
@@ -13,32 +17,29 @@ const createResponse = (data = null) =>
 const fetchRequestHandler = (request: Request) => {
   const url = request.url;
 
-  if (!url.includes(basePath)) {
+  if (!url.includes(BASE_PATHNAME)) {
     return;
   }
 
   const pathname = new URL(url).pathname;
 
-  if (!pathname.startsWith(basePath)) {
+  if (!pathname.startsWith(BASE_PATHNAME)) {
     return;
   }
 
   const id = pathname.slice(basePathLength);
 
-  // eslint-disable-next-line node/prefer-global/process
-  if (process.env.NODE_ENV !== "production") {
+  if (!__SERVER_FUNCTIONS__) {
     const [_, hexFilepath] = id.split("_");
 
-    // eslint-disable-next-line node/prefer-global/buffer
-    const response = Promise.all([import(Buffer.from(hexFilepath, "hex").toString()), request.json()])
-      .then(([mod, data]) => mod[id](...data))
+    const response = Promise.all([import(hexToText(hexFilepath)), request.json()])
+      .then(([mod, args]) => mod[id](...args))
       .then(createResponse);
 
     return response;
   }
 
-  // @ts-expect-error serverFunction is translated by babel
-  const serverFunction = (serverFunctions as { [id: string]: (...args: any[]) => Promise<any> })[id];
+  const serverFunction = __SERVER_FUNCTIONS__[id];
 
   if (!serverFunction) {
     return;

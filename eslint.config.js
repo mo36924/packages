@@ -13,6 +13,7 @@ export default antfu({
     "ts/consistent-type-definitions": ["error", "type"],
     "ts/consistent-type-imports": ["error", { prefer: "no-type-imports" }],
     "ts/no-use-before-define": "off",
+    "unicorn/prefer-number-properties": "off",
     "style/padding-line-between-statements": [
       "error",
       {
