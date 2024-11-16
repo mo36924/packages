@@ -53,8 +53,8 @@
     "dist"
   ],
   "dependencies": {
-    "@babel/core": "^7.25.2",
-    "@babel/helper-plugin-utils": "^7.24.8",
+    "@babel/core": "^7.26.0",
+    "@babel/helper-plugin-utils": "^7.25.9",
     "@mo36924/json": "^5.1.11",
     "@types/babel__core": "^7.20.5",
     "@types/babel__helper-plugin-utils": "^7.10.3",

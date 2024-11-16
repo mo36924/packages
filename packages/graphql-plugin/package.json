@@ -44,7 +44,7 @@
     "@mo36924/graphql": "^5.1.10",
     "graphql": "^16.9.0",
     "graphql-language-service": "^5.3.0",
-    "typescript": "^5.5.4",
+    "typescript": "^5.6.3",
     "vscode-languageserver-types": "^3.17.5"
   }
 }

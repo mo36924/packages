@@ -41,8 +41,8 @@
     "dist"
   ],
   "dependencies": {
-    "@babel/helper-plugin-utils": "^7.24.8",
-    "@babel/plugin-syntax-jsx": "^7.24.7",
+    "@babel/helper-plugin-utils": "^7.25.9",
+    "@babel/plugin-syntax-jsx": "^7.25.9",
     "@types/babel__helper-plugin-utils": "^7.10.3"
   }
 }
