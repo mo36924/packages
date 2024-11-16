@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/graphql-d1",
   "type": "module",
-  "version": "5.1.13",
+  "version": "5.1.14",
   "description": "graphql-d1",
   "author": "mo36924",
   "license": "MIT",
@@ -49,7 +49,7 @@
   "dependencies": {
     "@cloudflare/workers-types": "^4.20241112.0",
     "@mo36924/change-case": "^0.0.1",
-    "@mo36924/graphql": "^5.1.10",
+    "@mo36924/graphql": "^5.1.14",
     "graphql": "^16.9.0",
     "miniflare": "^3.20241106.0"
   }
