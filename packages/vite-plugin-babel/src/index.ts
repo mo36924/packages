@@ -1,16 +1,16 @@
-import { TransformOptions as BabelTransformOptions, transformSync } from "@babel/core";
+import { TransformOptions, transformSync } from "@babel/core";
 import { createFilter, FilterPattern, Plugin } from "vite";
 
-type TransformOptions = BabelTransformOptions | null | undefined | void;
+export type BabelOptions = TransformOptions | null | undefined | void;
 
-export type BabelOptions = {
+export type Options = {
   enforce?: "pre" | "post";
   include?: FilterPattern;
   exclude?: FilterPattern;
-  transformOptions: TransformOptions | ((options: { id: string; isBuild: boolean; ssr: boolean }) => TransformOptions);
+  options: BabelOptions | ((options: { id: string; isBuild: boolean; ssr: boolean }) => BabelOptions);
 };
 
-export const babel = ({ enforce, include, exclude, transformOptions }: BabelOptions): Plugin => {
+export default ({ enforce, include, exclude, options }: Options): Plugin => {
   const filter = createFilter(include, exclude);
   let isBuild = false;
   return {
@@ -24,10 +24,9 @@ export const babel = ({ enforce, include, exclude, transformOptions }: BabelOpti
         return;
       }
 
-      const _transformOptions =
-        typeof transformOptions === "function" ? transformOptions({ id, isBuild, ssr }) : transformOptions;
+      const _options = typeof options === "function" ? options({ id, isBuild, ssr }) : options;
 
-      if (!_transformOptions) {
+      if (!_options) {
         return;
       }
 
@@ -40,7 +39,7 @@ export const babel = ({ enforce, include, exclude, transformOptions }: BabelOpti
         parserOpts: {
           plugins: /\.[cm]?tsx?$/.test(id) ? ["typescript"] : /\.[cm]?jsx$/.test(id) ? ["jsx"] : undefined,
         },
-        ..._transformOptions,
+        ..._options,
       }) as any;
     },
   };
