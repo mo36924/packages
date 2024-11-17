@@ -1,7 +1,11 @@
 import devServer from "@hono/vite-dev-server";
-import { build, Plugin } from "vite";
+import { build, Manifest, Plugin } from "vite";
 
-export default ({ input, assets }: { input: string; assets: string[] }): Plugin[] => {
+const manifestPath = "manifest.json";
+
+export const manifest: Manifest = ((globalThis as any).__VITE_PLUGIN_SSR_MANIFEST__ ??= Object.create(null));
+
+export const ssr = ({ input, assets }: { input: string; assets: string[] }): Plugin[] => {
   let isSsrBuild = false;
   return [
     {
@@ -10,6 +14,7 @@ export default ({ input, assets }: { input: string; assets: string[] }): Plugin[
         isSsrBuild = !!env.isSsrBuild;
         return {
           build: {
+            manifest: !isSsrBuild && manifestPath,
             target: isSsrBuild ? "node20" : "modules",
             emptyOutDir: !isSsrBuild,
             minify: true,
@@ -25,6 +30,21 @@ export default ({ input, assets }: { input: string; assets: string[] }): Plugin[
           ssr: isSsrBuild ? { noExternal: true } : undefined,
         };
       },
+      generateBundle: isSsrBuild
+        ? undefined
+        : {
+            order: "post",
+            handler(_options, bundle) {
+              const output = bundle[manifestPath];
+
+              if (output.type !== "asset") {
+                return;
+              }
+
+              Object.assign(manifest, JSON.parse(`${output.source}`));
+              delete bundle[manifestPath];
+            },
+          },
       async writeBundle() {
         if (!isSsrBuild) {
           await build({ build: { ssr: true } });
