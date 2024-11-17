@@ -6,6 +6,6 @@ const { resolveConfig, format } = prettier;
 const config = { ...resolveConfig("index.tsx"), plugins: [], filepath: "index.tsx" };
 
 export default {
-  test: (value) => typeof value?.code === "string" && "ast" in value && "map" in value && "metadata" in value,
+  test: (value) => typeof value?.code === "string" && "map" in value,
   serialize: (value) => format(value.code, config),
 } satisfies SnapshotSerializer;
