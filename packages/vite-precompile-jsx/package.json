@@ -41,7 +41,7 @@
     "dist"
   ],
   "dependencies": {
-    "@mo36924/precompile-jsx": "^0.0.3",
+    "@mo36924/precompile-jsx": "^0.0.4",
     "vite": "^5.4.11"
   }
 }

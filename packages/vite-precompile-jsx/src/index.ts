@@ -7,9 +7,8 @@ export default (options: Options = {}): Plugin => {
   return {
     name: "vite-precompile-jsx",
     enforce: "pre",
-    apply: (config) => !!config.build?.ssr,
-    transform(code, id) {
-      if (/\.[cm]?[tj]sx$/.test(id)) {
+    transform(code, id, { ssr } = {}) {
+      if (ssr && /\.[cm]?[tj]sx$/.test(id)) {
         return precompileJsx({ ...options, code, path: id });
       }
     },
