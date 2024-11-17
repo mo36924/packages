@@ -5,7 +5,7 @@ export type Options = Pick<PrecompileJsxOptions, "jsxImportSource">;
 
 export default (options: Options = {}): Plugin => {
   return {
-    name: "vite-precompile-jsx",
+    name: "vite-plugin-precompile-jsx",
     enforce: "pre",
     transform(code, id, { ssr } = {}) {
       if (ssr && /\.[cm]?[tj]sx$/.test(id)) {
