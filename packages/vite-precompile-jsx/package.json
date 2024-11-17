@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/vite-precompile-jsx",
   "type": "module",
-  "version": "5.1.14",
+  "version": "5.3.6",
   "description": "vite-precompile-jsx",
   "author": "mo36924",
   "license": "MIT",
