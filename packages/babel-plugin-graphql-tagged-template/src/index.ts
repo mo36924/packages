@@ -3,11 +3,11 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PluginObj, types as t } from "@babel/core";
 import { declare } from "@babel/helper-plugin-utils";
-import basex from "base-x";
 import {
   DocumentNode,
   GraphQLInputType,
   GraphQLSchema,
+  OperationTypeNode,
   parse,
   stripIgnoredCharacters,
   TypeInfo,
@@ -15,20 +15,19 @@ import {
   visit,
   visitWithTypeInfo,
 } from "graphql";
+import { queries as _queries, Queries } from "./queries";
 
 export type Options = {
   schema: GraphQLSchema;
   development?: boolean;
-  queries?: string[];
+  queries?: Queries;
 };
 
-const queriesCache: string[] = [];
 const queriesDir = dirname(fileURLToPath(import.meta.url));
 const queriesPaths = ["js", "cjs", "ts"].map((extname) => join(queriesDir, `queries.${extname}`));
-const base52 = basex("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz");
-const hash = (data: string) => base52.encode(createHash("sha256").update(data).digest());
+const hash = (data: string) => createHash("sha256").update(data).digest("base64url");
 
-export default declare<Options>((_, { schema, development, queries = queriesCache }): PluginObj => {
+export default declare<Options>((_api, { schema, development, queries = _queries }): PluginObj => {
   return {
     name: "babel-plugin-graphql-tagged-template",
     visitor: {
@@ -36,32 +35,29 @@ export default declare<Options>((_, { schema, development, queries = queriesCach
         ? {}
         : {
             VariableDeclarator(path, { filename = "" }) {
-              if (
-                !(
-                  queriesPaths.includes(filename) &&
-                  path.get("id").isIdentifier({ name: "queries" }) &&
-                  path.get("init").isObjectExpression()
-                )
-              ) {
+              if (!(queriesPaths.includes(filename) && path.get("id").isIdentifier({ name: "queries" }))) {
                 return;
               }
 
-              path
-                .get("init")
-                .replaceWith(
+              path.get("init").replaceWith(
+                t.callExpression(t.memberExpression(t.identifier("Object"), t.identifier("assign")), [
+                  t.callExpression(t.memberExpression(t.identifier("Object"), t.identifier("create")), [
+                    t.nullLiteral(),
+                  ]),
                   t.objectExpression(
-                    queries
-                      .sort()
-                      .map((query) =>
+                    Object.entries(queries)
+                      .sort(([a], [b]) => a.localeCompare(b))
+                      .map(([key, documentNode]) =>
                         t.objectProperty(
-                          t.identifier(hash(query)),
+                          t.stringLiteral(key),
                           t.callExpression(t.memberExpression(t.identifier("JSON"), t.identifier("parse")), [
-                            t.stringLiteral(JSON.stringify(parse(query, { noLocation: true }))),
+                            t.stringLiteral(JSON.stringify(documentNode)),
                           ]),
                         ),
                       ),
                   ),
-                );
+                ]),
+              );
             },
           }),
       TaggedTemplateExpression(path) {
@@ -115,16 +111,13 @@ export default declare<Options>((_, { schema, development, queries = queriesCach
           throw path.buildCodeFrameError("Only a field is allowed");
         }
 
-        const isMutation = !!schema.getMutationType()?.getFields()[field.name.value];
-        const operation = isMutation ? "mutation" : "query";
-        // @ts-expect-error ignore readonly
-        definition.operation = operation;
-
         const values: GraphQLInputType[] = [];
         const typeInfo = new TypeInfo(schema);
+        const isMutation = !!schema.getMutationType()?.getFields()[field.name.value];
+        const operation = isMutation ? OperationTypeNode.MUTATION : OperationTypeNode.QUERY;
 
         visit(
-          definition,
+          { ...definition, operation },
           visitWithTypeInfo(typeInfo, {
             Variable() {
               values.push(typeInfo.getInputType()!);
@@ -153,13 +146,10 @@ export default declare<Options>((_, { schema, development, queries = queriesCach
 
         query = stripIgnoredCharacters(query);
 
-        if (!development && !queries.includes(query)) {
-          queries.push(query);
-        }
+        const key = hash(query);
+        queries[key] = documentNode;
 
-        const id = development ? query : hash(query);
-
-        const properties: t.ObjectProperty[] = [t.objectProperty(t.identifier("query"), t.stringLiteral(id))];
+        const properties: t.ObjectProperty[] = [t.objectProperty(t.identifier("query"), t.stringLiteral(key))];
 
         if (expressions.length) {
           properties.push(
