@@ -1,5 +1,5 @@
 import devServer from "@hono/vite-dev-server";
-import { build, Manifest, Plugin } from "vite";
+import { build, Manifest, ManifestChunk, Plugin } from "vite";
 
 const manifestPath = "manifest.json";
 
@@ -12,6 +12,17 @@ export const ssr = ({ input, assets }: { input: string; assets: string[] }): Plu
       name: "vite-plugin-ssr",
       config: (_config, env) => {
         isSsrBuild = !!env.isSsrBuild;
+
+        if (!isSsrBuild) {
+          Object.assign(
+            manifest,
+            assets.map((file) => {
+              const normalizedPath = file.replace(/^\.\//, "");
+              return [normalizedPath, { file: normalizedPath, isEntry: true } satisfies ManifestChunk];
+            }),
+          );
+        }
+
         return {
           build: {
             manifest: !isSsrBuild && manifestPath,
