@@ -1,10 +1,10 @@
 import { parse, stringify } from "@mo36924/json";
-import { BASE_PATHNAME } from "./constants";
+import { basePathname } from "./constants";
 
 export type Client = (id: string, ...args: any[]) => Promise<any>;
 
 const client: Client = (id: string, ...args: any[]) =>
-  fetch(BASE_PATHNAME + id, {
+  fetch(basePathname + id, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -1,1 +1,3 @@
-export const BASE_PATHNAME = "/server";
+export const basePathname = "/server/";
+
+export const basePathnameLength = 8;
