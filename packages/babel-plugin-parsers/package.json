@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/babel-plugin-parsers",
   "type": "module",
-  "version": "5.3.11",
+  "version": "5.3.12",
   "description": "babel-plugin-parsers",
   "author": "mo36924",
   "license": "MIT",
