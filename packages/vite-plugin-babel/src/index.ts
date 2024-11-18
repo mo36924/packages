@@ -37,7 +37,15 @@ export default ({ enforce, include, exclude, options }: Options): Plugin => {
         sourceMaps: true,
         filename: id,
         parserOpts: {
-          plugins: /\.[cm]?tsx?$/.test(id) ? ["jsx", "typescript"] : /\.[cm]?jsx$/.test(id) ? ["jsx"] : undefined,
+          plugins: /\.[cm]?tsx$/.test(id)
+            ? ["jsx", "typescript"]
+            : /\.[cm]?jsx$/.test(id)
+              ? ["jsx"]
+              : /\.d\.[cm]?ts$/.test(id)
+                ? [["typescript", { dts: true }]]
+                : /\.[cm]?ts$/.test(id)
+                  ? ["typescript"]
+                  : [],
         },
         ..._options,
       }) as any;
