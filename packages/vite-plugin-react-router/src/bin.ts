@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { ConfigEnv, loadConfigFromFile, Plugin } from "vite";
 import { name } from "./name";
 
