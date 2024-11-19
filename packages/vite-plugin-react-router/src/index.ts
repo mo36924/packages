@@ -1,10 +1,11 @@
 import { FSWatcher, watch, writeFileSync } from "node:fs";
 import { basename, dirname, relative, resolve } from "node:path";
-import { pascalCase } from "change-case";
+import { pascalCase } from "@mo36924/change-case";
 import glob from "fast-glob";
 import MagicString from "magic-string";
 import pluralize from "pluralize";
 import { Plugin } from "vite";
+import { name } from "./name";
 
 export type GenerateOptions = {
   include?: string[];
@@ -163,7 +164,7 @@ export default (options?: GenerateOptions): Plugin => {
   const routesPath = resolve(generateOptions.routesPath);
   const _globalThis: { watcher?: FSWatcher } = globalThis as any;
   return {
-    name: "vite-plugin-react-router",
+    name,
     async config(_config, { isSsrBuild }) {
       if (!isSsrBuild) {
         await _generateRoutesFile();

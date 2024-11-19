@@ -21,14 +21,17 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
+    },
+    "./bin": {
+      "types": "./dist/bin.d.ts",
+      "import": "./dist/bin.js",
+      "require": "./dist/bin.cjs",
+      "default": "./dist/bin.js"
     }
   },
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "publishConfig": {
-    "access": "public"
-  },
   "typesVersions": {
     "*": {
       "*": [
@@ -37,12 +40,16 @@
       ]
     }
   },
+  "bin": "./dist/bin.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist"
   ],
   "dependencies": {
+    "@mo36924/change-case": "^0.0.1",
     "@types/pluralize": "^0.0.33",
-    "change-case": "^5.4.4",
     "fast-glob": "^3.3.2",
     "magic-string": "^0.30.13",
     "pluralize": "^8.0.0",

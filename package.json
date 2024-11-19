@@ -58,7 +58,6 @@
     "babel-dead-code-elimination": "^1.0.6",
     "babel-plugin-minify-dead-code-elimination": "^0.5.2",
     "base-x": "^5.0.0",
-    "change-case": "^5.4.4",
     "cosmiconfig": "^9.0.0",
     "del-cli": "^6.0.0",
     "depcheck": "^1.4.7",
