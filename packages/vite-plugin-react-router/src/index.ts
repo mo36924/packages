@@ -40,7 +40,7 @@ export const generateRoutesCode = async (options?: GenerateOptions) => {
   const { include, exclude, routesDir, importPrefix } = generateOptions;
   const paths = await glob(include, { cwd: routesDir, ignore: exclude });
   const routesDirName = basename(routesDir);
-  const namePrefix = pluralize.singular(routesDirName);
+  const namePrefix = pascalCase(pluralize.singular(routesDirName));
 
   const routes = paths.sort().map((path: string) => {
     const trimmedExtnamePath = path.replace(/\.\w+$/, "");
@@ -147,7 +147,7 @@ export const generateRoutesCode = async (options?: GenerateOptions) => {
 export const generateRoutesFile = async (options?: GenerateOptions) => {
   const generateOptions = getGenerateOptions(options);
   const { routesPath } = generateOptions;
-  let code = await generateRoutesCode();
+  let code = await generateRoutesCode(generateOptions);
 
   if (generateOptions.prettier) {
     const { format, resolveConfig } = await import("prettier");
