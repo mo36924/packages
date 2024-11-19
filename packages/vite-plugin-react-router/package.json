@@ -1,0 +1,52 @@
+{
+  "name": "@mo36924/vite-plugin-react-router",
+  "type": "module",
+  "version": "5.3.15",
+  "description": "vite-plugin-react-router",
+  "author": "mo36924",
+  "license": "MIT",
+  "homepage": "https://github.com/mo36924/packages#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mo36924/packages.git",
+    "directory": "packages/vite-plugin-react-router"
+  },
+  "bugs": {
+    "url": "https://github.com/mo36924/packages/issues"
+  },
+  "keywords": [],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/*.d.ts",
+        "*"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@types/pluralize": "^0.0.33",
+    "change-case": "^5.4.4",
+    "fast-glob": "^3.3.2",
+    "magic-string": "^0.30.13",
+    "pluralize": "^8.0.0",
+    "prettier": "^3.3.3",
+    "vite": "^5.4.11"
+  }
+}

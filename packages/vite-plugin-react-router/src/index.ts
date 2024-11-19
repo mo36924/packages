@@ -1,0 +1,189 @@
+import { FSWatcher, watch, writeFileSync } from "node:fs";
+import { basename, dirname, relative, resolve } from "node:path";
+import { pascalCase } from "change-case";
+import glob from "fast-glob";
+import MagicString from "magic-string";
+import pluralize from "pluralize";
+import { Plugin } from "vite";
+
+export type GenerateOptions = {
+  include?: string[];
+  exclude?: string[];
+  importPrefix?: string;
+  routesDir?: string;
+  routesPath?: string;
+  componentsDir?: string;
+  prettier?: boolean;
+};
+
+const getGenerateOptions = ({
+  include = ["**/*.tsx"],
+  exclude = [],
+  routesDir = "src/routes",
+  routesPath = "src/lib/routes.ts",
+  componentsDir = "src/components",
+  prettier = true,
+  importPrefix = relative(dirname(routesPath), routesDir).replace(/^(?!\.)/, "./"),
+}: GenerateOptions = {}): Required<GenerateOptions> => ({
+  include,
+  exclude,
+  importPrefix,
+  routesDir,
+  routesPath,
+  componentsDir,
+  prettier,
+});
+
+export const generateRoutesCode = async (options?: GenerateOptions) => {
+  const generateOptions = getGenerateOptions(options);
+  const { include, exclude, routesDir, importPrefix } = generateOptions;
+  const paths = await glob(include, { cwd: routesDir, ignore: exclude });
+  const routesDirName = basename(routesDir);
+  const namePrefix = pluralize.singular(routesDirName);
+
+  const routes = paths.sort().map((path: string) => {
+    const trimmedExtnamePath = path.replace(/\.\w+$/, "");
+    const trimmedIndexPath = trimmedExtnamePath.replace(/(^|\/)index$/, "");
+    const pathname = `/${trimmedIndexPath}`;
+    const name = `${namePrefix}${pascalCase(trimmedExtnamePath)}`;
+    const importPath = `${importPrefix}/${trimmedExtnamePath}`;
+    const isDynamic = /\[\w+\]/.test(pathname);
+    const params: string[] = [];
+
+    const regExp = `()${trimmedIndexPath.replaceAll("/", "\\/").replace(/\[(\w+)\]/g, (_, param) => {
+      params.push(param);
+      return "([^/]+)";
+    })}`;
+
+    const type = params.length ? `{${params.map((param) => `${param}:string`).join()}}` : "Record<string, unknown>";
+
+    const rank = trimmedIndexPath
+      .split("/")
+      .map((segment) =>
+        !/\[\w+\]/.test(segment) ? 9 : /^\[\w+\]/.test(segment) ? 8 : segment.split(/\[(\w+)\]/).length,
+      )
+      .join("");
+
+    const route = `\`${pathname.replace(/\[\w+\]/g, `$\${SafeSlug<T>}`)}\``;
+
+    return { path, name, type, pathname, importPath, isDynamic, params, regExp, rank, route };
+  });
+
+  const staticRoutes = routes.filter(({ isDynamic }) => !isDynamic);
+
+  const dynamicRoutes = routes
+    .filter(({ isDynamic }) => isDynamic)
+    .sort((a, b) => (a.rank < b.rank ? 1 : a.rank > b.rank ? -1 : 0));
+
+  const code = `
+    /* eslint-disable eslint-comments/no-unlimited-disable */
+    /* eslint-disable */
+    import { FC } from "react"
+    ${routes.map(({ name, importPath }) => `import ${name} from ${JSON.stringify(importPath)}`).join("\n")}
+
+    const staticRoutes: Record<string, FC> = {${staticRoutes
+      .map(({ pathname, name }) => `${JSON.stringify(pathname)}:${name}`)
+      .join()}}
+
+    const dynamicRoutes: Array<FC<any> | string | undefined> = [,${dynamicRoutes
+      .flatMap(({ name, type, params }) => [
+        `${name} satisfies FC<${type}>`,
+        ...params.map((param) => JSON.stringify(param)),
+      ])
+      .join()}]
+
+    const dynamicRouteRegExp = /^\\/(?:${dynamicRoutes.map(({ regExp }) => regExp).join("|")})$/
+
+    export const match = (pathname: string): [FC | null] | [FC, Record<string, string>] => {
+      const StaticRoute = staticRoutes[pathname];
+
+      if (StaticRoute) {
+        return [StaticRoute];
+      }
+
+      const matches = pathname.match(dynamicRouteRegExp);
+
+      if (!matches) {
+        return [null];
+      }
+
+      const index = matches.indexOf("");
+      const DynamicRoute: FC<Record<string, string>> = dynamicRoutes[index] as any;
+      const params: Record<string, string> = {};
+
+      for (let i = index + 1; matches[i] !== undefined; i++) {
+        params[(dynamicRoutes as any)[i]] = matches[i];
+      }
+
+      return [DynamicRoute, params];
+    };
+
+    type SearchOrHash = \`?\${string}\` | \`#\${string}\`;
+
+    type Suffix = "" | SearchOrHash;
+
+    type SafeSlug<S extends string> = S extends \`\${string}/\${string}\`
+      ? never
+      : S extends \`\${string}\${SearchOrHash}\`
+        ? never
+        : S extends ""
+          ? never
+          : S;
+
+    type StaticRoutes = ${staticRoutes.map(({ pathname }) => `"${pathname}"`).join("|") || "never"};
+
+    type DynamicRoutes<T extends string = string> = ${dynamicRoutes.map(({ route }) => `${route}`).join("|") || "never"};
+
+    export type Route<T> =
+      | StaticRoutes
+      | \`\${StaticRoutes}\${SearchOrHash}\`
+      | (T extends \`\${DynamicRoutes<infer _>}\${Suffix}\` ? T : never);
+  `;
+
+  return code;
+};
+
+export const generateRoutesFile = async (options?: GenerateOptions) => {
+  const generateOptions = getGenerateOptions(options);
+  const { routesPath } = generateOptions;
+  let code = await generateRoutesCode();
+
+  if (generateOptions.prettier) {
+    const { format, resolveConfig } = await import("prettier");
+    const config = await resolveConfig(routesPath);
+    code = await format(code, { ...config, filepath: routesPath });
+  }
+
+  writeFileSync(routesPath, code);
+};
+
+export default (options?: GenerateOptions): Plugin => {
+  const generateOptions = getGenerateOptions(options);
+  const _generateRoutesFile = generateRoutesFile.bind(null, generateOptions);
+  const routesPath = resolve(generateOptions.routesPath);
+  const _globalThis: { watcher?: FSWatcher } = globalThis as any;
+  return {
+    name: "vite-plugin-react-router",
+    async config(_config, { isSsrBuild }) {
+      if (!isSsrBuild) {
+        await _generateRoutesFile();
+      }
+    },
+    async configResolved({ command }) {
+      if (command !== "build") {
+        _globalThis.watcher?.close();
+        _globalThis.watcher = watch(generateOptions.routesDir, _generateRoutesFile);
+      }
+    },
+    transform(code, id) {
+      if (id !== routesPath) {
+        return;
+      }
+
+      const s = new MagicString(code);
+      s.prepend("import { lazy } from 'react'\n");
+      s.replaceAll(/import (.+?) from (['"].+?['"])/g, (_, p1, p2) => `const ${p1} = lazy(() => import(${p2}))`);
+      return { code: s.toString(), map: s.generateMap({ hires: true }) };
+    },
+  };
+};
