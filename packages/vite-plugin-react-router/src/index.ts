@@ -176,8 +176,8 @@ export default (options?: GenerateOptions): Plugin => {
         _globalThis.watcher = watch(generateOptions.routesDir, _generateRoutesFile);
       }
     },
-    transform(code, id) {
-      if (id !== routesPath) {
+    transform(code, id, { ssr } = {}) {
+      if (id !== routesPath || ssr) {
         return;
       }
 
