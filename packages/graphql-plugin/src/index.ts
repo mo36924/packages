@@ -1,4 +1,4 @@
-import { getConfig } from "@mo36924/graphql";
+import { getSchema } from "@mo36924/graphql";
 import { GraphQLError } from "graphql";
 import {
   CompletionItemKind,
@@ -89,10 +89,10 @@ const init: ts.server.PluginModuleFactory = ({ typescript: ts }) => {
 
   return {
     create(info) {
-      const { path, schema } = getConfig(info.project.getCurrentDirectory());
+      const { schema } = getSchema(info.project.getCurrentDirectory());
       const languageService = info.languageService;
 
-      if (!path) {
+      if (!schema) {
         return languageService;
       }
 

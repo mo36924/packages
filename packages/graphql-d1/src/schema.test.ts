@@ -1,7 +1,7 @@
-import { schema } from "@mo36924/graphql/schema.gql";
 import { expect, it } from "vitest";
 import { exec } from "./db";
 import { buildSchema as buildSQLiteSchema } from "./schema";
+import { schema } from "./test";
 
 it("buildSchema", async () => {
   const ddl = buildSQLiteSchema(schema);

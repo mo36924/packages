@@ -2,7 +2,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parse } from "graphql";
 import { Plugin } from "vite";
-import { getConfig } from "./config";
+import { getSchema } from "./config";
 
 const schemaDir = dirname(fileURLToPath(import.meta.url));
 const schemaPaths = ["js", "cjs", "ts"].map((extname) => join(schemaDir, `schema.gql.${extname}`));
@@ -16,7 +16,7 @@ export default ({ searchFrom }: Options = {}): Plugin => {
     name: "vite-graphql",
     load(id) {
       if (schemaPaths.includes(id)) {
-        const { source } = getConfig(searchFrom);
+        const { source } = getSchema(searchFrom);
 
         if (!source) {
           return;

@@ -2,10 +2,8 @@ import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { cwd } from "node:process";
 import { cosmiconfigSync, getDefaultSearchPlaces } from "cosmiconfig";
-import glob from "fast-glob";
-import { buildSchema } from "graphql";
 import { require } from "tsx/cjs/api";
-import { build, Result } from "./schema";
+import { build } from "./schema";
 
 const moduleName = "graphql";
 
@@ -25,8 +23,6 @@ const explorerSync = cosmiconfigSync(moduleName, {
   },
 });
 
-const defaultSchema = buildSchema("scalar _");
-
 export type Config = {
   schema?: string;
   dts?: string;
@@ -35,32 +31,18 @@ export type Config = {
 
 export const getConfig = (searchFrom: string = cwd()) => {
   const result = explorerSync.search(searchFrom);
-  const config: Config = result?.config ?? {};
-  const dir = result?.filepath ? dirname(result.filepath) : searchFrom;
+  const baseDir = result?.filepath ? dirname(result.filepath) : searchFrom;
+  const { schema, dts, drizzle }: Config = { ...result?.config };
+  return {
+    schema: schema && resolve(baseDir, schema),
+    dts: dts && resolve(baseDir, dts),
+    drizzle: drizzle && resolve(baseDir, drizzle),
+  };
+};
 
-  let path: string | undefined;
-  let dts = "graphql.d.ts";
-  let drizzle: string | undefined;
-  let buildResult: Result | undefined;
-
-  try {
-    if (config.schema) {
-      path = resolve(dir, config.schema);
-    } else {
-      path = glob.globSync("**/schema.gql", { absolute: true, cwd: dir, ignore: ["**/node_modules/**"] }).sort()[0];
-    }
-
-    if (config.dts) {
-      dts = resolve(dir, config.dts);
-    }
-
-    if (config.drizzle) {
-      drizzle = resolve(dir, config.drizzle);
-    }
-
-    const model = readFileSync(path, "utf-8");
-    buildResult = build(model);
-  } catch {}
-
-  return { path, dts, drizzle, schema: defaultSchema, ...buildResult };
+export const getSchema = (searchFrom?: string) => {
+  const config = getConfig(searchFrom);
+  const model = config.schema && readFileSync(config.schema, "utf-8");
+  const result = model && build(model);
+  return { config, ...result };
 };

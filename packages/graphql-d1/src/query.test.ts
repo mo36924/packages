@@ -1,4 +1,3 @@
-import { schema } from "@mo36924/graphql/schema.gql";
 import { parse as jsonParse } from "@mo36924/json";
 import { parse } from "graphql";
 import { buildExecutionContext } from "graphql/execution/execute";
@@ -7,6 +6,7 @@ import { buildData } from "./data";
 import { connect } from "./db";
 import { buildQuery } from "./query";
 import { buildSchema as buildSQLiteSchema } from "./schema";
+import { schema } from "./test";
 
 it("query", async () => {
   const ddl = buildSQLiteSchema(schema);

@@ -1,9 +1,8 @@
 /// <reference types="@volar/typescript" />
 
-import { writeFileSync } from "node:fs";
-import { buildDeclaration, getConfig, getGqlTypeArguments } from "@mo36924/graphql";
-import { buildDrizzleSchema } from "@mo36924/graphql-d1";
+import { getGqlTypeArguments, getSchema } from "@mo36924/graphql";
 import { CodeInformation, CodeMapping, LanguagePlugin, VirtualCode } from "@volar/language-core";
+import { buildSchema } from "graphql";
 import ts from "typescript";
 
 const tag = "gql";
@@ -24,21 +23,8 @@ const getCodeMappings = (text: string): CodeMapping[] => [
 ];
 
 export const getLanguagePlugin = (cwd?: string) => {
-  const { path, model, schema, dts, drizzle } = getConfig(cwd);
-
-  if (path) {
-    const declaration = buildDeclaration(dts, schema);
-    writeFileSync(dts, declaration);
-
-    if (model) {
-      writeFileSync(path, model);
-    }
-
-    if (drizzle) {
-      const drizzleSchema = buildDrizzleSchema(drizzle, schema);
-      writeFileSync(drizzle, drizzleSchema);
-    }
-  }
+  let { schema } = getSchema(cwd);
+  schema ??= buildSchema("scalar _");
 
   const transform = (sourceFile: ts.SourceFile): { snapshot: ts.IScriptSnapshot; mappings: CodeMapping[] } => {
     const code = sourceFile.text;

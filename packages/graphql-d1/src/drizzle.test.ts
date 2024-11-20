@@ -1,6 +1,6 @@
-import { schema } from "@mo36924/graphql/schema.gql";
 import { expect, it } from "vitest";
 import { buildDrizzleSchema } from "./drizzle";
+import { schema } from "./test";
 
 it("buildDrizzleSchema", async () => {
   const drizzleSchema = buildDrizzleSchema("schema.ts", schema);
