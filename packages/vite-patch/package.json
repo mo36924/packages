@@ -1,0 +1,50 @@
+{
+  "name": "@mo36924/vite-patch",
+  "type": "module",
+  "version": "5.3.20",
+  "description": "vite-patch",
+  "author": "mo36924",
+  "license": "MIT",
+  "homepage": "https://github.com/mo36924/packages#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mo36924/packages.git",
+    "directory": "packages/vite-patch"
+  },
+  "bugs": {
+    "url": "https://github.com/mo36924/packages/issues"
+  },
+  "keywords": [],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    },
+    "./bin": {
+      "types": "./dist/bin.d.ts",
+      "import": "./dist/bin.js",
+      "require": "./dist/bin.cjs",
+      "default": "./dist/bin.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/*.d.ts",
+        "*"
+      ]
+    }
+  },
+  "bin": "./dist/bin.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ]
+}
