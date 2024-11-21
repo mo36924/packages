@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/babel-preset-jsx",
   "type": "module",
-  "version": "5.4.4",
+  "version": "5.4.5",
   "description": "babel-preset-jsx",
   "author": "mo36924",
   "license": "MIT",
