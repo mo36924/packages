@@ -1,3 +1,4 @@
+import { env } from "node:process";
 import { TransformOptions } from "@babel/core";
 import deadCodeElimination from "@mo36924/babel-plugin-dead-code-elimination";
 import flattenNestedFragments from "@mo36924/babel-plugin-flatten-nested-fragments";
@@ -21,7 +22,7 @@ export type Options = {
 
 export default (
   _: any = {},
-  { development, server, manifest = {}, schema }: Options = {},
+  { development = env.NODE_ENV === "development", server, manifest = {}, schema }: Options = {},
 ): Pick<TransformOptions, "plugins"> => {
   return {
     plugins: [
