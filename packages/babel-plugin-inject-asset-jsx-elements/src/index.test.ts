@@ -21,7 +21,7 @@ it("babel-plugin-inject-asset-jsx-elements", () => {
     "src/client/index.tsx": { file: "assets/index.js", isEntry: true },
   };
 
-  const result = transformSync(code, { plugins: [[plugin, manifest satisfies Options]] });
+  const result = transformSync(code, { plugins: [[plugin, { manifest } satisfies Options]] });
 
   expect(result).toMatchInlineSnapshot(`
     <html>

@@ -7,6 +7,7 @@
     "module": "es2022",
     "moduleResolution": "bundler",
     "paths": {
+      "@mo36924/babel-plugin-graphql-tagged-template/*": ["packages/babel-plugin-graphql-tagged-template/src/*"],
       "@mo36924/graphql/*": ["packages/graphql/src/*"],
       "@mo36924/graphql-plugin/*": ["packages/graphql-plugin/src/*"],
       "@mo36924/*": ["packages/*/src"]

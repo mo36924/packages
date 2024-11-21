@@ -2,9 +2,12 @@ import { relative } from "node:path";
 import { types as t } from "@babel/core";
 import { declare } from "@babel/helper-plugin-utils";
 import jsx from "@babel/plugin-syntax-jsx";
+import { manifest as _manifest } from "@mo36924/vite-plugin-ssr";
 import { Manifest } from "vite";
 
-export type Options = Manifest;
+export type Options = {
+  manifest?: Manifest;
+};
 
 const compareBooleans = (a: boolean = false, b: boolean = false) => (a === b ? 0 : a ? -1 : 1);
 
@@ -21,7 +24,7 @@ const jsxElement = (tag: string, attrs: Record<string, string> = {}) =>
     [],
   );
 
-export default declare((_, manifest: Options) => {
+export default declare<Options>((_, { manifest = _manifest }) => {
   return {
     name: "babel-plugin-inject-asset-jsx-elements",
     inherits: jsx.default || jsx,

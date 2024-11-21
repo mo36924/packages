@@ -44,6 +44,7 @@
     "@babel/core": "^7.26.0",
     "@babel/helper-plugin-utils": "^7.25.9",
     "@babel/plugin-syntax-jsx": "^7.25.9",
+    "@mo36924/vite-plugin-ssr": "^5.3.14",
     "@types/babel__core": "^7.20.5",
     "@types/babel__helper-plugin-utils": "^7.10.3",
     "vite": "^5.4.11"

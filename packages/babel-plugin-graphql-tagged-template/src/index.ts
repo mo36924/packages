@@ -5,7 +5,6 @@ import { fileURLToPath } from "node:url";
 import { PluginObj, types as t } from "@babel/core";
 import { declare } from "@babel/helper-plugin-utils";
 import { printSchemaWithDirectives } from "@graphql-tools/utils";
-import { getSchema } from "@mo36924/graphql";
 import {
   DocumentNode,
   GraphQLInputType,
@@ -19,6 +18,7 @@ import {
   visitWithTypeInfo,
 } from "graphql";
 import { queries as _queries, Queries } from "./queries";
+import { schema as _schema } from "./schema";
 
 export type Options = {
   development?: boolean;
@@ -32,10 +32,7 @@ const schemaPaths = ["js", "cjs", "ts"].map((extname) => join(queriesDir, `schem
 const hash = (data: string) => createHash("sha256").update(data).digest("base64url");
 
 export default declare<Options>(
-  (
-    _api,
-    { development = env.NODE_ENV === "development", schema = getSchema().schema, queries = _queries },
-  ): PluginObj => {
+  (_api, { development = env.NODE_ENV === "development", schema = _schema, queries = _queries }): PluginObj => {
     return {
       name: "babel-plugin-graphql-tagged-template",
       visitor: {

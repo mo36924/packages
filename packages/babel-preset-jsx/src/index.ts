@@ -10,7 +10,6 @@ import jsxDisplayName from "@mo36924/babel-plugin-jsx-display-name";
 import replace, { Options as ReplaceOptions } from "@mo36924/babel-plugin-replace";
 import replaceJsxElements, { Options as ReplaceJsxElementsOptions } from "@mo36924/babel-plugin-replace-jsx-elements";
 import serverFunction, { Options as ServerFunctionOptions } from "@mo36924/babel-plugin-server-function";
-import { getSchema } from "@mo36924/graphql";
 import { GraphQLSchema } from "graphql";
 import { Manifest } from "vite";
 
@@ -23,12 +22,12 @@ export type Options = {
 
 export default (
   _: any = {},
-  { development = env.NODE_ENV === "development", server, manifest = {}, schema = getSchema().schema }: Options = {},
+  { development = env.NODE_ENV === "development", server, manifest, schema }: Options = {},
 ): Pick<TransformOptions, "plugins"> => {
   return {
     plugins: [
       [serverFunction, { server, development } satisfies ServerFunctionOptions],
-      [injectAssetJsxElements, manifest satisfies InjectAssetJsxElementsOptions],
+      [injectAssetJsxElements, { manifest } satisfies InjectAssetJsxElementsOptions],
       [
         replaceJsxElements,
         server
