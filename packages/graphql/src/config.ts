@@ -27,7 +27,6 @@ export type Config = {
   schema?: string;
   dts?: string;
   drizzle?: string;
-  database?: "d1" | "postgres";
 };
 
 export const getConfig = (searchFrom: string = cwd()) => {
