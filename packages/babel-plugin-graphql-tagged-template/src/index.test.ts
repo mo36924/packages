@@ -17,10 +17,9 @@ const schema = buildSchema(`
   }
 `);
 
-const transform = (code: string, options: Options) =>
+const transform = (code: string, options?: Options) =>
   transformSync(code, {
-    filename: join(fileURLToPath(import.meta.url), "..", "queries.ts"),
-    plugins: [[plugin, options]],
+    plugins: [[plugin, { schema, ...options }]],
   });
 
 describe("babel-plugin-graphql-tagged-template", () => {
@@ -34,7 +33,7 @@ describe("babel-plugin-graphql-tagged-template", () => {
         }
       }\`
     `,
-      { schema, development: true },
+      { development: true },
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -58,7 +57,7 @@ describe("babel-plugin-graphql-tagged-template", () => {
         }
       }\`
     `,
-      { schema, development: true },
+      { development: true },
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -82,7 +81,6 @@ describe("babel-plugin-graphql-tagged-template", () => {
         }
       }\`
     `,
-      { schema },
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -106,7 +104,6 @@ describe("babel-plugin-graphql-tagged-template", () => {
         }
       }\`
     `,
-      { schema },
     );
 
     expect(result).toMatchInlineSnapshot(`
@@ -132,7 +129,7 @@ describe("babel-plugin-graphql-tagged-template", () => {
         }
       }\`
     `,
-      { schema, queries },
+      { queries },
     );
 
     expect(queries).toMatchInlineSnapshot(`
