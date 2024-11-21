@@ -21,6 +21,12 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
+    },
+    "./volar": {
+      "types": "./dist/volar.d.ts",
+      "import": "./dist/volar.js",
+      "require": "./dist/volar.cjs",
+      "default": "./dist/volar.js"
     }
   },
   "main": "./dist/index.cjs",
@@ -42,6 +48,7 @@
   ],
   "dependencies": {
     "@mo36924/graphql": "^5.4.0",
+    "@volar/typescript": "^2.4.10",
     "graphql": "^16.9.0",
     "graphql-language-service": "^5.3.0",
     "typescript": "^5.6.3",

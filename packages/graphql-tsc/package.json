@@ -1,15 +1,15 @@
 {
-  "name": "@mo36924/graphql-volar",
+  "name": "@mo36924/graphql-tsc",
   "type": "module",
-  "version": "5.4.0",
-  "description": "graphql-volar",
+  "version": "5.4.1",
+  "description": "graphql-tsc",
   "author": "mo36924",
   "license": "MIT",
   "homepage": "https://github.com/mo36924/packages#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mo36924/packages.git",
-    "directory": "packages/graphql-volar"
+    "directory": "packages/graphql-tsc"
   },
   "bugs": {
     "url": "https://github.com/mo36924/packages/issues"
@@ -21,15 +21,9 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
-    },
-    "./tsc": {
-      "types": "./dist/tsc.d.ts",
-      "import": "./dist/tsc.js",
-      "require": "./dist/tsc.cjs",
-      "default": "./dist/tsc.js"
     }
   },
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "typesVersions": {
@@ -40,7 +34,7 @@
       ]
     }
   },
-  "bin": "./dist/tsc.cjs",
+  "bin": "./dist/index.js",
   "publishConfig": {
     "access": "public"
   },
@@ -48,10 +42,8 @@
     "dist"
   ],
   "dependencies": {
-    "@mo36924/graphql": "^5.4.0",
-    "@mo36924/graphql-d1": "^5.4.0",
+    "@mo36924/graphql-plugin": "^5.4.0",
     "@volar/typescript": "^2.4.10",
-    "graphql": "^16.9.0",
     "typescript": "^5.6.3"
   }
 }

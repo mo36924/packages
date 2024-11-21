@@ -2,6 +2,7 @@
 
 import { getGqlTypeArguments, getSchema } from "@mo36924/graphql";
 import { CodeInformation, CodeMapping, LanguagePlugin, VirtualCode } from "@volar/language-core";
+import { createLanguageServicePlugin } from "@volar/typescript/lib/quickstart/createLanguageServicePlugin";
 import { buildSchema } from "graphql";
 import ts from "typescript";
 
@@ -153,3 +154,7 @@ export const getLanguagePlugin = (cwd?: string) => {
 
   return languagePlugin;
 };
+
+export const volar: ts.server.PluginModuleFactory = createLanguageServicePlugin((_ts, info) => ({
+  languagePlugins: [getLanguagePlugin(info.project.getCurrentDirectory())],
+}));
