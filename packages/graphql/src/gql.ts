@@ -1,6 +1,4 @@
-import { getSchema } from "./config";
-
-export const { schema } = getSchema();
+export {};
 
 declare global {
   const gql: <

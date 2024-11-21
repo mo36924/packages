@@ -92,10 +92,6 @@ export const graphql: ts.server.PluginModuleFactory = ({ typescript: ts }) => {
       const { schema } = getSchema(info.project.getCurrentDirectory());
       const languageService = info.languageService;
 
-      if (!schema) {
-        return languageService;
-      }
-
       const getSourceFile = (fileName: string) => languageService.getProgram()?.getSourceFile(fileName);
 
       const normalizeQuery = (node: ts.TaggedTemplateExpression) => {

@@ -4,6 +4,8 @@ export * from "./data";
 
 export * from "./format";
 
+export * from "./gql";
+
 export * from "./model";
 
 export * from "./operators";

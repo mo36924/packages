@@ -3,7 +3,6 @@
 import { getGqlTypeArguments, getSchema } from "@mo36924/graphql";
 import { CodeInformation, CodeMapping, LanguagePlugin, VirtualCode } from "@volar/language-core";
 import { createLanguageServicePlugin } from "@volar/typescript/lib/quickstart/createLanguageServicePlugin";
-import { buildSchema } from "graphql";
 import ts from "typescript";
 
 const tag = "gql";
@@ -24,8 +23,7 @@ const getCodeMappings = (text: string): CodeMapping[] => [
 ];
 
 export const getLanguagePlugin = (cwd?: string) => {
-  let { schema } = getSchema(cwd);
-  schema ??= buildSchema("scalar _");
+  const { schema } = getSchema(cwd);
 
   const transform = (sourceFile: ts.SourceFile): { snapshot: ts.IScriptSnapshot; mappings: CodeMapping[] } => {
     const code = sourceFile.text;

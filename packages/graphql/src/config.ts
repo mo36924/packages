@@ -44,6 +44,6 @@ export const getConfig = (searchFrom: string = cwd()) => {
 export const getSchema = (searchFrom?: string) => {
   const config = getConfig(searchFrom);
   const model = config.schema && readFileSync(config.schema, "utf-8");
-  const result = model && build(model);
+  const result = build(model ?? "type Unknown { unknown: String }");
   return { config, ...result };
 };
