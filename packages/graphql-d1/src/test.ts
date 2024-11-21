@@ -1,4 +1,4 @@
-import { build } from "@mo36924/graphql/schema";
+import { build } from "@mo36924/graphql";
 
 const model = /* GraphQL */ `
   type Class {
