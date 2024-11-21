@@ -1,27 +1,28 @@
 const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-const uint8Array = new Uint8Array(65536);
-let i = 0;
+const maxByteLength = 1000;
+const uint8Array = new Uint8Array(maxByteLength);
+const randomIdLength = 22;
+let i = maxByteLength;
 
 export const randomId = () => {
+  let j = 0;
   let id = "";
-  let j = 21;
 
   do {
-    if (i) {
-      i--;
-    } else {
+    if (i === maxByteLength) {
+      i = 0;
       crypto.getRandomValues(uint8Array);
-      i = 65535;
+    } else {
+      i++;
     }
 
     const byte = uint8Array[i];
 
     if (byte < 248) {
+      j++;
       id += chars[byte % 62];
 
-      if (j) {
-        j--;
-      } else {
+      if (j === randomIdLength) {
         return id;
       }
     }
