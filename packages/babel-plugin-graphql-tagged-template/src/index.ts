@@ -1,9 +1,11 @@
 import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
+import { env } from "node:process";
 import { fileURLToPath } from "node:url";
 import { PluginObj, types as t } from "@babel/core";
 import { declare } from "@babel/helper-plugin-utils";
 import { printSchemaWithDirectives } from "@graphql-tools/utils";
+import { getSchema } from "@mo36924/graphql";
 import {
   DocumentNode,
   GraphQLInputType,
@@ -19,8 +21,8 @@ import {
 import { queries as _queries, Queries } from "./queries";
 
 export type Options = {
-  schema: GraphQLSchema;
   development?: boolean;
+  schema?: GraphQLSchema;
   queries?: Queries;
 };
 
@@ -29,152 +31,156 @@ const queriesPaths = ["js", "cjs", "ts"].map((extname) => join(queriesDir, `quer
 const schemaPaths = ["js", "cjs", "ts"].map((extname) => join(queriesDir, `schema.${extname}`));
 const hash = (data: string) => createHash("sha256").update(data).digest("base64url");
 
-export default declare<Options>((_api, { schema, development, queries = _queries }): PluginObj => {
-  return {
-    name: "babel-plugin-graphql-tagged-template",
-    visitor: {
-      ...(development
-        ? {}
-        : {
-            VariableDeclarator(path, { filename = "" }) {
-              if (queriesPaths.includes(filename) && path.get("id").isIdentifier({ name: "queries" })) {
-                path.get("init").replaceWith(
-                  t.callExpression(t.memberExpression(t.identifier("Object"), t.identifier("assign")), [
-                    t.callExpression(t.memberExpression(t.identifier("Object"), t.identifier("create")), [
-                      t.nullLiteral(),
-                    ]),
-                    t.objectExpression(
-                      Object.entries(queries)
-                        .sort(([a], [b]) => a.localeCompare(b))
-                        .map(([key, documentNode]) =>
-                          t.objectProperty(
-                            t.stringLiteral(key),
-                            t.callExpression(t.memberExpression(t.identifier("JSON"), t.identifier("parse")), [
-                              t.stringLiteral(JSON.stringify(documentNode)),
-                            ]),
-                          ),
-                        ),
-                    ),
-                  ]),
-                );
-              } else if (schemaPaths.includes(filename) && path.get("id").isIdentifier({ name: "schema" })) {
-                const source = printSchemaWithDirectives(schema);
-                const documentNode = parse(source, { noLocation: true });
-
-                path
-                  .get("init")
-                  .replaceWith(
-                    t.callExpression(t.memberExpression(t.identifier("JSON"), t.identifier("parse")), [
-                      t.stringLiteral(JSON.stringify(documentNode)),
-                    ]),
+export default declare<Options>(
+  (
+    _api,
+    { development = env.NODE_ENV === "development", schema = getSchema().schema, queries = _queries },
+  ): PluginObj => {
+    return {
+      name: "babel-plugin-graphql-tagged-template",
+      visitor: {
+        ...(development
+          ? {}
+          : {
+              VariableDeclarator(path, { filename = "" }) {
+                if (queriesPaths.includes(filename) && path.get("id").isIdentifier({ name: "queries" })) {
+                  const sortedQueries = Object.fromEntries(
+                    Object.entries(queries).sort(([a], [b]) => a.localeCompare(b)),
                   );
-              }
-            },
-          }),
-      TaggedTemplateExpression(path) {
-        const {
-          tag,
-          quasi: { quasis, expressions },
-        } = path.node;
 
-        if (!t.isIdentifier(tag)) {
-          return;
-        }
+                  path
+                    .get("init")
+                    .replaceWith(
+                      t.callExpression(t.memberExpression(t.identifier("Object"), t.identifier("assign")), [
+                        t.callExpression(t.memberExpression(t.identifier("Object"), t.identifier("create")), [
+                          t.nullLiteral(),
+                        ]),
+                        t.callExpression(t.memberExpression(t.identifier("JSON"), t.identifier("parse")), [
+                          t.stringLiteral(JSON.stringify(sortedQueries)),
+                        ]),
+                      ]),
+                    );
+                } else if (schemaPaths.includes(filename) && path.get("id").isIdentifier({ name: "schema" })) {
+                  const source = printSchemaWithDirectives(schema);
+                  const documentNode = parse(source, { noLocation: true });
 
-        const name = tag.name;
+                  path
+                    .get("init")
+                    .replaceWith(
+                      t.callExpression(t.memberExpression(t.identifier("JSON"), t.identifier("parse")), [
+                        t.stringLiteral(JSON.stringify(documentNode)),
+                      ]),
+                    );
+                }
+              },
+            }),
+        TaggedTemplateExpression(path) {
+          const {
+            tag,
+            quasi: { quasis, expressions },
+          } = path.node;
 
-        if (name !== "gql") {
-          return;
-        }
+          if (!t.isIdentifier(tag)) {
+            return;
+          }
 
-        let query = quasis[0].value.cooked ?? quasis[0].value.raw;
+          const name = tag.name;
 
-        if (query.trimStart()[0] !== "{") {
-          throw path.buildCodeFrameError("Named operation are not allowed");
-        }
+          if (name !== "gql") {
+            return;
+          }
 
-        for (let i = 0; i < expressions.length; i++) {
-          query += `$_${i}${quasis[i + 1].value.cooked ?? quasis[i + 1].value.raw}`;
-        }
+          let query = quasis[0].value.cooked ?? quasis[0].value.raw;
 
-        let documentNode: DocumentNode;
+          if (query.trimStart()[0] !== "{") {
+            throw path.buildCodeFrameError("Named operation are not allowed");
+          }
 
-        try {
-          documentNode = parse(query);
-        } catch (err) {
-          throw path.buildCodeFrameError(String(err));
-        }
+          for (let i = 0; i < expressions.length; i++) {
+            query += `$_${i}${quasis[i + 1].value.cooked ?? quasis[i + 1].value.raw}`;
+          }
 
-        const definitions = documentNode.definitions;
-        const definition = definitions[0];
+          let documentNode: DocumentNode;
 
-        if (definitions.length !== 1 || definition.kind !== "OperationDefinition") {
-          throw path.buildCodeFrameError("Only a single operation is allowed");
-        }
+          try {
+            documentNode = parse(query);
+          } catch (err) {
+            throw path.buildCodeFrameError(String(err));
+          }
 
-        if (definition.variableDefinitions?.length) {
-          throw path.buildCodeFrameError("Variables are not allowed");
-        }
+          const definitions = documentNode.definitions;
+          const definition = definitions[0];
 
-        const field = definition.selectionSet.selections[0];
+          if (definitions.length !== 1 || definition.kind !== "OperationDefinition") {
+            throw path.buildCodeFrameError("Only a single operation is allowed");
+          }
 
-        if (field.kind !== "Field") {
-          throw path.buildCodeFrameError("Only a field is allowed");
-        }
+          if (definition.variableDefinitions?.length) {
+            throw path.buildCodeFrameError("Variables are not allowed");
+          }
 
-        const values: GraphQLInputType[] = [];
-        const typeInfo = new TypeInfo(schema);
-        const isMutation = !!schema.getMutationType()?.getFields()[field.name.value];
-        const operation = isMutation ? OperationTypeNode.MUTATION : OperationTypeNode.QUERY;
+          const field = definition.selectionSet.selections[0];
 
-        visit(
-          { ...definition, operation },
-          visitWithTypeInfo(typeInfo, {
-            Variable() {
-              values.push(typeInfo.getInputType()!);
-            },
-          }),
-        );
+          if (field.kind !== "Field") {
+            throw path.buildCodeFrameError("Only a field is allowed");
+          }
 
-        if (values.length) {
-          const variables = `(${values.map((value, i) => `$_${i}:${value}`).join()})`;
-          query = `${operation}${variables}${query}`;
-        } else if (operation === "mutation") {
-          query = `${operation}${query}`;
-        }
+          const values: GraphQLInputType[] = [];
+          const typeInfo = new TypeInfo(schema);
+          const isMutation = !!schema.getMutationType()?.getFields()[field.name.value];
+          const operation = isMutation ? OperationTypeNode.MUTATION : OperationTypeNode.QUERY;
 
-        try {
-          documentNode = parse(query, { noLocation: true });
-        } catch (err) {
-          throw path.buildCodeFrameError(String(err));
-        }
-
-        const errors = validate(schema, documentNode);
-
-        if (errors.length) {
-          throw path.buildCodeFrameError(errors[0].message);
-        }
-
-        query = stripIgnoredCharacters(query);
-
-        const key = hash(query);
-        queries[key] = documentNode;
-
-        const properties: t.ObjectProperty[] = [t.objectProperty(t.identifier("query"), t.stringLiteral(key))];
-
-        if (expressions.length) {
-          properties.push(
-            t.objectProperty(
-              t.identifier("variables"),
-              t.objectExpression(
-                expressions.map((expression, i) => t.objectProperty(t.identifier(`_${i}`), expression as t.Expression)),
-              ),
-            ),
+          visit(
+            { ...definition, operation },
+            visitWithTypeInfo(typeInfo, {
+              Variable() {
+                values.push(typeInfo.getInputType()!);
+              },
+            }),
           );
-        }
 
-        path.replaceWith(t.objectExpression(properties));
+          if (values.length) {
+            const variables = `(${values.map((value, i) => `$_${i}:${value}`).join()})`;
+            query = `${operation}${variables}${query}`;
+          } else if (operation === "mutation") {
+            query = `${operation}${query}`;
+          }
+
+          try {
+            documentNode = parse(query, { noLocation: true });
+          } catch (err) {
+            throw path.buildCodeFrameError(String(err));
+          }
+
+          const errors = validate(schema, documentNode);
+
+          if (errors.length) {
+            throw path.buildCodeFrameError(errors[0].message);
+          }
+
+          query = stripIgnoredCharacters(query);
+
+          const key = hash(query);
+          queries[key] = documentNode;
+
+          const properties: t.ObjectProperty[] = [t.objectProperty(t.identifier("query"), t.stringLiteral(key))];
+
+          if (expressions.length) {
+            properties.push(
+              t.objectProperty(
+                t.identifier("variables"),
+                t.objectExpression(
+                  expressions.map((expression, i) =>
+                    t.objectProperty(t.identifier(`_${i}`), expression as t.Expression),
+                  ),
+                ),
+              ),
+            );
+          }
+
+          path.replaceWith(t.objectExpression(properties));
+        },
       },
-    },
-  };
-});
+    };
+  },
+);

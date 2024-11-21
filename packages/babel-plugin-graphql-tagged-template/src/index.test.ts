@@ -219,56 +219,69 @@ describe("babel-plugin-graphql-tagged-template", () => {
     `);
   });
 
-  it("queries-development", () => {
-    const queries = { key: parse("query($_0:Int){user(offset:$_0){name}}") };
-
-    const result = transform(
-      `
-      export const queries = {};
-    `,
-      { schema, queries, development: true },
-    );
-
-    expect(result).toMatchInlineSnapshot(`export const queries = {};`);
-  });
-
-  it("queries-production", () => {
+  it("queries-development", async () => {
     const queries = { key: parse("query($_0:Int){user(offset:$_0){name}}", { noLocation: true }) };
 
-    const result = transform(
-      `
-      export const queries = {};
-    `,
-      { schema, queries },
-    );
+    const result = await transformFileAsync(join(fileURLToPath(import.meta.url), "..", "queries.ts"), {
+      parserOpts: { plugins: ["typescript"] },
+      plugins: [[plugin, { schema, queries, development: true } satisfies Options]],
+    });
 
     expect(result).toMatchInlineSnapshot(`
-      export const queries = Object.assign(Object.create(null), {
-        key: JSON.parse(
-          '{"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"_0"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"directives":[]}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"_0"}}}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"},"arguments":[],"directives":[]}]}}]}}]}',
+      import { DocumentNode } from "graphql";
+      export type Queries = {
+        [key: string]: DocumentNode;
+      };
+
+      // @ts-expect-error queries is set to a value by Babel
+      export const queries: Queries = (globalThis.__GRAPHQL_QUERIES__ ??= Object.create(null));
+    `);
+  });
+
+  it("queries-production", async () => {
+    const queries = { key: parse("query($_0:Int){user(offset:$_0){name}}", { noLocation: true }) };
+
+    const result = await transformFileAsync(join(fileURLToPath(import.meta.url), "..", "queries.ts"), {
+      parserOpts: { plugins: ["typescript"] },
+      plugins: [[plugin, { schema, queries } satisfies Options]],
+    });
+
+    expect(result).toMatchInlineSnapshot(`
+      import { DocumentNode } from "graphql";
+      export type Queries = {
+        [key: string]: DocumentNode;
+      };
+
+      // @ts-expect-error queries is set to a value by Babel
+      export const queries: Queries = Object.assign(
+        Object.create(null),
+        JSON.parse(
+          '{"key":{"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"_0"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"directives":[]}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"_0"}}}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"},"arguments":[],"directives":[]}]}}]}}]}}',
         ),
-      });
+      );
     `);
   });
 
   it("schema-development", async () => {
     const result = await transformFileAsync(join(fileURLToPath(import.meta.url), "..", "schema.ts"), {
+      parserOpts: { plugins: ["typescript"] },
       plugins: [[plugin, { schema, development: true } satisfies Options]],
     });
 
     expect(result).toMatchInlineSnapshot(`
-      import { getSchema } from "@mo36924/graphql/config";
+      import { getSchema } from "@mo36924/graphql";
       export const schema = getSchema().schema;
     `);
   });
 
   it("schema-production", async () => {
     const result = await transformFileAsync(join(fileURLToPath(import.meta.url), "..", "schema.ts"), {
+      parserOpts: { plugins: ["typescript"] },
       plugins: [[plugin, { schema } satisfies Options]],
     });
 
     expect(result).toMatchInlineSnapshot(`
-      import { getSchema } from "@mo36924/graphql/config";
+      import { getSchema } from "@mo36924/graphql";
       export const schema = JSON.parse(
         '{"kind":"Document","definitions":[{"kind":"SchemaDefinition","directives":[],"operationTypes":[{"kind":"OperationTypeDefinition","operation":"query","type":{"kind":"NamedType","name":{"kind":"Name","value":"Query"}}},{"kind":"OperationTypeDefinition","operation":"mutation","type":{"kind":"NamedType","name":{"kind":"Name","value":"Mutation"}}}]},{"kind":"ObjectTypeDefinition","name":{"kind":"Name","value":"Query"},"interfaces":[],"directives":[],"fields":[{"kind":"FieldDefinition","name":{"kind":"Name","value":"user"},"arguments":[{"kind":"InputValueDefinition","name":{"kind":"Name","value":"offset"},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"directives":[]}],"type":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"directives":[]}]},{"kind":"ObjectTypeDefinition","name":{"kind":"Name","value":"Mutation"},"interfaces":[],"directives":[],"fields":[{"kind":"FieldDefinition","name":{"kind":"Name","value":"create"},"arguments":[{"kind":"InputValueDefinition","name":{"kind":"Name","value":"name"},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"directives":[]}],"type":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"directives":[]}]},{"kind":"ObjectTypeDefinition","name":{"kind":"Name","value":"User"},"interfaces":[],"directives":[],"fields":[{"kind":"FieldDefinition","name":{"kind":"Name","value":"name"},"arguments":[],"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"directives":[]}]}]}',
       );
