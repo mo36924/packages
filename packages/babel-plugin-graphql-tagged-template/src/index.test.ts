@@ -1,6 +1,6 @@
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { transformSync } from "@babel/core";
+import { transformFileAsync, transformSync } from "@babel/core";
 import { buildSchema, parse } from "graphql";
 import { describe, expect, it } from "vitest";
 import plugin, { Options } from "./index";
@@ -248,6 +248,30 @@ describe("babel-plugin-graphql-tagged-template", () => {
           '{"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"_0"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"directives":[]}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"_0"}}}],"directives":[],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"},"arguments":[],"directives":[]}]}}]}}]}',
         ),
       });
+    `);
+  });
+
+  it("schema-development", async () => {
+    const result = await transformFileAsync(join(fileURLToPath(import.meta.url), "..", "schema.ts"), {
+      plugins: [[plugin, { schema, development: true } satisfies Options]],
+    });
+
+    expect(result).toMatchInlineSnapshot(`
+      import { getSchema } from "@mo36924/graphql/config";
+      export const schema = getSchema().schema;
+    `);
+  });
+
+  it("schema-production", async () => {
+    const result = await transformFileAsync(join(fileURLToPath(import.meta.url), "..", "schema.ts"), {
+      plugins: [[plugin, { schema } satisfies Options]],
+    });
+
+    expect(result).toMatchInlineSnapshot(`
+      import { getSchema } from "@mo36924/graphql/config";
+      export const schema = JSON.parse(
+        '{"kind":"Document","definitions":[{"kind":"SchemaDefinition","directives":[],"operationTypes":[{"kind":"OperationTypeDefinition","operation":"query","type":{"kind":"NamedType","name":{"kind":"Name","value":"Query"}}},{"kind":"OperationTypeDefinition","operation":"mutation","type":{"kind":"NamedType","name":{"kind":"Name","value":"Mutation"}}}]},{"kind":"ObjectTypeDefinition","name":{"kind":"Name","value":"Query"},"interfaces":[],"directives":[],"fields":[{"kind":"FieldDefinition","name":{"kind":"Name","value":"user"},"arguments":[{"kind":"InputValueDefinition","name":{"kind":"Name","value":"offset"},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}},"directives":[]}],"type":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"directives":[]}]},{"kind":"ObjectTypeDefinition","name":{"kind":"Name","value":"Mutation"},"interfaces":[],"directives":[],"fields":[{"kind":"FieldDefinition","name":{"kind":"Name","value":"create"},"arguments":[{"kind":"InputValueDefinition","name":{"kind":"Name","value":"name"},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"directives":[]}],"type":{"kind":"NamedType","name":{"kind":"Name","value":"User"}},"directives":[]}]},{"kind":"ObjectTypeDefinition","name":{"kind":"Name","value":"User"},"interfaces":[],"directives":[],"fields":[{"kind":"FieldDefinition","name":{"kind":"Name","value":"name"},"arguments":[],"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}},"directives":[]}]}]}',
+      );
     `);
   });
 });

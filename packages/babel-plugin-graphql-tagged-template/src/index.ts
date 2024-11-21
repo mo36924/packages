@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PluginObj, types as t } from "@babel/core";
 import { declare } from "@babel/helper-plugin-utils";
+import { printSchemaWithDirectives } from "@graphql-tools/utils";
 import {
   DocumentNode,
   GraphQLInputType,
@@ -25,6 +26,7 @@ export type Options = {
 
 const queriesDir = dirname(fileURLToPath(import.meta.url));
 const queriesPaths = ["js", "cjs", "ts"].map((extname) => join(queriesDir, `queries.${extname}`));
+const schemaPaths = ["js", "cjs", "ts"].map((extname) => join(queriesDir, `schema.${extname}`));
 const hash = (data: string) => createHash("sha256").update(data).digest("base64url");
 
 export default declare<Options>((_api, { schema, development, queries = _queries }): PluginObj => {
@@ -35,29 +37,38 @@ export default declare<Options>((_api, { schema, development, queries = _queries
         ? {}
         : {
             VariableDeclarator(path, { filename = "" }) {
-              if (!(queriesPaths.includes(filename) && path.get("id").isIdentifier({ name: "queries" }))) {
-                return;
-              }
-
-              path.get("init").replaceWith(
-                t.callExpression(t.memberExpression(t.identifier("Object"), t.identifier("assign")), [
-                  t.callExpression(t.memberExpression(t.identifier("Object"), t.identifier("create")), [
-                    t.nullLiteral(),
-                  ]),
-                  t.objectExpression(
-                    Object.entries(queries)
-                      .sort(([a], [b]) => a.localeCompare(b))
-                      .map(([key, documentNode]) =>
-                        t.objectProperty(
-                          t.stringLiteral(key),
-                          t.callExpression(t.memberExpression(t.identifier("JSON"), t.identifier("parse")), [
-                            t.stringLiteral(JSON.stringify(documentNode)),
-                          ]),
+              if (queriesPaths.includes(filename) && path.get("id").isIdentifier({ name: "queries" })) {
+                path.get("init").replaceWith(
+                  t.callExpression(t.memberExpression(t.identifier("Object"), t.identifier("assign")), [
+                    t.callExpression(t.memberExpression(t.identifier("Object"), t.identifier("create")), [
+                      t.nullLiteral(),
+                    ]),
+                    t.objectExpression(
+                      Object.entries(queries)
+                        .sort(([a], [b]) => a.localeCompare(b))
+                        .map(([key, documentNode]) =>
+                          t.objectProperty(
+                            t.stringLiteral(key),
+                            t.callExpression(t.memberExpression(t.identifier("JSON"), t.identifier("parse")), [
+                              t.stringLiteral(JSON.stringify(documentNode)),
+                            ]),
+                          ),
                         ),
-                      ),
-                  ),
-                ]),
-              );
+                    ),
+                  ]),
+                );
+              } else if (schemaPaths.includes(filename) && path.get("id").isIdentifier({ name: "schema" })) {
+                const source = printSchemaWithDirectives(schema);
+                const documentNode = parse(source, { noLocation: true });
+
+                path
+                  .get("init")
+                  .replaceWith(
+                    t.callExpression(t.memberExpression(t.identifier("JSON"), t.identifier("parse")), [
+                      t.stringLiteral(JSON.stringify(documentNode)),
+                    ]),
+                  );
+              }
             },
           }),
       TaggedTemplateExpression(path) {

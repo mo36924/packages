@@ -27,6 +27,12 @@
       "import": "./dist/queries.js",
       "require": "./dist/queries.cjs",
       "default": "./dist/queries.js"
+    },
+    "./schema": {
+      "types": "./dist/schema.d.ts",
+      "import": "./dist/schema.js",
+      "require": "./dist/schema.cjs",
+      "default": "./dist/schema.js"
     }
   },
   "main": "./dist/index.js",
@@ -49,6 +55,8 @@
   "dependencies": {
     "@babel/core": "^7.26.0",
     "@babel/helper-plugin-utils": "^7.25.9",
+    "@graphql-tools/utils": "^10.5.6",
+    "@mo36924/graphql": "^5.4.2",
     "@types/babel__core": "^7.20.5",
     "@types/babel__helper-plugin-utils": "^7.10.3",
     "graphql": "^16.9.0"
