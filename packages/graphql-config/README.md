@@ -1,3 +1,0 @@
-# graphql-config
-
-graphql-config
