@@ -1,0 +1,70 @@
+{
+  "name": "@mo36924/cloudflare",
+  "type": "module",
+  "version": "5.4.10",
+  "description": "cloudflare",
+  "author": "mo36924",
+  "license": "MIT",
+  "homepage": "https://github.com/mo36924/packages#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mo36924/packages.git",
+    "directory": "packages/cloudflare"
+  },
+  "bugs": {
+    "url": "https://github.com/mo36924/packages/issues"
+  },
+  "keywords": [],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    },
+    "./codegen": {
+      "types": "./dist/codegen.d.ts",
+      "import": "./dist/codegen.js",
+      "require": "./dist/codegen.cjs",
+      "default": "./dist/codegen.js"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "import": "./dist/vite.js",
+      "require": "./dist/vite.cjs",
+      "default": "./dist/vite.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/*.d.ts",
+        "*"
+      ]
+    }
+  },
+  "bin": {
+    "cloudflare-codegen": "./dist/codegen.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "@mo36924/babel-preset-jsx": "^5.4.10",
+    "@mo36924/graphql": "^5.4.10",
+    "@mo36924/graphql-d1": "^5.4.10",
+    "@mo36924/vite-plugin-babel": "^5.3.12",
+    "@mo36924/vite-plugin-precompile-jsx": "^5.3.8",
+    "@mo36924/vite-plugin-react-router": "^5.3.20",
+    "@mo36924/vite-plugin-ssr": "^5.3.14",
+    "@preact/preset-vite": "^2.9.1",
+    "vite": "^5.4.11",
+    "vite-tsconfig-paths": "^5.1.2"
+  }
+}

@@ -1,11 +1,16 @@
 import devServer from "@hono/vite-dev-server";
 import { build, Manifest, Plugin } from "vite";
 
+export type Options = {
+  input: string;
+  assets: string[];
+};
+
 const manifestPath = "manifest.json";
 
 export const manifest: Manifest = ((globalThis as any).__VITE_PLUGIN_SSR_MANIFEST__ ??= Object.create(null));
 
-export const ssr = ({ input, assets }: { input: string; assets: string[] }): Plugin[] => {
+export const ssr = ({ input, assets }: Options): Plugin[] => {
   let isSsrBuild = false;
   return [
     {
