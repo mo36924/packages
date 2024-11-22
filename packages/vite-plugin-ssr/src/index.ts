@@ -43,21 +43,23 @@ export const ssr = ({ input, assets }: Options): Plugin[] => {
           ssr: isSsrBuild ? { noExternal: true } : undefined,
         };
       },
-      generateBundle: isSsrBuild
-        ? undefined
-        : {
-            order: "post",
-            handler(_options, bundle) {
-              const output = bundle[manifestPath];
+      generateBundle: {
+        order: "post",
+        handler(_options, bundle) {
+          if (isSsrBuild) {
+            return;
+          }
 
-              if (output.type !== "asset") {
-                return;
-              }
+          const output = bundle[manifestPath];
 
-              Object.assign(manifest, JSON.parse(`${output.source}`));
-              delete bundle[manifestPath];
-            },
-          },
+          if (output.type !== "asset") {
+            return;
+          }
+
+          Object.assign(manifest, JSON.parse(`${output.source}`));
+          delete bundle[manifestPath];
+        },
+      },
       async writeBundle() {
         if (!isSsrBuild) {
           await build({ build: { ssr: true } });
