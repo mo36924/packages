@@ -28,6 +28,12 @@
       "require": "./dist/definitions.cjs",
       "default": "./dist/definitions.js"
     },
+    "./dts": {
+      "types": "./dist/dts.d.ts",
+      "import": "./dist/dts.js",
+      "require": "./dist/dts.cjs",
+      "default": "./dist/dts.js"
+    },
     "./merge": {
       "types": "./dist/merge.d.ts",
       "import": "./dist/merge.js",
@@ -45,6 +51,9 @@
         "*"
       ]
     }
+  },
+  "bin": {
+    "graphql-dts": "./dist/dts.js"
   },
   "files": [
     "dist"
