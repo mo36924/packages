@@ -28,6 +28,12 @@
       "require": "./dist/codegen.cjs",
       "default": "./dist/codegen.js"
     },
+    "./tsc": {
+      "types": "./dist/tsc.d.ts",
+      "import": "./dist/tsc.js",
+      "require": "./dist/tsc.cjs",
+      "default": "./dist/tsc.js"
+    },
     "./vite": {
       "types": "./dist/vite.d.ts",
       "import": "./dist/vite.js",
@@ -47,7 +53,8 @@
     }
   },
   "bin": {
-    "cloudflare-codegen": "./dist/codegen.js"
+    "cloudflare-codegen": "./dist/codegen.js",
+    "cloudflare-tsc": "./dist/tsc.js"
   },
   "publishConfig": {
     "access": "public"
@@ -59,6 +66,7 @@
     "@mo36924/babel-preset-jsx": "^5.4.11",
     "@mo36924/graphql": "^5.4.10",
     "@mo36924/graphql-d1": "^5.4.10",
+    "@mo36924/graphql-tsc": "^5.4.10",
     "@mo36924/vite-plugin-babel": "^5.3.12",
     "@mo36924/vite-plugin-precompile-jsx": "^5.3.8",
     "@mo36924/vite-plugin-react-router": "^5.3.20",
