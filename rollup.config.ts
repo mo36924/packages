@@ -31,21 +31,60 @@ const input = Object.fromEntries(
 export default defineConfig([
   {
     input,
-    output: [
+    output: {
+      dir: ".",
+      format: "module",
+      chunkFileNames: ({ moduleIds }) => `${relative(cwd(), join(moduleIds[0], "..", "..", "dist"))}/[name].js`,
+    },
+    plugins: [
+      swc(),
+      resolve,
       {
-        dir: ".",
-        format: "module",
-        chunkFileNames: ({ moduleIds }) => `${relative(cwd(), join(moduleIds[0], "..", "..", "dist"))}/[name].js`,
-      },
-      {
-        dir: ".",
-        format: "cjs",
-        entryFileNames: "[name].cjs",
-        chunkFileNames: ({ moduleIds }) => `${relative(cwd(), join(moduleIds[0], "..", "..", "dist"))}/[name].cjs`,
+        name: "resolve",
+        resolveId(source, importer) {
+          if (source === "graphql") {
+            return { id: `${source}/index.mjs`, external: true };
+          }
+
+          if (source === "graphql/execution/execute") {
+            return { id: `${source}.mjs`, external: true };
+          }
+
+          if (importer && external.test(source)) {
+            return { id: source, external: true };
+          }
+        },
       },
     ],
-    external,
-    plugins: [swc(), resolve],
+  },
+  {
+    input,
+    output: {
+      dir: ".",
+      format: "cjs",
+      entryFileNames: "[name].cjs",
+      chunkFileNames: ({ moduleIds }) => `${relative(cwd(), join(moduleIds[0], "..", "..", "dist"))}/[name].cjs`,
+    },
+    plugins: [
+      swc(),
+      resolve,
+      {
+        name: "resolve",
+        resolveId(source, importer) {
+          if (source === "graphql") {
+            return { id: `${source}/index.js`, external: true };
+          }
+
+          if (source === "graphql/execution/execute") {
+            return { id: `${source}.js`, external: true };
+          }
+
+          if (importer && external.test(source)) {
+            return { id: source, external: true };
+          }
+        },
+      },
+    ],
   },
   {
     input,
