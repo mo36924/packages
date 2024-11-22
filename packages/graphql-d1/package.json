@@ -22,17 +22,23 @@
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
     },
-    "./bin": {
-      "types": "./dist/bin.d.ts",
-      "import": "./dist/bin.js",
-      "require": "./dist/bin.cjs",
-      "default": "./dist/bin.js"
-    },
     "./query": {
       "types": "./dist/query.d.ts",
       "import": "./dist/query.js",
       "require": "./dist/query.cjs",
       "default": "./dist/query.js"
+    },
+    "./bin/drizzle": {
+      "types": "./dist/bin/drizzle.d.ts",
+      "import": "./dist/bin/drizzle.js",
+      "require": "./dist/bin/drizzle.cjs",
+      "default": "./dist/bin/drizzle.js"
+    },
+    "./bin/seed": {
+      "types": "./dist/bin/seed.d.ts",
+      "import": "./dist/bin/seed.js",
+      "require": "./dist/bin/seed.cjs",
+      "default": "./dist/bin/seed.js"
     }
   },
   "main": "./dist/index.js",
@@ -46,7 +52,10 @@
       ]
     }
   },
-  "bin": "./dist/bin.js",
+  "bin": {
+    "graphql-drizzle": "./dist/bin/drizzle.js",
+    "graphql-seed": "./dist/bin/seed.js"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -58,6 +67,7 @@
     "@mo36924/change-case": "^0.0.1",
     "@mo36924/graphql": "^5.4.7",
     "graphql": "^16.9.0",
-    "miniflare": "^3.20241106.0"
+    "miniflare": "^3.20241106.0",
+    "wrangler": "^3.89.0"
   }
 }

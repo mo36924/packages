@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
-import { basename, join, relative } from "node:path";
+import { join, relative } from "node:path";
 import { cwd } from "node:process";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
 import swc from "@rollup/plugin-swc";
@@ -22,7 +22,7 @@ const input = Object.fromEntries(
     .flatMap((packageDir) =>
       Object.values<{ [type: string]: string }>(JSON.parse(readFileSync(`${packageDir}/package.json`, "utf-8")).exports)
         .flatMap((_export) => Object.values(_export))
-        .map((path) => basename(path).replace(/\.(js|cjs|d\.ts)$/, ""))
+        .map((path) => path.replace(/^\.\/dist\//, "").replace(/\.(js|cjs|d\.ts)$/, ""))
         .filter((name, index, self) => self.indexOf(name) === index)
         .map((name): [string, string] => [`${packageDir}/dist/${name}`, resolvePath(`${packageDir}/src/${name}`)]),
     ),

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { writeFileSync } from "node:fs";
 import { getSchema } from "@mo36924/graphql";
-import { buildDrizzleSchema } from "./drizzle";
+import { buildDrizzleSchema } from "../drizzle";
 
 const { config, schema } = getSchema();
 

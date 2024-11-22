@@ -88,6 +88,7 @@
     "vite-plugin-solid": "^2.10.2",
     "vite-tsconfig-paths": "^5.1.2",
     "vitest": "^2.1.5",
-    "vscode-languageserver-types": "^3.17.5"
+    "vscode-languageserver-types": "^3.17.5",
+    "wrangler": "^3.89.0"
   }
 }
