@@ -1,15 +1,15 @@
 {
-  "name": "@mo36924/babel-plugin-graphql-tagged-template",
+  "name": "@mo36924/babel-plugin-graphql",
   "type": "module",
-  "version": "5.4.10",
-  "description": "babel-plugin-graphql-tagged-template",
+  "version": "5.4.16",
+  "description": "babel-plugin-graphql",
   "author": "mo36924",
   "license": "MIT",
   "homepage": "https://github.com/mo36924/packages#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mo36924/packages.git",
-    "directory": "packages/babel-plugin-graphql-tagged-template"
+    "directory": "packages/babel-plugin-graphql"
   },
   "bugs": {
     "url": "https://github.com/mo36924/packages/issues"

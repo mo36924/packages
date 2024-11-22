@@ -22,7 +22,7 @@ const transform = (code: string, options?: Options) =>
     plugins: [[plugin, { schema, ...options }]],
   });
 
-describe("babel-plugin-graphql-tagged-template", () => {
+describe("babel-plugin-graphql", () => {
   it("query-development", () => {
     const result = transform(
       `

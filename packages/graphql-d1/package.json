@@ -22,6 +22,12 @@
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
     },
+    "./fetch": {
+      "types": "./dist/fetch.d.ts",
+      "import": "./dist/fetch.js",
+      "require": "./dist/fetch.cjs",
+      "default": "./dist/fetch.js"
+    },
     "./query": {
       "types": "./dist/query.d.ts",
       "import": "./dist/query.js",
@@ -64,6 +70,7 @@
   ],
   "dependencies": {
     "@cloudflare/workers-types": "^4.20241112.0",
+    "@mo36924/babel-plugin-graphql": "^5.4.16",
     "@mo36924/change-case": "^0.0.1",
     "@mo36924/graphql": "^5.4.10",
     "graphql": "^16.9.0",

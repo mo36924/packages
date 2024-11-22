@@ -2,7 +2,7 @@ import { env } from "node:process";
 import { TransformOptions } from "@babel/core";
 import deadCodeElimination from "@mo36924/babel-plugin-dead-code-elimination";
 import flattenNestedFragments from "@mo36924/babel-plugin-flatten-nested-fragments";
-import graphql, { Options as GraphQLOptions } from "@mo36924/babel-plugin-graphql-tagged-template";
+import graphql, { Options as GraphQLOptions } from "@mo36924/babel-plugin-graphql";
 import injectAssetJsxElements, {
   Options as InjectAssetJsxElementsOptions,
 } from "@mo36924/babel-plugin-inject-asset-jsx-elements";
