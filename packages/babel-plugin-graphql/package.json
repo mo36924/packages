@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/babel-plugin-graphql",
   "type": "module",
-  "version": "5.4.16",
+  "version": "5.4.17",
   "description": "babel-plugin-graphql",
   "author": "mo36924",
   "license": "MIT",
