@@ -2,7 +2,7 @@
 
 import { getGqlTypeArguments, getSchema } from "@mo36924/graphql";
 import { CodeInformation, CodeMapping, LanguagePlugin, VirtualCode } from "@volar/language-core";
-import { createLanguageServicePlugin } from "@volar/typescript/lib/quickstart/createLanguageServicePlugin";
+import { createLanguageServicePlugin } from "@volar/typescript/lib/quickstart/createLanguageServicePlugin.js";
 import ts from "typescript";
 
 const tag = "gql";
