@@ -4,7 +4,7 @@ import { schema } from "@mo36924/babel-plugin-graphql/schema";
 import { buildExecutionContext } from "graphql/execution/execute";
 import { buildQuery } from "./query";
 
-type Env = {
+export type Env = {
   DB: D1Database;
 };
 
@@ -72,4 +72,4 @@ const fetchRequestHandler = (request: Request, env: Env) => {
   }
 };
 
-export default fetchRequestHandler;
+export { fetchRequestHandler as fetch, queries, schema };
