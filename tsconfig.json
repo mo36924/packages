@@ -10,6 +10,7 @@
       "@mo36924/babel-plugin-graphql/*": ["packages/babel-plugin-graphql/src/*"],
       "@mo36924/babel-plugin-server-function/*": ["packages/babel-plugin-server-function/src/*"],
       "@mo36924/graphql/*": ["packages/graphql/src/*"],
+      "@mo36924/graphql-d1/*": ["packages/graphql-d1/src/*"],
       "@mo36924/graphql-plugin/*": ["packages/graphql-plugin/src/*"],
       "@mo36924/*": ["packages/*/src"]
     },

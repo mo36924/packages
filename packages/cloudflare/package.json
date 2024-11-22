@@ -28,6 +28,12 @@
       "require": "./dist/codegen.cjs",
       "default": "./dist/codegen.js"
     },
+    "./graphql": {
+      "types": "./dist/graphql.d.ts",
+      "import": "./dist/graphql.js",
+      "require": "./dist/graphql.cjs",
+      "default": "./dist/graphql.js"
+    },
     "./server-function": {
       "types": "./dist/server-function.d.ts",
       "import": "./dist/server-function.js",
