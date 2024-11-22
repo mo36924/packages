@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/cloudflare",
   "type": "module",
-  "version": "5.4.15",
+  "version": "5.4.16",
   "description": "cloudflare",
   "author": "mo36924",
   "license": "MIT",
@@ -73,7 +73,7 @@
     "@mo36924/babel-preset-jsx": "^5.4.15",
     "@mo36924/graphql": "^5.4.10",
     "@mo36924/graphql-d1": "^5.4.10",
-    "@mo36924/graphql-tsc": "^5.4.13",
+    "@mo36924/graphql-tsc": "^5.4.16",
     "@mo36924/vite-plugin-babel": "^5.3.12",
     "@mo36924/vite-plugin-precompile-jsx": "^5.3.8",
     "@mo36924/vite-plugin-react-router": "^5.3.20",
