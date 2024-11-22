@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { writeFileSync } from "node:fs";
 import { getSchema } from "./config";
 import { buildDeclaration } from "./typescript";

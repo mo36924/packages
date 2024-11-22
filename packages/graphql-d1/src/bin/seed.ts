@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { D1Database } from "@cloudflare/workers-types";
 import { getSchema } from "@mo36924/graphql";
 import { getPlatformProxy } from "wrangler";
