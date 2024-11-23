@@ -39,6 +39,12 @@
       "import": "./dist/merge.js",
       "require": "./dist/merge.cjs",
       "default": "./dist/merge.js"
+    },
+    "./patch": {
+      "types": "./dist/patch.d.ts",
+      "import": "./dist/patch.js",
+      "require": "./dist/patch.cjs",
+      "default": "./dist/patch.js"
     }
   },
   "main": "./dist/index.js",
@@ -53,7 +59,8 @@
     }
   },
   "bin": {
-    "graphql-dts": "./dist/dts.js"
+    "graphql-dts": "./dist/dts.js",
+    "graphql-patch": "./dist/patch.js"
   },
   "files": [
     "dist"

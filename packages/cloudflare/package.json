@@ -34,6 +34,12 @@
       "require": "./dist/graphql.cjs",
       "default": "./dist/graphql.js"
     },
+    "./patch": {
+      "types": "./dist/patch.d.ts",
+      "import": "./dist/patch.js",
+      "require": "./dist/patch.cjs",
+      "default": "./dist/patch.js"
+    },
     "./server-function": {
       "types": "./dist/server-function.d.ts",
       "import": "./dist/server-function.js",
@@ -66,6 +72,7 @@
   },
   "bin": {
     "cloudflare-codegen": "./dist/codegen.js",
+    "cloudflare-patch": "./dist/patch.js",
     "cloudflare-tsc": "./dist/tsc.js"
   },
   "publishConfig": {

@@ -8,7 +8,6 @@ import dts from "rollup-plugin-dts";
 
 const workspaceDir = "packages";
 const external = /^[@\w]/;
-const _swc = swc({ swc: { jsc: { target: "es2022" } } });
 const resolve = nodeResolve({ extensions: [".tsx", ".ts"] });
 
 const resolvePath = (path: string) =>
@@ -32,64 +31,26 @@ const input = Object.fromEntries(
 export default defineConfig([
   {
     input,
-    output: {
-      dir: ".",
-      format: "module",
-      hoistTransitiveImports: false,
-      generatedCode: "es2015",
-      chunkFileNames: ({ moduleIds }) => `${relative(cwd(), join(moduleIds[0], "..", "..", "dist"))}/[name].js`,
-    },
-    plugins: [
-      _swc,
-      resolve,
+    output: [
       {
-        name: "resolve",
-        resolveId(source, importer) {
-          if (source === "graphql") {
-            return { id: `${source}/index.mjs`, external: true };
-          }
-
-          if (source === "graphql/execution/execute") {
-            return { id: `${source}.mjs`, external: true };
-          }
-
-          if (importer && external.test(source)) {
-            return { id: source, external: true };
-          }
-        },
+        dir: ".",
+        format: "module",
+        entryFileNames: "[name].js",
+        hoistTransitiveImports: false,
+        generatedCode: "es2015",
+        chunkFileNames: ({ moduleIds }) => `${relative(cwd(), join(moduleIds[0], "..", "..", "dist"))}/[name].js`,
+      },
+      {
+        dir: ".",
+        format: "commonjs",
+        entryFileNames: "[name].cjs",
+        hoistTransitiveImports: false,
+        generatedCode: "es2015",
+        chunkFileNames: ({ moduleIds }) => `${relative(cwd(), join(moduleIds[0], "..", "..", "dist"))}/[name].cjs`,
       },
     ],
-  },
-  {
-    input,
-    output: {
-      dir: ".",
-      format: "cjs",
-      entryFileNames: "[name].cjs",
-      hoistTransitiveImports: false,
-      generatedCode: "es2015",
-      chunkFileNames: ({ moduleIds }) => `${relative(cwd(), join(moduleIds[0], "..", "..", "dist"))}/[name].cjs`,
-    },
-    plugins: [
-      _swc,
-      resolve,
-      {
-        name: "resolve",
-        resolveId(source, importer) {
-          if (source === "graphql") {
-            return { id: `${source}/index.js`, external: true };
-          }
-
-          if (source === "graphql/execution/execute") {
-            return { id: `${source}.js`, external: true };
-          }
-
-          if (importer && external.test(source)) {
-            return { id: source, external: true };
-          }
-        },
-      },
-    ],
+    external,
+    plugins: [swc({ swc: { jsc: { target: "es2022" } } }), resolve],
   },
   {
     input,
