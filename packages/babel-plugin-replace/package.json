@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/babel-plugin-replace",
   "type": "module",
-  "version": "5.3.0",
+  "version": "5.4.20",
   "description": "babel-plugin-replace",
   "author": "mo36924",
   "license": "MIT",

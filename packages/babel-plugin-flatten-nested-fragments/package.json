@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/babel-plugin-flatten-nested-fragments",
   "type": "module",
-  "version": "5.1.14",
+  "version": "5.4.20",
   "description": "babel-plugin-flatten-nested-fragments",
   "author": "mo36924",
   "license": "MIT",
