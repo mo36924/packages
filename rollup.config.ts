@@ -8,6 +8,7 @@ import dts from "rollup-plugin-dts";
 
 const workspaceDir = "packages";
 const external = /^[@\w]/;
+const _swc = swc({ swc: { jsc: { target: "es2022" } } });
 const resolve = nodeResolve({ extensions: [".tsx", ".ts"] });
 
 const resolvePath = (path: string) =>
@@ -34,10 +35,12 @@ export default defineConfig([
     output: {
       dir: ".",
       format: "module",
+      hoistTransitiveImports: false,
+      generatedCode: "es2015",
       chunkFileNames: ({ moduleIds }) => `${relative(cwd(), join(moduleIds[0], "..", "..", "dist"))}/[name].js`,
     },
     plugins: [
-      swc(),
+      _swc,
       resolve,
       {
         name: "resolve",
@@ -63,10 +66,12 @@ export default defineConfig([
       dir: ".",
       format: "cjs",
       entryFileNames: "[name].cjs",
+      hoistTransitiveImports: false,
+      generatedCode: "es2015",
       chunkFileNames: ({ moduleIds }) => `${relative(cwd(), join(moduleIds[0], "..", "..", "dist"))}/[name].cjs`,
     },
     plugins: [
-      swc(),
+      _swc,
       resolve,
       {
         name: "resolve",
