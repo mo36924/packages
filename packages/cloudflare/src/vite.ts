@@ -18,9 +18,9 @@ export default ({ input, assets, importPrefix }: Options): Plugin[] => [
   reactRouter({ importPrefix }),
   babel({
     enforce: "pre",
-    include: [/\.tsx?$/],
+    include: [/\.tsx?$/, /\/@mo36924\//],
     options: ({ isBuild, ssr }) => ({
-      presets: [[preset, { development: isBuild, server: ssr } satisfies PresetOptions]],
+      presets: [[preset, { development: !isBuild, server: ssr } satisfies PresetOptions]],
     }),
   }),
   precompileJsx(),
