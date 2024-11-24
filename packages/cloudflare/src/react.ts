@@ -1,5 +1,6 @@
 import { D1Database } from "@cloudflare/workers-types";
-import { queries, schema } from "@mo36924/cloudflare/graphql";
+import { queries } from "@mo36924/babel-plugin-graphql/queries";
+import { schema } from "@mo36924/babel-plugin-graphql/schema";
 import { buildQuery } from "@mo36924/graphql-d1/query";
 import { parse } from "@mo36924/json";
 import { buildExecutionContext } from "graphql/execution/execute";
