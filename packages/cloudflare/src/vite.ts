@@ -1,3 +1,5 @@
+import devServer from "@hono/vite-dev-server";
+import cloudflareAdapter from "@hono/vite-dev-server/cloudflare";
 import preset, { Options as PresetOptions } from "@mo36924/babel-preset-jsx";
 import babel from "@mo36924/vite-plugin-babel";
 import precompileJsx from "@mo36924/vite-plugin-precompile-jsx";
@@ -14,7 +16,7 @@ type Options = {
 };
 
 export default ({ input, assets, importPrefix }: Options): Plugin[] => [
-  ...ssr({ input, assets }),
+  ssr({ input, assets }),
   reactRouter({ importPrefix }),
   babel({
     enforce: "pre",
@@ -26,4 +28,5 @@ export default ({ input, assets, importPrefix }: Options): Plugin[] => [
   precompileJsx(),
   tsconfigPaths(),
   ...preact(),
+  devServer({ entry: input, adapter: cloudflareAdapter }),
 ];

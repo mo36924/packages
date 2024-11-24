@@ -90,6 +90,7 @@
   ],
   "dependencies": {
     "@cloudflare/workers-types": "^4.20241112.0",
+    "@hono/vite-dev-server": "^0.17.0",
     "@mo36924/babel-plugin-graphql": "^5.4.23",
     "@mo36924/babel-plugin-server-function": "^5.4.20",
     "@mo36924/babel-preset-jsx": "^5.4.23",
