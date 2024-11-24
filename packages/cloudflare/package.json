@@ -40,6 +40,13 @@
       "require": "./dist/patch.cjs",
       "default": "./dist/patch.js"
     },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "browser": "./dist/react.browser.js",
+      "import": "./dist/react.js",
+      "require": "./dist/react.cjs",
+      "default": "./dist/react.js"
+    },
     "./server-function": {
       "types": "./dist/server-function.d.ts",
       "import": "./dist/server-function.js",
@@ -82,16 +89,22 @@
     "dist"
   ],
   "dependencies": {
+    "@cloudflare/workers-types": "^4.20241112.0",
     "@mo36924/babel-plugin-server-function": "^5.4.20",
     "@mo36924/babel-preset-jsx": "^5.4.23",
+    "@mo36924/cloudflare": "^5.4.23",
     "@mo36924/graphql": "^5.4.23",
     "@mo36924/graphql-d1": "^5.4.23",
     "@mo36924/graphql-tsc": "^5.4.23",
+    "@mo36924/json": "^5.4.20",
     "@mo36924/vite-plugin-babel": "^5.4.20",
     "@mo36924/vite-plugin-precompile-jsx": "^5.4.20",
     "@mo36924/vite-plugin-react-router": "^5.4.20",
     "@mo36924/vite-plugin-ssr": "^5.4.20",
     "@preact/preset-vite": "^2.9.1",
+    "@types/react": "^18.3.12",
+    "graphql": "^16.9.0",
+    "react": "^18.3.1",
     "vite": "^5.4.11",
     "vite-tsconfig-paths": "^5.1.2"
   }
