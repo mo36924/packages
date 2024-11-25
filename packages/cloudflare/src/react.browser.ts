@@ -13,7 +13,7 @@ export type UseQuery = <TData>(params: {
   variables?: Record<string, any>;
   _data: TData;
   _operation: "query";
-}) => { data: TData };
+}) => { data?: TData };
 
 export const useQuery: UseQuery = ({ query, variables }) => {
   const context = useContext(QueryContext);
