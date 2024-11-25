@@ -47,5 +47,5 @@ export const useQuery: UseQuery = ({ query, variables }) => {
     throw data;
   }
 
-  return data;
+  return { data };
 };

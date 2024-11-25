@@ -1,5 +1,5 @@
 import { parse } from "@mo36924/json";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const textContent = document.getElementById("context")?.textContent;
 const context = textContent ? parse(textContent) : {};
@@ -13,19 +13,19 @@ export type UseQuery = <TData>(params: {
   variables?: Record<string, any>;
   _data: TData;
   _operation: "query";
-}) => TData;
+}) => { data: TData };
 
 export const useQuery: UseQuery = ({ query, variables }) => {
   const context = useContext(QueryContext);
   const url = `/graphql?query=${query}${variables ? `&variables=${encodeURIComponent(JSON.stringify(variables))}` : ""}`;
+  const [data, setData] = useState(context[url]);
 
-  const data = (context[url] ??= fetch(url)
-    .then((res) => res.text())
-    .then((text) => (context[url] = parse(text))));
+  useEffect(() => {
+    data ??
+      fetch(url)
+        .then((res) => res.text())
+        .then((text) => setData((context[url] = parse(text))));
+  }, [data, url]);
 
-  if (typeof data.then === "function") {
-    throw data;
-  }
-
-  return data;
+  return { data };
 };
