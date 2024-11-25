@@ -133,7 +133,7 @@ export const generateRoutesCode = async (options?: GenerateOptions) => {
 
     type StaticRoutes = ${staticRoutes.map(({ pathname }) => `"${pathname}"`).join("|") || "never"};
 
-    type DynamicRoutes<T extends string = string> = ${dynamicRoutes.map(({ route }) => `${route}`).join("|") || "never"};
+    type DynamicRoutes<T extends string = string> = ${dynamicRoutes.map(({ route }) => `${route}`).join("|") || 'T extends "" ? SafeSlug<T> : never'};
 
     export type Route<T> =
       | StaticRoutes
