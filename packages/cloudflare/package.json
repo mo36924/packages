@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/cloudflare",
   "type": "module",
-  "version": "5.4.30",
+  "version": "5.4.31",
   "description": "cloudflare",
   "author": "mo36924",
   "license": "MIT",
@@ -101,7 +101,7 @@
     "@mo36924/json": "^5.4.20",
     "@mo36924/vite-plugin-babel": "^5.4.20",
     "@mo36924/vite-plugin-precompile-jsx": "^5.4.20",
-    "@mo36924/vite-plugin-react-router": "^5.4.30",
+    "@mo36924/vite-plugin-react-router": "^5.4.31",
     "@mo36924/vite-plugin-ssr": "^5.4.26",
     "@preact/preset-vite": "^2.9.1",
     "@types/react": "^18.3.12",
