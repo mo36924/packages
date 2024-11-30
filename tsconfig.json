@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es2022",
     "jsx": "preserve",
-    "jsxImportSource": "solid-js",
+    "jsxImportSource": "react",
     "baseUrl": ".",
     "module": "es2022",
     "moduleResolution": "bundler",

@@ -47,6 +47,13 @@
       "require": "./dist/react.cjs",
       "default": "./dist/react.js"
     },
+    "./render": {
+      "types": "./dist/render.d.ts",
+      "browser": "./dist/render.browser.js",
+      "import": "./dist/render.js",
+      "require": "./dist/render.cjs",
+      "default": "./dist/render.js"
+    },
     "./server-function": {
       "types": "./dist/server-function.d.ts",
       "import": "./dist/server-function.js",
@@ -95,6 +102,7 @@
     "@mo36924/babel-plugin-server-function": "^5.4.20",
     "@mo36924/babel-preset-jsx": "^5.4.26",
     "@mo36924/cloudflare": "^5.4.23",
+    "@mo36924/escape-html": "^5.4.20",
     "@mo36924/graphql": "^5.4.23",
     "@mo36924/graphql-d1": "^5.4.23",
     "@mo36924/graphql-tsc": "^5.4.23",
@@ -106,6 +114,7 @@
     "@preact/preset-vite": "^2.9.1",
     "@types/react": "^18.3.12",
     "graphql": "^16.9.0",
+    "preact-render-to-string": "^6.5.11",
     "react": "^18.3.1",
     "vite": "^5.4.11",
     "vite-tsconfig-paths": "^5.1.2"
