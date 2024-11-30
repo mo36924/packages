@@ -100,7 +100,7 @@ export const generateRoutesCode = async (options?: GenerateOptions) => {
   const code = `
     /* eslint-disable eslint-comments/no-unlimited-disable */
     /* eslint-disable */
-    import { FC, Suspense } from "react"
+    import { FC, HTMLAttributes, Suspense } from "react";
     ${routes.map(({ name, importPath }) => `import ${name} from ${JSON.stringify(importPath)}`).join("\n")}
 
     const staticRoutes: Record<string, FC> = {${staticRoutes
@@ -160,6 +160,10 @@ export const generateRoutesCode = async (options?: GenerateOptions) => {
       | StaticRoutes
       | \`\${StaticRoutes}\${SearchOrHash}\`
       | (T extends \`\${DynamicRoutes<infer _>}\${Suffix}\` ? T : never);
+
+    export const A = <T extends string>(props: { href: Route<T> } & Omit<HTMLAttributes<HTMLAnchorElement>, "href">) => (
+      <a {...props} />
+    );
 
     const Router = ({ pathname }: { pathname: string }) => {
       const [Route, params] = match(pathname);
