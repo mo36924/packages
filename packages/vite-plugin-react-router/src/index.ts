@@ -12,8 +12,7 @@ export type GenerateOptions = {
   exclude?: string[];
   importPrefix?: string;
   routesDir?: string;
-  routesPath?: string;
-  componentsDir?: string;
+  routerPath?: string;
   prettier?: boolean;
 };
 
@@ -21,17 +20,15 @@ const getGenerateOptions = ({
   include = ["**/*.tsx"],
   exclude = [],
   routesDir = "src/routes",
-  routesPath = "src/lib/routes.ts",
-  componentsDir = "src/components",
+  routerPath = "src/components/Router.tsx",
   prettier = true,
-  importPrefix = relative(dirname(routesPath), routesDir).replace(/^(?!\.)/, "./"),
+  importPrefix = relative(dirname(routerPath), routesDir).replace(/^(?!\.)/, "./"),
 }: GenerateOptions = {}): Required<GenerateOptions> => ({
   include,
   exclude,
   importPrefix,
   routesDir,
-  routesPath,
-  componentsDir,
+  routerPath,
   prettier,
 });
 
@@ -79,7 +76,7 @@ export const generateRoutesCode = async (options?: GenerateOptions) => {
   const code = `
     /* eslint-disable eslint-comments/no-unlimited-disable */
     /* eslint-disable */
-    import { FC } from "react"
+    import { FC, Suspense } from "react"
     ${routes.map(({ name, importPath }) => `import ${name} from ${JSON.stringify(importPath)}`).join("\n")}
 
     const staticRoutes: Record<string, FC> = {${staticRoutes
@@ -139,6 +136,19 @@ export const generateRoutesCode = async (options?: GenerateOptions) => {
       | StaticRoutes
       | \`\${StaticRoutes}\${SearchOrHash}\`
       | (T extends \`\${DynamicRoutes<infer _>}\${Suffix}\` ? T : never);
+
+    const Router = ({ pathname }: { pathname: string }) => {
+      const [Route, params] = match(pathname);
+      return (
+        Route && (
+          <Suspense>
+            <Route {...params} />
+          </Suspense>
+        )
+      );
+    };
+
+    export default Router;
   `;
 
   return code;
@@ -146,22 +156,22 @@ export const generateRoutesCode = async (options?: GenerateOptions) => {
 
 export const generateRoutesFile = async (options?: GenerateOptions) => {
   const generateOptions = getGenerateOptions(options);
-  const { routesPath } = generateOptions;
+  const { routerPath } = generateOptions;
   let code = await generateRoutesCode(generateOptions);
 
   if (generateOptions.prettier) {
     const { format, resolveConfig } = await import("prettier");
-    const config = await resolveConfig(routesPath);
-    code = await format(code, { ...config, filepath: routesPath });
+    const config = await resolveConfig(routerPath);
+    code = await format(code, { ...config, filepath: routerPath });
   }
 
-  writeFileSync(routesPath, code);
+  writeFileSync(routerPath, code);
 };
 
 export default (options?: GenerateOptions): Plugin => {
   const generateOptions = getGenerateOptions(options);
   const _generateRoutesFile = generateRoutesFile.bind(null, generateOptions);
-  const routesPath = resolve(generateOptions.routesPath);
+  const routesPath = resolve(generateOptions.routerPath);
   const _globalThis: { watcher?: FSWatcher } = globalThis as any;
   return {
     name,
