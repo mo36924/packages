@@ -49,7 +49,6 @@
     },
     "./render": {
       "types": "./dist/render.d.ts",
-      "browser": "./dist/render.browser.js",
       "import": "./dist/render.js",
       "require": "./dist/render.cjs",
       "default": "./dist/render.js"
