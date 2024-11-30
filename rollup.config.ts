@@ -50,7 +50,7 @@ export default defineConfig([
       },
     ],
     external,
-    plugins: [swc({ swc: { jsc: { target: "es2022" } } }), resolve],
+    plugins: [swc({ swc: { jsc: { target: "es2022", transform: { react: { runtime: "automatic" } } } } }), resolve],
   },
   {
     input,

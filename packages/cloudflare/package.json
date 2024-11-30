@@ -34,6 +34,12 @@
       "require": "./dist/graphql.cjs",
       "default": "./dist/graphql.js"
     },
+    "./hydrate": {
+      "types": "./dist/hydrate.d.ts",
+      "import": "./dist/hydrate.js",
+      "require": "./dist/hydrate.cjs",
+      "default": "./dist/hydrate.js"
+    },
     "./patch": {
       "types": "./dist/patch.d.ts",
       "import": "./dist/patch.js",
@@ -112,6 +118,7 @@
     "@mo36924/vite-plugin-ssr": "^5.4.26",
     "@preact/preset-vite": "^2.9.1",
     "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
     "graphql": "^16.9.0",
     "preact-render-to-string": "^6.5.11",
     "react": "^18.3.1",
