@@ -1,4 +1,4 @@
-import { FSWatcher, watch, writeFileSync } from "node:fs";
+import { existsSync, FSWatcher, watch, writeFileSync } from "node:fs";
 import { basename, dirname, relative, resolve } from "node:path";
 import { pascalCase } from "@mo36924/change-case";
 import glob from "fast-glob";
@@ -30,7 +30,7 @@ const getDefaultImportPrefix = (routesDir: string, routerPath: string) => {
         const routesDirName = basename(routesDir);
         const requestedModule = pathKey.replace("*", routesDirName);
 
-        if (matchPath(requestedModule)) {
+        if (matchPath(requestedModule, undefined, existsSync, [])) {
           return requestedModule;
         }
       }
