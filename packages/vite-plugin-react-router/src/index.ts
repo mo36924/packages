@@ -4,6 +4,7 @@ import { pascalCase } from "@mo36924/change-case";
 import glob from "fast-glob";
 import MagicString from "magic-string";
 import pluralize from "pluralize";
+import { createMatchPath, loadConfig } from "tsconfig-paths";
 import { Plugin } from "vite";
 import { name } from "./name";
 
@@ -16,13 +17,36 @@ export type GenerateOptions = {
   prettier?: boolean;
 };
 
+const getDefaultImportPrefix = (routesDir: string, routerPath: string) => {
+  const config = loadConfig();
+
+  if (config.resultType === "success") {
+    const pathKeys = Object.keys(config.paths);
+
+    if (pathKeys.length) {
+      const matchPath = createMatchPath(config.absoluteBaseUrl, config.paths, config.mainFields, config.addMatchAll);
+
+      for (const pathKey of pathKeys) {
+        const routesDirName = basename(routesDir);
+        const requestedModule = pathKey.replace("*", routesDirName);
+
+        if (matchPath(requestedModule)) {
+          return requestedModule;
+        }
+      }
+    }
+  }
+
+  return relative(dirname(routerPath), routesDir).replace(/^(?!\.)/, "./");
+};
+
 const getGenerateOptions = ({
   include = ["**/*.tsx"],
   exclude = [],
   routesDir = "src/routes",
   routerPath = "src/components/Router.tsx",
   prettier = true,
-  importPrefix = relative(dirname(routerPath), routesDir).replace(/^(?!\.)/, "./"),
+  importPrefix = getDefaultImportPrefix(routesDir, routerPath),
 }: GenerateOptions = {}): Required<GenerateOptions> => ({
   include,
   exclude,
