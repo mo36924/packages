@@ -217,7 +217,7 @@ export default (options?: GenerateOptions): Plugin => {
 
       const s = new MagicString(code);
       s.prepend("import { lazy } from 'react'\n");
-      s.replaceAll(/import (.+?) from (['"].+?['"])/g, (_, p1, p2) => `const ${p1} = lazy(() => import(${p2}))`);
+      s.replaceAll(/import (\w+) from (['"].+?['"])/g, (_, p1, p2) => `const ${p1} = lazy(() => import(${p2}))`);
       return { code: s.toString(), map: s.generateMap({ hires: true }) };
     },
   };
