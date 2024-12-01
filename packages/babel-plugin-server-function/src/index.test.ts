@@ -58,10 +58,14 @@ it("client", () => {
   expect(result).toMatchInlineSnapshot(`
     import _client from "@mo36924/babel-plugin-server-function/client";
     type A = string;
-    const serverFunction = (arg, { prop }, [value], ...args) => {
+    const serverFunction = (arg, {
+      prop
+    }, [value], ...args) => {
       return _client("B-Ey_vbGUGuUxwTitwko3pzAcbh_1qVULE07GsfsCG8", arg, prop, value, args);
     };
-    function serverFunction1(arg, { prop }, [value], ...args) {
+    function serverFunction1(arg, {
+      prop
+    }, [value], ...args) {
       return _client("0Awf45xy9l01x9xBXhrrDjdhg6ix2VhQaC7j8h9vCN4", arg, prop, value, args);
     }
     export default async (...args) => {
@@ -79,7 +83,9 @@ it("server", () => {
     import { readFile } from "fs/promises";
     const a = 1;
     type A = string;
-    const serverFunction = async (arg, { prop }, [value], ...args) => {
+    const serverFunction = async (arg, {
+      prop
+    }, [value], ...args) => {
       console.log(a);
       console.log(arg);
       console.log(prop);
@@ -88,7 +94,9 @@ it("server", () => {
       const data: A = await readFile(arg, "utf-8");
       return data;
     };
-    async function serverFunction1(arg, { prop }, [value], ...args) {
+    async function serverFunction1(arg, {
+      prop
+    }, [value], ...args) {
       console.log(a);
       console.log(arg);
       console.log(prop);
@@ -133,7 +141,7 @@ it("functions-development", async () => {
     };
 
     // @ts-expect-error functions is set to a value by Babel
-    export const functions: Functions = (globalThis.__SERVER_FUNCTIONS__ ??= Object.create(null));
+    export const functions: Functions = globalThis.__SERVER_FUNCTIONS__ ??= Object.create(null);
   `);
 
   expect(functions).toMatchInlineSnapshot(`
@@ -158,7 +166,7 @@ it("functions-production", () => {
     // @ts-expect-error functions is set to a value by Babel
     export const functions: Functions = Object.assign(Object.create(null), {
       "B-Ey_vbGUGuUxwTitwko3pzAcbh_1qVULE07GsfsCG8": _2f696e6465782e7473_0,
-      "0Awf45xy9l01x9xBXhrrDjdhg6ix2VhQaC7j8h9vCN4": _2f696e6465782e7473_1,
+      "0Awf45xy9l01x9xBXhrrDjdhg6ix2VhQaC7j8h9vCN4": _2f696e6465782e7473_1
     });
   `);
 });

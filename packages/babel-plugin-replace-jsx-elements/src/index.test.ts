@@ -25,18 +25,17 @@ it("babel-plugin-replace-jsx-elements", () => {
   });
 
   expect(result).toMatchInlineSnapshot(`
-    const Component = () => (
-      <>
-        <a href="/">top</a>
-        <a href="/user">user</a>
-        <Title>title</Title>
-        <>header</>
-      </>
-    );
-    const Body = ({ children, ...props }) => (
-      <body {...props}>
-        <div id="app">{children}</div>
-      </body>
-    );
+    const Component = () => <>
+            <a href="/">top</a>
+            <a href="/user">user</a>
+            <Title>title</Title>
+            <>header</>
+          </>;
+    const Body = ({
+      children,
+      ...props
+    }) => <body {...props}>
+            <div id="app">{children}</div>
+          </body>;
   `);
 });

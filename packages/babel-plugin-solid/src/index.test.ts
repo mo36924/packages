@@ -26,18 +26,16 @@ const transform = (code: string) =>
 it("babel-plugin-solid", () => {
   expect(transform(code)).toMatchInlineSnapshot(`
     import { HydrationScript } from "solid-js/web";
-    const Index = () => (
-      <html lang="en">
+    const Index = () => <html lang="en">
         <head>
           <meta charset="UTF-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <title>Document</title>
-          <script type="module" src="/index.js" />
-          <HydrationScript />
-        </head>
-        <body>Hello World!</body>
-      </html>
-    );
+        <script type="module" src="/index.js" /><HydrationScript /></head>
+        <body>
+          Hello World!
+        </body>
+      </html>;
     export default Index;
   `);
 });

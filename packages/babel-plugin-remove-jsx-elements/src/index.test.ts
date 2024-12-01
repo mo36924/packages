@@ -33,12 +33,11 @@ it("babel-plugin-remove-jsx-elements", () => {
 
   expect(result).toMatchInlineSnapshot(`
     const A = <></>;
-    const B = (
-      <>
-        <body>
-          <h1>Hello</h1>
-        </body>
-      </>
-    );
+    const B = <>
+            
+            <body>
+              <h1>Hello</h1>
+            </body>
+          </>;
   `);
 });

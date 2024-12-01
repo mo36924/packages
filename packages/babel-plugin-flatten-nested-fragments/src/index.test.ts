@@ -20,7 +20,14 @@ it("babel-plugin-flatten-nested-fragments", () => {
 
   expect(result).toMatchInlineSnapshot(`
     <>
-      <div>a</div>b<div>c</div>d
-    </>;
+          <div>a</div>
+          b
+          
+            <div>c</div>
+          
+          
+            d
+          
+        </>;
   `);
 });

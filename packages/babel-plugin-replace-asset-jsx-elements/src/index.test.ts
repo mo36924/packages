@@ -28,15 +28,15 @@ it("babel-plugin-replace-asset-jsx-elements", () => {
 
   expect(result).toMatchInlineSnapshot(`
     <html>
-      <head>
-        <meta charset="utf-8" />
-        <title>Hello</title>
-        <link rel="stylesheet" href="/assets/index.css" />
-        <script type="module" src="/assets/index.js" />
-      </head>
-      <body>
-        <h1>Hello</h1>
-      </body>
-    </html>;
+          <head>
+            <meta charset="utf-8" />
+            <title>Hello</title>
+            <link rel="stylesheet" href="/assets/index.css" />
+            <script type="module" src="/assets/index.js" />
+          </head>
+          <body>
+            <h1>Hello</h1>
+          </body>
+        </html>;
   `);
 });
