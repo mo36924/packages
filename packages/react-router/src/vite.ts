@@ -1,4 +1,4 @@
-import { existsSync } from "node:fs";
+import { existsSync, FSWatcher, watch } from "node:fs";
 import { basename, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { pascalCase } from "@mo36924/change-case";
@@ -163,6 +163,24 @@ export default (options?: GenerateOptions): Plugin => {
       }
 
       return generateRoutesCode({ ...generateOptions, ssr });
+    },
+    configureServer(server) {
+      const _globalThis: { watcher?: FSWatcher } = globalThis as any;
+      _globalThis.watcher?.close();
+
+      _globalThis.watcher = watch(generateOptions.routesDir, async (event) => {
+        if (event === "change") {
+          return;
+        }
+
+        const module = server.moduleGraph.getModuleById(filename);
+
+        if (!module) {
+          return;
+        }
+
+        await server.reloadModule(module);
+      });
     },
   };
 };
