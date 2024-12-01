@@ -1,6 +1,7 @@
 import { FC, ReactNode } from "react";
 import { hydrateRoot } from "react-dom/client";
 
+// packages/react-components/src/Body.tsx
 declare const _: HTMLElement;
 
 export const hydrate = (
