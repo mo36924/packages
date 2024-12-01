@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/cloudflare",
   "type": "module",
-  "version": "5.5.12",
+  "version": "5.5.13",
   "description": "cloudflare",
   "author": "mo36924",
   "license": "MIT",
