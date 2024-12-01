@@ -18,14 +18,18 @@ export default ({ include }: Options = {}): Plugin => {
         return;
       }
 
-      const input = build.rollupOptions.input;
-      const _include = include ?? (typeof input === "object" ? Object.values(input) : input);
-
-      if (!_include) {
+      if (include) {
+        filter = createFilter(include);
         return;
       }
 
-      filter = createFilter(_include);
+      const input = build.rollupOptions.input;
+      const inputs = typeof input === "object" ? Object.values(input) : input ? [input] : [];
+      const scripts = inputs.filter((input) => !input.endsWith(".css"));
+
+      if (scripts.length) {
+        filter = createFilter(scripts);
+      }
     },
     transform(code, id, { ssr } = {}) {
       if (ssr || !filter?.(id)) {
