@@ -1,0 +1,41 @@
+{
+  "name": "@mo36924/vite-plugin-preact-debug",
+  "type": "module",
+  "version": "5.5.9",
+  "description": "vite-plugin-preact-debug",
+  "author": "mo36924",
+  "license": "MIT",
+  "homepage": "https://github.com/mo36924/packages#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mo36924/packages.git",
+    "directory": "packages/vite-plugin-preact-debug"
+  },
+  "bugs": {
+    "url": "https://github.com/mo36924/packages/issues"
+  },
+  "keywords": [],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@babel/core": "^7.26.0",
+    "@types/babel__core": "^7.20.5",
+    "magic-string": "^0.30.13",
+    "vite": "^5.4.11"
+  }
+}
