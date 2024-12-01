@@ -93,8 +93,18 @@ await Promise.all(
       default: undefined,
     });
 
-    const [{ output = data }] = await eslint.lintText(data, { filePath: path });
-    const formattedCode = await format(output, { ...prettierConfig, filepath: path });
+    let fixedCode = data;
+
+    for (let i = 0; i < 3; i++) {
+      const [{ output = fixedCode, fixableErrorCount }] = await eslint.lintText(fixedCode, { filePath: path });
+      fixedCode = output;
+
+      if (!fixableErrorCount) {
+        break;
+      }
+    }
+
+    const formattedCode = await format(fixedCode, { ...prettierConfig, filepath: path });
 
     if (code !== formattedCode) {
       await writeFile(path, formattedCode);
