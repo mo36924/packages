@@ -21,7 +21,11 @@ const input = Object.fromEntries(
     .map((name) => `${workspaceDir}/${name}`)
     .flatMap((packageDir) =>
       Object.values<{ [type: string]: string }>(JSON.parse(readFileSync(`${packageDir}/package.json`, "utf-8")).exports)
-        .flatMap((_export) => Object.values(_export))
+        .flatMap((_export) =>
+          Object.entries(_export)
+            .filter(([condition]) => condition !== "source")
+            .map(([_condition, path]) => path),
+        )
         .map((path) => path.replace(/^\.\/dist\//, "").replace(/\.(js|cjs|d\.ts)$/, ""))
         .filter((name, index, self) => self.indexOf(name) === index)
         .map((name): [string, string] => [`${packageDir}/dist/${name}`, resolvePath(`${packageDir}/src/${name}`)]),
