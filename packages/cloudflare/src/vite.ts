@@ -26,6 +26,6 @@ export default ({ input, assets }: Options): Plugin[] => [
   }),
   precompileJsx(),
   tsconfigPaths(),
-  ...preact(),
+  ...preact({ include: [/\.tsx?$/], exclude: [] }),
   devServer({ entry: input, adapter: cloudflareAdapter }),
 ];
