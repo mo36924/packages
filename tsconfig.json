@@ -12,6 +12,7 @@
       "@mo36924/graphql/*": ["packages/graphql/src/*"],
       "@mo36924/graphql-d1/*": ["packages/graphql-d1/src/*"],
       "@mo36924/graphql-plugin/*": ["packages/graphql-plugin/src/*"],
+      "@mo36924/react-router/*": ["packages/react-router/src/*"],
       "@mo36924/*": ["packages/*/src"]
     },
     "resolveJsonModule": true,
