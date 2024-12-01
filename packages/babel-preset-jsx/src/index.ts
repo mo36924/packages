@@ -52,14 +52,14 @@ export default (
       [
         inject,
         {
-          ...(existsSync("./src/components/Html.tsx") ? { Html: ["./src/components/Html.tsx", "Html"] } : {}),
+          ...(existsSync("./src/components/Html.tsx") ? { Html: ["./src/components/Html.tsx", "default"] } : {}),
           Title: [
             existsSync("./src/components/Title.tsx") ? "./src/components/Title.tsx" : "@mo36924/react-components/Title",
-            "Title",
+            "default",
           ],
           Body: [
             existsSync("./src/components/Body.tsx") ? "./src/components/Body.tsx" : "@mo36924/react-components/Body",
-            "Body",
+            "default",
           ],
         } satisfies InjectOptions,
       ],
