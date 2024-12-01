@@ -1,8 +1,10 @@
+import { existsSync } from "node:fs";
 import { env } from "node:process";
 import { TransformOptions } from "@babel/core";
 import deadCodeElimination from "@mo36924/babel-plugin-dead-code-elimination";
 import flattenNestedFragments from "@mo36924/babel-plugin-flatten-nested-fragments";
 import graphql, { Options as GraphQLOptions } from "@mo36924/babel-plugin-graphql";
+import inject, { Options as InjectOptions } from "@mo36924/babel-plugin-inject";
 import injectAssetJsxElements, {
   Options as InjectAssetJsxElementsOptions,
 } from "@mo36924/babel-plugin-inject-asset-jsx-elements";
@@ -32,22 +34,34 @@ export default (
         replaceJsxElements,
         server
           ? ({
+              body: "Body",
               Suspense: "Fragment",
               A: "a",
-              Title: "title",
             } satisfies ReplaceJsxElementsOptions)
           : ({
               html: "Fragment",
-              Html: "Fragment",
               head: "Fragment",
               meta: "Fragment",
               link: "Fragment",
               script: "Fragment",
               body: "Fragment",
-              Body: "Fragment",
               title: "Title",
               A: "a",
             } satisfies ReplaceJsxElementsOptions),
+      ],
+      [
+        inject,
+        {
+          ...(existsSync("./src/components/Html.tsx") ? { Html: ["./src/components/Html.tsx", "Html"] } : {}),
+          Title: [
+            existsSync("./src/components/Title.tsx") ? "./src/components/Title.tsx" : "@mo36924/react-components/Title",
+            "Title",
+          ],
+          Body: [
+            existsSync("./src/components/Body.tsx") ? "./src/components/Body.tsx" : "@mo36924/react-components/Body",
+            "Body",
+          ],
+        } satisfies InjectOptions,
       ],
       flattenNestedFragments,
       [jsxDisplayName, development ? undefined : false],

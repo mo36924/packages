@@ -22,6 +22,20 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs",
       "default": "./dist/index.js"
+    },
+    "./Body": {
+      "types": "./dist/Body.d.ts",
+      "source": "./src/Body.tsx",
+      "import": "./dist/Body.js",
+      "require": "./dist/Body.cjs",
+      "default": "./dist/Body.js"
+    },
+    "./Title": {
+      "types": "./dist/Title.d.ts",
+      "source": "./src/Title.tsx",
+      "import": "./dist/Title.js",
+      "require": "./dist/Title.cjs",
+      "default": "./dist/Title.js"
     }
   },
   "main": "./dist/index.js",
