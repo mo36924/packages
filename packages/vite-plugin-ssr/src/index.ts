@@ -41,7 +41,7 @@ export const ssr = ({ input, assets }: Options): Plugin => {
         resolve: {
           conditions: ["source", "browser", "import"],
         },
-        ssr: { noExternal: isSsrBuild ? true : undefined, conditions: ["source", "import", "node"] },
+        ssr: { noExternal: isSsrBuild ? true : undefined, resolve: { conditions: ["source", "import", "node"] } },
       };
     },
     generateBundle: {

@@ -1,5 +1,5 @@
 import { existsSync } from "node:fs";
-import { basename, dirname, join, relative } from "node:path";
+import { basename, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { pascalCase } from "@mo36924/change-case";
 import glob from "fast-glob";
@@ -15,7 +15,7 @@ export type GenerateOptions = {
   routesDir?: string;
 };
 
-const dir = dirname(fileURLToPath(import.meta.url));
+const dir = join(fileURLToPath(import.meta.url), "..", "..", "src");
 const filename = join(dir, "index.tsx");
 
 const getDefaultImportPrefix = (routesDir: string) => {
@@ -154,6 +154,9 @@ export default (options?: GenerateOptions): Plugin => {
   const generateOptions = getGenerateOptions(options);
   return {
     name,
+    config: () => ({
+      ssr: { noExternal: "@mo36924/react-router", resolve: { conditions: ["source", "import", "node"] } },
+    }),
     load(id, { ssr } = {}) {
       if (id !== filename) {
         return;
