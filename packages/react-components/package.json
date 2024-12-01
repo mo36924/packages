@@ -1,0 +1,40 @@
+{
+  "name": "@mo36924/react-components",
+  "type": "module",
+  "version": "5.4.38",
+  "description": "react-components",
+  "author": "mo36924",
+  "license": "MIT",
+  "homepage": "https://github.com/mo36924/packages#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mo36924/packages.git",
+    "directory": "packages/react-components"
+  },
+  "bugs": {
+    "url": "https://github.com/mo36924/packages/issues"
+  },
+  "keywords": [],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "source": "./src/index.tsx",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@types/react": "^18.3.12",
+    "react": "^18.3.1"
+  }
+}
