@@ -2,16 +2,14 @@ import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { cwd } from "node:process";
 import depcheck from "depcheck";
-import { Linter } from "eslint";
+import { ESLint } from "eslint";
 import { format, resolveConfig } from "prettier";
-import promiseConfig from "../eslint.config.js";
 import { version } from "../lerna.json";
 import { author, devDependencies, name } from "../package.json";
 
 const dir = resolve("packages");
 const names = await readdir(dir);
-const linter = new Linter();
-const eslintConfig = await promiseConfig;
+const eslint = new ESLint({ fix: true });
 const prettierConfig = await resolveConfig(cwd());
 
 const pkgs = await Promise.all(
@@ -48,6 +46,7 @@ await Promise.all(
       description: _name,
       keywords: [],
       main: "./dist/index.js",
+      files: ["dist"],
       ...pkg,
       license: "MIT",
       name: `@${author}/${_name}`,
@@ -67,8 +66,6 @@ await Promise.all(
       publishConfig: {
         access: "public",
       },
-      typesVersions: { "*": { "*": ["dist/*.d.ts", "*"] } },
-      files: ["dist"],
       exports: Object.fromEntries(
         Object.entries<{ [key: string]: string }>(pkg.exports ?? { ".": {} }).map(([key, value]) => {
           const name = key.slice(2) || "index";
@@ -96,7 +93,7 @@ await Promise.all(
       default: undefined,
     });
 
-    const { output } = linter.verifyAndFix(data, eslintConfig, path);
+    const [{ output = data }] = await eslint.lintText(data, { filePath: path });
     const formattedCode = await format(output, { ...prettierConfig, filepath: path });
 
     if (code !== formattedCode) {
