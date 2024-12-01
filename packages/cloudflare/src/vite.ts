@@ -16,7 +16,12 @@ type Options = {
 };
 
 export default ({ input, assets }: Options): Plugin[] => [
-  ssr({ input, assets }),
+  ssr({
+    input,
+    assets: assets.some((asset) => !asset.endsWith(".css"))
+      ? assets
+      : ["node_modules/@mo36924/cloudflare/src/client.tsx", ...assets],
+  }),
   reactRouter(),
   babel({
     enforce: "pre",
