@@ -11,10 +11,10 @@ export type Options = {
 export default ({ include }: Options = {}): Plugin => {
   let filter: ReturnType<typeof createFilter> | undefined;
   return {
-    name: "vite-plugin-babel",
+    name: "vite-plugin-preact-debug",
     enforce: "post",
     configResolved({ command, build }) {
-      if (command !== "build") {
+      if (command === "build") {
         return;
       }
 
