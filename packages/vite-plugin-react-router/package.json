@@ -32,10 +32,10 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "bin": "./dist/bin.js",
   "files": [
     "dist"
   ],
-  "bin": "./dist/bin.js",
   "publishConfig": {
     "access": "public"
   },

@@ -81,14 +81,14 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "bin": {
     "cloudflare-codegen": "./dist/codegen.js",
     "cloudflare-patch": "./dist/patch.js",
     "cloudflare-tsc": "./dist/tsc.js"
   },
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public"
   },

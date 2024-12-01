@@ -50,13 +50,13 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "bin": {
     "graphql-drizzle": "./dist/bin/drizzle.js",
     "graphql-seed": "./dist/bin/seed.js"
   },
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public"
   },
