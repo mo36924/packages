@@ -32,21 +32,13 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/*.d.ts",
-        "*"
-      ]
-    }
-  },
+  "files": [
+    "dist"
+  ],
   "bin": "./dist/bin.js",
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "dist"
-  ],
   "dependencies": {
     "@mo36924/change-case": "^0.0.1",
     "@types/pluralize": "^0.0.33",

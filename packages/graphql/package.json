@@ -50,21 +50,13 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/*.d.ts",
-        "*"
-      ]
-    }
-  },
+  "files": [
+    "dist"
+  ],
   "bin": {
     "graphql-dts": "./dist/dts.js",
     "graphql-patch": "./dist/patch.js"
   },
-  "files": [
-    "dist"
-  ],
   "publishConfig": {
     "access": "public"
   },

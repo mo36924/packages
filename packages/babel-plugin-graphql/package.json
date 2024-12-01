@@ -38,20 +38,12 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "publishConfig": {
-    "access": "public"
-  },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/*.d.ts",
-        "*"
-      ]
-    }
-  },
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@babel/core": "^7.26.0",
     "@babel/helper-plugin-utils": "^7.25.9",

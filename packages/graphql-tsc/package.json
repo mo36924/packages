@@ -26,21 +26,13 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/*.d.ts",
-        "*"
-      ]
-    }
-  },
+  "files": [
+    "dist"
+  ],
   "bin": "./dist/index.js",
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "dist"
-  ],
   "dependencies": {
     "@mo36924/graphql-plugin": "^5.4.23",
     "@volar/typescript": "^2.4.10",

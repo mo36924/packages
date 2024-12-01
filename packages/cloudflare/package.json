@@ -81,14 +81,9 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/*.d.ts",
-        "*"
-      ]
-    }
-  },
+  "files": [
+    "dist"
+  ],
   "bin": {
     "cloudflare-codegen": "./dist/codegen.js",
     "cloudflare-patch": "./dist/patch.js",
@@ -97,9 +92,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "dist"
-  ],
   "dependencies": {
     "@cloudflare/workers-types": "^4.20241112.0",
     "@hono/vite-dev-server": "^0.17.0",

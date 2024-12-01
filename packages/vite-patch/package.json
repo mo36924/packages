@@ -32,19 +32,11 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/*.d.ts",
-        "*"
-      ]
-    }
-  },
+  "files": [
+    "dist"
+  ],
   "bin": "./dist/bin.js",
   "publishConfig": {
     "access": "public"
-  },
-  "files": [
-    "dist"
-  ]
+  }
 }
