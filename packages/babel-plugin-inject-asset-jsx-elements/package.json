@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/babel-plugin-inject-asset-jsx-elements",
   "type": "module",
-  "version": "5.5.8",
+  "version": "5.5.9",
   "description": "babel-plugin-inject-asset-jsx-elements",
   "author": "mo36924",
   "license": "MIT",
@@ -36,7 +36,7 @@
     "@babel/core": "^7.26.0",
     "@babel/helper-plugin-utils": "^7.25.9",
     "@babel/plugin-syntax-jsx": "^7.25.9",
-    "@mo36924/vite-plugin-ssr": "^5.5.7",
+    "@mo36924/vite-plugin-ssr": "^5.5.9",
     "@types/babel__core": "^7.20.5",
     "@types/babel__helper-plugin-utils": "^7.10.3",
     "vite": "^5.4.11"
