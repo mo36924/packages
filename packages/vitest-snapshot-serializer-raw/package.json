@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/vitest-snapshot-serializer-raw",
   "type": "module",
-  "version": "5.5.0",
+  "version": "5.5.4",
   "description": "vitest-snapshot-serializer-raw",
   "author": "mo36924",
   "license": "MIT",
