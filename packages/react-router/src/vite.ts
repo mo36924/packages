@@ -16,7 +16,7 @@ export type GenerateOptions = {
 };
 
 const dir = dirname(fileURLToPath(import.meta.url));
-const filenames = ["js", "cjs"].map((ext) => join(dir, `index.${ext}`));
+const filename = join(dir, "index.tsx");
 
 const getDefaultImportPrefix = (routesDir: string) => {
   const config = loadConfig();
@@ -130,7 +130,7 @@ export const generateRoutesCode = async (options?: GenerateOptions & { ssr?: boo
 
       const index = matches.indexOf("");
       const DynamicRoute = dynamicRoutes[index];
-      const params: Record<string, string> = {};
+      const params = {};
 
       for (let i = index + 1; matches[i] !== undefined; i++) {
         params[(dynamicRoutes)[i]] = matches[i];
@@ -155,7 +155,7 @@ export default (options?: GenerateOptions): Plugin => {
   return {
     name,
     load(id, { ssr } = {}) {
-      if (!filenames.includes(id)) {
+      if (id !== filename) {
         return;
       }
 
