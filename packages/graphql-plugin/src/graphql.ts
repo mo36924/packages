@@ -125,7 +125,7 @@ export const graphql: ts.server.PluginModuleFactory = ({ typescript: ts }) => {
 
         const field = query.match(/\w+/)?.[0] ?? "";
         const isMutation = !!schema.getMutationType()?.getFields()[field];
-        const operation = isMutation ? "mutation" : "query";
+        const operation = isMutation ? "mutation" : "";
         query = operation + query.replace(/\n|\r/g, " ");
         const offset = -operation.length + template.getStart() + 1;
 
