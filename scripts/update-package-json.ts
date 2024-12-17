@@ -89,6 +89,9 @@ await Promise.all(
             .map((name) => [name, deps[name]]),
         ),
         ...Object.fromEntries(Object.keys(result.using).map((name) => [name, deps[name]])),
+        ...Object.fromEntries(
+          Object.entries<string>(pkg.dependencies ?? {}).filter(([_, version]) => version.includes("||")),
+        ),
       }),
       default: undefined,
     });
