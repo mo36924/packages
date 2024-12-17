@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/graphql-plugin",
   "type": "module",
-  "version": "5.5.4",
+  "version": "5.5.14",
   "description": "graphql-plugin",
   "author": "mo36924",
   "license": "MIT",
