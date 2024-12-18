@@ -28,7 +28,7 @@ export default (
 ): Pick<TransformOptions, "plugins"> => {
   return {
     plugins: [
-      [serverFunction, { server, development } satisfies ServerFunctionOptions],
+      [serverFunction, { ssr: server, development } satisfies ServerFunctionOptions],
       [injectAssetJsxElements, { manifest } satisfies InjectAssetJsxElementsOptions],
       [
         replaceJsxElements,

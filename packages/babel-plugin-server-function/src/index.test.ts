@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
 import { transformFileSync, transformSync } from "@babel/core";
 import { expect, it } from "vitest";
-import { functions } from "./functions";
+import functions from "./functions";
 import plugin, { Options } from "./index";
 
 const code = `
@@ -53,7 +53,7 @@ const transformFunctions = (options: Options) =>
   });
 
 it("client", () => {
-  const result = transform({ server: false });
+  const result = transform({ ssr: false });
 
   expect(result).toMatchInlineSnapshot(`
     import _client from "@mo36924/babel-plugin-server-function/client";
@@ -77,7 +77,7 @@ it("client", () => {
 });
 
 it("server", () => {
-  const result = transform({ server: true });
+  const result = transform({ ssr: true });
 
   expect(result).toMatchInlineSnapshot(`
     import { readFile } from "fs/promises";
@@ -132,16 +132,14 @@ it("server", () => {
 });
 
 it("functions-development", async () => {
-  transform({ server: false });
-  const result = transformFunctions({ server: true, development: true });
+  transform({ ssr: false });
+  const result = transformFunctions({ ssr: true, development: true });
 
   expect(result).toMatchInlineSnapshot(`
-    export type Functions = {
+    const functions: {
       [hash: string]: (...args: any[]) => Promise<any>;
-    };
-
-    // @ts-expect-error functions is set to a value by Babel
-    export const functions: Functions = globalThis.__SERVER_FUNCTIONS__ ??= Object.create(null);
+    } = Object.create(null);
+    export default functions;
   `);
 
   expect(functions).toMatchInlineSnapshot(`
@@ -153,18 +151,13 @@ it("functions-development", async () => {
 });
 
 it("functions-production", () => {
-  transform({ server: false });
-  const result = transformFunctions({ server: true });
+  transform({ ssr: false });
+  const result = transformFunctions({ ssr: true });
 
   expect(result).toMatchInlineSnapshot(`
     import { _2f696e6465782e7473_0 } from "/index.ts";
     import { _2f696e6465782e7473_1 } from "/index.ts";
-    export type Functions = {
-      [hash: string]: (...args: any[]) => Promise<any>;
-    };
-
-    // @ts-expect-error functions is set to a value by Babel
-    export const functions: Functions = Object.assign(Object.create(null), {
+    export default Object.assign(Object.create(null), {
       "B-Ey_vbGUGuUxwTitwko3pzAcbh_1qVULE07GsfsCG8": _2f696e6465782e7473_0,
       "0Awf45xy9l01x9xBXhrrDjdhg6ix2VhQaC7j8h9vCN4": _2f696e6465782e7473_1
     });

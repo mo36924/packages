@@ -28,12 +28,6 @@
       "require": "./dist/client.cjs",
       "default": "./dist/client.js"
     },
-    "./fetch": {
-      "types": "./dist/fetch.d.ts",
-      "import": "./dist/fetch.js",
-      "require": "./dist/fetch.cjs",
-      "default": "./dist/fetch.js"
-    },
     "./functions": {
       "types": "./dist/functions.d.ts",
       "import": "./dist/functions.js",

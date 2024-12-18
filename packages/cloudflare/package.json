@@ -66,12 +66,6 @@
       "require": "./dist/render.cjs",
       "default": "./dist/render.js"
     },
-    "./server-function": {
-      "types": "./dist/server-function.d.ts",
-      "import": "./dist/server-function.js",
-      "require": "./dist/server-function.cjs",
-      "default": "./dist/server-function.js"
-    },
     "./tsc": {
       "types": "./dist/tsc.d.ts",
       "import": "./dist/tsc.js",

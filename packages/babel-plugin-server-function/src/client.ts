@@ -1,10 +1,7 @@
 import { parse, stringify } from "@mo36924/json";
-import { basePathname } from "./constants";
 
-export type Client = (id: string, ...args: any[]) => Promise<any>;
-
-const client: Client = (id: string, ...args: any[]) =>
-  fetch(basePathname + id, {
+export default (id: string, ...args: any[]): Promise<any> =>
+  fetch(`/server-function/${id}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -13,5 +10,3 @@ const client: Client = (id: string, ...args: any[]) =>
   })
     .then((response) => response.text())
     .then(parse);
-
-export default client;
