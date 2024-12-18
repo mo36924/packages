@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/vite-plugin-remove-use-client-directive",
   "type": "module",
-  "version": "5.5.16",
+  "version": "5.5.17",
   "description": "vite-plugin-remove-use-client-directive",
   "author": "mo36924",
   "license": "MIT",
