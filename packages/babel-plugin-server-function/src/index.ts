@@ -192,8 +192,6 @@ const getServerFunctionArgs = (path: NodePath<t.Function>) => {
 //   },
 // );
 
-const serverFunctions: { [hash: string]: { path: string; name: string } } = Object.create(null);
-
 export default declare<Options, PluginObj<State>>(
   (
     _api,
@@ -215,14 +213,16 @@ export default declare<Options, PluginObj<State>>(
             statement.remove();
           }
 
+          const values = Object.values(functions).map((fn) => fn._);
+
           path.pushContainer(
             "body",
             template.statements.ast(
-              `${Object.values(serverFunctions)
+              `${values
                 .map(({ name, path }) => `import { ${name} } from ${JSON.stringify(path)}\n`)
                 .join(
                   "",
-                )}export default Object.assign(Object.create(null), {${Object.entries(serverFunctions).map(([key, { name }]) => `${JSON.stringify(key)}: ${name}`)}})`,
+                )}export default Object.assign(Object.create(null), {${values.map(({ key, name }) => `${JSON.stringify(key)}: ${name}`)}})`,
             ),
           );
         },
@@ -263,21 +263,18 @@ export default declare<Options, PluginObj<State>>(
               );
             }
 
-            // functions[key] = Object.assign(
-            //   async (..._args: any[]) => {
-            //     throw new Error("Server function is not implemented.");
-            //   },
-            //   { key, path: _path, _name: name },
-            // );
-
             const filename = state.filename;
 
             if (!filename) {
               throw path.buildCodeFrameError("Filename is required.");
             }
 
-            functions[key] = (...args: any[]) => import(filename).then((mod) => mod[name](...args));
-            serverFunctions[key] = { path: filename, name };
+            functions[key] = Object.assign(
+              async (..._args: any[]) => {
+                throw new Error("Server function is not implemented.");
+              },
+              { _: { key, path: filename, name } },
+            );
 
             path.replaceWith({
               ...path.node,
