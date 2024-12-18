@@ -1,3 +1,5 @@
-import { getSchema } from "@mo36924/graphql";
+import { buildSchema, GraphQLSchema } from "graphql";
 
-export const schema = getSchema().schema;
+const schema: GraphQLSchema = buildSchema("scalar Unknown");
+
+export default schema;

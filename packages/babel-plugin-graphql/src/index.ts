@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { dirname, join } from "node:path";
 import { env } from "node:process";
 import { fileURLToPath } from "node:url";
-import { PluginObj, types as t } from "@babel/core";
+import { PluginObj, types as t, template } from "@babel/core";
 import { declare } from "@babel/helper-plugin-utils";
 import { printSchemaWithDirectives } from "@graphql-tools/utils";
 import {
@@ -17,73 +17,66 @@ import {
   visit,
   visitWithTypeInfo,
 } from "graphql";
-import { queries as _queries, Queries } from "./queries";
-import { schema as _schema } from "./schema";
+import documentNodes from "./documents";
+import graphqlSchema from "./schema";
 
 export type Options = {
   development?: boolean;
   schema?: GraphQLSchema;
-  queries?: Queries;
+  documents?: { [hash: string]: DocumentNode | undefined };
 };
 
-const queriesDir = dirname(fileURLToPath(import.meta.url));
-const queriesPaths = ["js", "cjs", "ts"].map((extname) => join(queriesDir, `queries.${extname}`));
-const schemaPaths = ["js", "cjs", "ts"].map((extname) => join(queriesDir, `schema.${extname}`));
-const hash = (data: string) => createHash("sha256").update(data).digest("base64url");
+const moduleDir = dirname(fileURLToPath(import.meta.url));
+const documentPaths = ["js", "cjs", "ts"].map((extname) => join(moduleDir, `documents.${extname}`));
+const schemaPaths = ["js", "cjs", "ts"].map((extname) => join(moduleDir, `schema.${extname}`));
 
 export default declare<Options>(
-  (_api, { development = env.NODE_ENV === "development", schema = _schema, queries = _queries }): PluginObj => {
+  (
+    _api,
+    { development = env.NODE_ENV === "development", schema = graphqlSchema, documents = documentNodes },
+  ): PluginObj => {
     return {
-      name: "babel-plugin-graphql-tagged-template",
+      name: "babel-plugin-graphql",
       visitor: {
-        ...(development
-          ? {}
-          : {
-              VariableDeclarator(path, { filename = "" }) {
-                if (queriesPaths.includes(filename) && path.get("id").isIdentifier({ name: "queries" })) {
-                  const sortedQueries = Object.fromEntries(
-                    Object.entries(queries).sort(([a], [b]) => a.localeCompare(b)),
-                  );
+        Program(path, { filename = "" }) {
+          if (documentPaths.includes(filename)) {
+            if (development) {
+              return;
+            }
 
-                  path
-                    .get("init")
-                    .replaceWith(
-                      t.callExpression(t.memberExpression(t.identifier("Object"), t.identifier("assign")), [
-                        t.callExpression(t.memberExpression(t.identifier("Object"), t.identifier("create")), [
-                          t.nullLiteral(),
-                        ]),
-                        t.callExpression(t.memberExpression(t.identifier("JSON"), t.identifier("parse")), [
-                          t.stringLiteral(JSON.stringify(sortedQueries)),
-                        ]),
-                      ]),
-                    );
-                } else if (schemaPaths.includes(filename) && path.get("id").isIdentifier({ name: "schema" })) {
-                  const source = printSchemaWithDirectives(schema);
-                  const documentNode = parse(source, { noLocation: true });
+            for (const statement of path.get("body")) {
+              statement.remove();
+            }
 
-                  path
-                    .get("init")
-                    .replaceWith(
-                      t.callExpression(t.memberExpression(t.identifier("JSON"), t.identifier("parse")), [
-                        t.stringLiteral(JSON.stringify(documentNode)),
-                      ]),
-                    );
-                }
-              },
-            }),
+            path.pushContainer(
+              "body",
+              template.statement.ast(
+                `export default Object.assign(Object.create(null), JSON.parse(${JSON.stringify(JSON.stringify(documents))}))`,
+              ),
+            );
+          } else if (schemaPaths.includes(filename)) {
+            for (const statement of path.get("body")) {
+              statement.remove();
+            }
+
+            const source = printSchemaWithDirectives(schema);
+            const documentNode = parse(source, { noLocation: true });
+
+            path.pushContainer(
+              "body",
+              template.statements.ast(
+                `import { buildASTSchema } from "graphql"\nimport { mergeCustomScalars } from "@mo36924/graphql/merge"\nexport default mergeCustomScalars(buildASTSchema(JSON.parse(${JSON.stringify(JSON.stringify(documentNode))})))`,
+              ),
+            );
+          }
+        },
         TaggedTemplateExpression(path) {
           const {
             tag,
             quasi: { quasis, expressions },
           } = path.node;
 
-          if (!t.isIdentifier(tag)) {
-            return;
-          }
-
-          const name = tag.name;
-
-          if (name !== "gql") {
+          if (!t.isIdentifier(tag, { name: "gql" })) {
             return;
           }
 
@@ -157,10 +150,10 @@ export default declare<Options>(
 
           query = stripIgnoredCharacters(query);
 
-          const key = hash(query);
-          queries[key] = documentNode;
+          const hash = createHash("sha256").update(query).digest("base64url");
+          documents[hash] = documentNode;
 
-          const properties: t.ObjectProperty[] = [t.objectProperty(t.identifier("query"), t.stringLiteral(key))];
+          const properties: t.ObjectProperty[] = [t.objectProperty(t.identifier("query"), t.stringLiteral(hash))];
 
           if (expressions.length) {
             properties.push(

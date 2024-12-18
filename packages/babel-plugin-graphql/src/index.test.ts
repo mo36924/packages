@@ -17,9 +17,9 @@ const schema = buildSchema(`
   }
 `);
 
-const transform = (code: string, options?: Options) =>
+const transform = (code: string, options?: Omit<Options, "schema">) =>
   transformSync(code, {
-    plugins: [[plugin, { schema, ...options }]],
+    plugins: [[plugin, { schema, ...options } satisfies Options]],
   });
 
 describe("babel-plugin-graphql", () => {
@@ -117,8 +117,8 @@ describe("babel-plugin-graphql", () => {
     `);
   });
 
-  it("queries", () => {
-    const queries = {};
+  it("documents", () => {
+    const documents = {};
 
     transform(
       `
@@ -129,10 +129,10 @@ describe("babel-plugin-graphql", () => {
         }
       }\`
     `,
-      { queries },
+      { documents },
     );
 
-    expect(queries).toMatchInlineSnapshot(`
+    expect(documents).toMatchInlineSnapshot(`
       {
         "WB3CpN66RCuW4s8_87g1t7TC8iTyQCqtqjT7Yw82wkE": {
           "definitions": [
@@ -216,65 +216,46 @@ describe("babel-plugin-graphql", () => {
     `);
   });
 
-  it("queries-development", async () => {
-    const queries = { key: parse("query($_0:Int){user(offset:$_0){name}}", { noLocation: true }) };
+  it("documents-development", async () => {
+    const documents = { key: parse("query($_0:Int){user(offset:$_0){name}}", { noLocation: true }) };
 
-    const result = await transformFileAsync(join(fileURLToPath(import.meta.url), "..", "queries.ts"), {
+    const result = await transformFileAsync(join(fileURLToPath(import.meta.url), "..", "documents.ts"), {
       parserOpts: { plugins: ["typescript"] },
-      plugins: [[plugin, { schema, queries, development: true } satisfies Options]],
+      plugins: [[plugin, { schema, documents, development: true } satisfies Options]],
     });
 
     expect(result).toMatchInlineSnapshot(`
       import { DocumentNode } from "graphql";
-      export type Queries = {
-        [key: string]: DocumentNode;
-      };
-
-      // @ts-expect-error queries is set to a value by Babel
-      export const queries: Queries = globalThis.__GRAPHQL_QUERIES__ ??= Object.create(null);
+      const documents: {
+        [hash: string]: DocumentNode | undefined;
+      } = Object.create(null);
+      export default documents;
     `);
   });
 
-  it("queries-production", async () => {
-    const queries = { key: parse("query($_0:Int){user(offset:$_0){name}}", { noLocation: true }) };
+  it("documents-production", async () => {
+    const documents = { key: parse("query($_0:Int){user(offset:$_0){name}}", { noLocation: true }) };
 
-    const result = await transformFileAsync(join(fileURLToPath(import.meta.url), "..", "queries.ts"), {
+    const result = await transformFileAsync(join(fileURLToPath(import.meta.url), "..", "documents.ts"), {
       parserOpts: { plugins: ["typescript"] },
-      plugins: [[plugin, { schema, queries } satisfies Options]],
+      plugins: [[plugin, { schema, documents } satisfies Options]],
     });
 
-    expect(result).toMatchInlineSnapshot(`
-      import { DocumentNode } from "graphql";
-      export type Queries = {
-        [key: string]: DocumentNode;
-      };
-
-      // @ts-expect-error queries is set to a value by Babel
-      export const queries: Queries = Object.assign(Object.create(null), JSON.parse("{\\"key\\":{\\"kind\\":\\"Document\\",\\"definitions\\":[{\\"kind\\":\\"OperationDefinition\\",\\"operation\\":\\"query\\",\\"variableDefinitions\\":[{\\"kind\\":\\"VariableDefinition\\",\\"variable\\":{\\"kind\\":\\"Variable\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"_0\\"}},\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"Int\\"}},\\"directives\\":[]}],\\"directives\\":[],\\"selectionSet\\":{\\"kind\\":\\"SelectionSet\\",\\"selections\\":[{\\"kind\\":\\"Field\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"user\\"},\\"arguments\\":[{\\"kind\\":\\"Argument\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"offset\\"},\\"value\\":{\\"kind\\":\\"Variable\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"_0\\"}}}],\\"directives\\":[],\\"selectionSet\\":{\\"kind\\":\\"SelectionSet\\",\\"selections\\":[{\\"kind\\":\\"Field\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"name\\"},\\"arguments\\":[],\\"directives\\":[]}]}}]}}]}}"));
-    `);
+    expect(result).toMatchInlineSnapshot(
+      `export default Object.assign(Object.create(null), JSON.parse("{\\"key\\":{\\"kind\\":\\"Document\\",\\"definitions\\":[{\\"kind\\":\\"OperationDefinition\\",\\"operation\\":\\"query\\",\\"variableDefinitions\\":[{\\"kind\\":\\"VariableDefinition\\",\\"variable\\":{\\"kind\\":\\"Variable\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"_0\\"}},\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"Int\\"}},\\"directives\\":[]}],\\"directives\\":[],\\"selectionSet\\":{\\"kind\\":\\"SelectionSet\\",\\"selections\\":[{\\"kind\\":\\"Field\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"user\\"},\\"arguments\\":[{\\"kind\\":\\"Argument\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"offset\\"},\\"value\\":{\\"kind\\":\\"Variable\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"_0\\"}}}],\\"directives\\":[],\\"selectionSet\\":{\\"kind\\":\\"SelectionSet\\",\\"selections\\":[{\\"kind\\":\\"Field\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"name\\"},\\"arguments\\":[],\\"directives\\":[]}]}}]}}]}}"));`,
+    );
   });
 
-  it("schema-development", async () => {
+  it("schema", async () => {
     const result = await transformFileAsync(join(fileURLToPath(import.meta.url), "..", "schema.ts"), {
       parserOpts: { plugins: ["typescript"] },
       plugins: [[plugin, { schema, development: true } satisfies Options]],
     });
 
     expect(result).toMatchInlineSnapshot(`
-      import { getSchema } from "@mo36924/graphql";
-      export const schema = getSchema().schema;
-    `);
-  });
-
-  it("schema-production", async () => {
-    const result = await transformFileAsync(join(fileURLToPath(import.meta.url), "..", "schema.ts"), {
-      parserOpts: { plugins: ["typescript"] },
-      plugins: [[plugin, { schema } satisfies Options]],
-    });
-
-    expect(result).toMatchInlineSnapshot(`
-      import { getSchema } from "@mo36924/graphql";
-      export const schema = JSON.parse("{\\"kind\\":\\"Document\\",\\"definitions\\":[{\\"kind\\":\\"SchemaDefinition\\",\\"directives\\":[],\\"operationTypes\\":[{\\"kind\\":\\"OperationTypeDefinition\\",\\"operation\\":\\"query\\",\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"Query\\"}}},{\\"kind\\":\\"OperationTypeDefinition\\",\\"operation\\":\\"mutation\\",\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"Mutation\\"}}}]},{\\"kind\\":\\"ObjectTypeDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"Query\\"},\\"interfaces\\":[],\\"directives\\":[],\\"fields\\":[{\\"kind\\":\\"FieldDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"user\\"},\\"arguments\\":[{\\"kind\\":\\"InputValueDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"offset\\"},\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"Int\\"}},\\"directives\\":[]}],\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"User\\"}},\\"directives\\":[]}]},{\\"kind\\":\\"ObjectTypeDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"Mutation\\"},\\"interfaces\\":[],\\"directives\\":[],\\"fields\\":[{\\"kind\\":\\"FieldDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"create\\"},\\"arguments\\":[{\\"kind\\":\\"InputValueDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"name\\"},\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"String\\"}},\\"directives\\":[]}],\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"User\\"}},\\"directives\\":[]}]},{\\"kind\\":\\"ObjectTypeDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"User\\"},\\"interfaces\\":[],\\"directives\\":[],\\"fields\\":[{\\"kind\\":\\"FieldDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"name\\"},\\"arguments\\":[],\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"String\\"}},\\"directives\\":[]}]}]}");
+      import { buildASTSchema } from "graphql";
+      import { mergeCustomScalars } from "@mo36924/graphql/merge";
+      export default mergeCustomScalars(buildASTSchema(JSON.parse("{\\"kind\\":\\"Document\\",\\"definitions\\":[{\\"kind\\":\\"SchemaDefinition\\",\\"directives\\":[],\\"operationTypes\\":[{\\"kind\\":\\"OperationTypeDefinition\\",\\"operation\\":\\"query\\",\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"Query\\"}}},{\\"kind\\":\\"OperationTypeDefinition\\",\\"operation\\":\\"mutation\\",\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"Mutation\\"}}}]},{\\"kind\\":\\"ObjectTypeDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"Query\\"},\\"interfaces\\":[],\\"directives\\":[],\\"fields\\":[{\\"kind\\":\\"FieldDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"user\\"},\\"arguments\\":[{\\"kind\\":\\"InputValueDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"offset\\"},\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"Int\\"}},\\"directives\\":[]}],\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"User\\"}},\\"directives\\":[]}]},{\\"kind\\":\\"ObjectTypeDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"Mutation\\"},\\"interfaces\\":[],\\"directives\\":[],\\"fields\\":[{\\"kind\\":\\"FieldDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"create\\"},\\"arguments\\":[{\\"kind\\":\\"InputValueDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"name\\"},\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"String\\"}},\\"directives\\":[]}],\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"User\\"}},\\"directives\\":[]}]},{\\"kind\\":\\"ObjectTypeDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"User\\"},\\"interfaces\\":[],\\"directives\\":[],\\"fields\\":[{\\"kind\\":\\"FieldDefinition\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"name\\"},\\"arguments\\":[],\\"type\\":{\\"kind\\":\\"NamedType\\",\\"name\\":{\\"kind\\":\\"Name\\",\\"value\\":\\"String\\"}},\\"directives\\":[]}]}]}")));
     `);
   });
 });

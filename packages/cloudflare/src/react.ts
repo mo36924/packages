@@ -1,6 +1,6 @@
 import { D1Database } from "@cloudflare/workers-types";
-import { queries } from "@mo36924/babel-plugin-graphql/queries";
-import { schema } from "@mo36924/babel-plugin-graphql/schema";
+import documents from "@mo36924/babel-plugin-graphql/documents";
+import schema from "@mo36924/babel-plugin-graphql/schema";
 import { buildQuery } from "@mo36924/graphql-d1/query";
 import { parse } from "@mo36924/json";
 import { buildExecutionContext } from "graphql/execution/execute";
@@ -19,7 +19,7 @@ export const useQuery: UseQuery = ({ query, variables }) => {
   const { env } = useContext(ServerContext);
   const queryContext = useContext(QueryContext);
 
-  const document = queries[query];
+  const document = documents[query];
 
   if (!document) {
     throw new Error("Bad Request");

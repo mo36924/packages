@@ -1,6 +1,6 @@
 import { D1Database } from "@cloudflare/workers-types";
-import { queries } from "@mo36924/babel-plugin-graphql/queries";
-import { schema } from "@mo36924/babel-plugin-graphql/schema";
+import documents from "@mo36924/babel-plugin-graphql/documents";
+import schema from "@mo36924/babel-plugin-graphql/schema";
 import { buildExecutionContext } from "graphql/execution/execute";
 import { buildQuery } from "./query";
 
@@ -35,7 +35,7 @@ const fetchRequestHandler = (request: Request, env: Env) => {
       return badRequest();
     }
 
-    const document = queries[query];
+    const document = documents[query];
 
     if (!document) {
       return badRequest();
@@ -72,4 +72,4 @@ const fetchRequestHandler = (request: Request, env: Env) => {
   }
 };
 
-export { fetchRequestHandler as fetch, queries, schema };
+export { documents, fetchRequestHandler as fetch, schema };
