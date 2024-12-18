@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/babel-plugin-jsx-display-name",
   "type": "module",
-  "version": "5.5.4",
+  "version": "5.5.22",
   "description": "babel-plugin-jsx-display-name",
   "author": "mo36924",
   "license": "MIT",
