@@ -7,18 +7,20 @@ export type Options = {
 
 type ReplaceOptions = {
   identifier: string;
-  searchNode: babel.types.Expression;
-  replaceNode: babel.types.Expression;
+  searchNode: t.Expression;
+  replaceNode: t.Expression;
 }[];
 
+const cache: { [key: string]: ReplaceOptions } = Object.create(null);
+
 export default declare<ReplaceOptions>((_api, options) => {
-  const replaceOptions: ReplaceOptions = Object.entries(options)
+  const replaceOptions = (cache[JSON.stringify(options)] ??= Object.entries(options)
     .sort((a, b) => b[0].length - a[0].length)
     .map(([searchValue, replaceValue]) => ({
       identifier: searchValue.match(/^(typeof\s+)?([A-Za-z_$][\w$]*)/)?.[2] || "",
       searchNode: template.expression.ast(searchValue),
       replaceNode: template.expression.ast(`${replaceValue}`),
-    }));
+    })));
 
   return {
     name: "babel-plugin-replace",
