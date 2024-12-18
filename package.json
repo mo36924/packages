@@ -43,7 +43,7 @@
     "@hono/vite-dev-server": "^0.17.0",
     "@mo36924/change-case": "^0.0.1",
     "@mo36924/http-server": "^2.3.1",
-    "@mo36924/precompile-jsx": "^0.0.4",
+    "@mo36924/precompile-jsx": "^0.0.5",
     "@preact/preset-vite": "^2.9.1",
     "@prettier/sync": "^0.5.2",
     "@rollup/plugin-node-resolve": "^15.3.0",

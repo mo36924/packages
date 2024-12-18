@@ -33,7 +33,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@mo36924/precompile-jsx": "^0.0.4",
+    "@mo36924/precompile-jsx": "^0.0.5",
     "vite": "^5.4.11"
   }
 }
