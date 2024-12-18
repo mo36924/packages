@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/babel-preset-jsx",
   "type": "module",
-  "version": "5.5.22",
+  "version": "5.5.23",
   "description": "babel-preset-jsx",
   "author": "mo36924",
   "license": "MIT",
@@ -40,7 +40,7 @@
     "@mo36924/babel-plugin-inject": "^5.5.5",
     "@mo36924/babel-plugin-inject-asset-jsx-elements": "^5.5.9",
     "@mo36924/babel-plugin-jsx-display-name": "^5.5.22",
-    "@mo36924/babel-plugin-replace": "^5.5.4",
+    "@mo36924/babel-plugin-replace": "^5.5.23",
     "@mo36924/babel-plugin-replace-jsx-elements": "^5.5.8",
     "@mo36924/babel-plugin-server-function": "^5.5.21",
     "@mo36924/graphql": "^5.5.4",
