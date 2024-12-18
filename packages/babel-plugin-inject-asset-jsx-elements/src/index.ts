@@ -2,7 +2,7 @@ import { relative } from "node:path";
 import { types as t } from "@babel/core";
 import { declare } from "@babel/helper-plugin-utils";
 import jsx from "@babel/plugin-syntax-jsx";
-import { manifest as _manifest } from "@mo36924/vite-plugin-ssr";
+import viteManifest from "@mo36924/vite-plugin-manifest/manifest";
 import { Manifest } from "vite";
 
 export type Options = {
@@ -24,7 +24,7 @@ const jsxElement = (tag: string, attrs: Record<string, string> = {}) =>
     [],
   );
 
-export default declare<Options>((_, { manifest = _manifest }) => {
+export default declare<Options>((_, { manifest = viteManifest }) => {
   return {
     name: "babel-plugin-inject-asset-jsx-elements",
     inherits: jsx.default || jsx,
