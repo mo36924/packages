@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/graphql-d1",
   "type": "module",
-  "version": "5.5.26",
+  "version": "5.5.27",
   "description": "graphql-d1",
   "author": "mo36924",
   "license": "MIT",
@@ -62,7 +62,7 @@
   },
   "dependencies": {
     "@cloudflare/workers-types": "^4.20241112.0",
-    "@mo36924/babel-plugin-graphql": "^5.5.26",
+    "@mo36924/babel-plugin-graphql": "^5.5.27",
     "@mo36924/change-case": "^0.0.1",
     "@mo36924/graphql": "^5.5.4",
     "graphql": "^16.9.0",
