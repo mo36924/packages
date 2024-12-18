@@ -1,3 +1,5 @@
 import { Manifest } from "vite";
 
-export const manifest: Manifest = Object.create(null);
+const manifest: Manifest = Object.create(null);
+
+export default manifest;

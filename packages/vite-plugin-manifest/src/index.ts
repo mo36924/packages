@@ -1,13 +1,13 @@
 import { relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ManifestChunk, normalizePath, Plugin } from "vite";
-import { manifest as viteManifest } from "./manifest";
+import viteManifest from "./manifest";
 
 const manifestJsonPath = "manifest.json";
 const manifestModulePath = fileURLToPath(new URL("manifest.js", import.meta.url));
 const manifestModulePaths = [".js", ".cjs"].map((extname) => normalizePath(manifestModulePath + extname));
 
-export const manifest = (): Plugin => {
+export default (): Plugin => {
   let isSsrBuild: boolean = false;
   return {
     name: "vite-plugin-manifest",
@@ -40,7 +40,7 @@ export const manifest = (): Plugin => {
         return;
       }
 
-      return `export const manifest = Object.assign(Object.create(null), JSON.parse(${JSON.stringify(JSON.stringify(viteManifest))}))`;
+      return `export default Object.assign(Object.create(null), JSON.parse(${JSON.stringify(JSON.stringify(viteManifest))}))`;
     },
     generateBundle: {
       order: "post",
