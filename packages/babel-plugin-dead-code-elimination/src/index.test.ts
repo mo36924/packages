@@ -20,6 +20,8 @@ it("babel-plugin-dead-code-elimination", () => {
 
   expect(result).toMatchInlineSnapshot(`
     import { useState } from "react";
-    console.log(useState);
+    {
+      console.log(useState);
+    }
   `);
 });
