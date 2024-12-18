@@ -1,6 +1,6 @@
 import { Plugin } from "vite";
 
-export const removeUseClientDirective = (): Plugin => {
+export default (): Plugin => {
   return {
     name: "vite-plugin-remove-use-client-directive",
     transform(code) {
