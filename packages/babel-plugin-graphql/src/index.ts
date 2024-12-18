@@ -65,7 +65,7 @@ export default declare<Options>(
             path.pushContainer(
               "body",
               template.statements.ast(
-                `import { buildASTSchema } from "graphql"\nimport { mergeCustomScalars } from "@mo36924/graphql/merge"\nexport default mergeCustomScalars(buildASTSchema(JSON.parse(${JSON.stringify(JSON.stringify(documentNode))})))`,
+                `import { buildASTSchema } from "graphql"\nexport default buildASTSchema(JSON.parse(${JSON.stringify(JSON.stringify(documentNode))}))`,
               ),
             );
           }
