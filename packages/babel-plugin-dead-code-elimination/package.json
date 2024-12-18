@@ -35,7 +35,6 @@
   "dependencies": {
     "@babel/helper-plugin-utils": "^7.25.9",
     "@types/babel__helper-plugin-utils": "^7.10.3",
-    "babel-dead-code-elimination": "^1.0.6",
-    "babel-plugin-minify-dead-code-elimination": "^0.5.2"
+    "babel-dead-code-elimination": "^1.0.8"
   }
 }

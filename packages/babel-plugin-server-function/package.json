@@ -56,6 +56,6 @@
     "@mo36924/json": "^5.5.4",
     "@types/babel__core": "^7.20.5",
     "@types/babel__helper-plugin-utils": "^7.10.3",
-    "babel-dead-code-elimination": "^1.0.6"
+    "babel-dead-code-elimination": "^1.0.8"
   }
 }
