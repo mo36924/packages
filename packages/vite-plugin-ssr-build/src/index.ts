@@ -1,6 +1,6 @@
 import { build, Plugin } from "vite";
 
-export const ssrBuild = (): Plugin => {
+export default (): Plugin => {
   return {
     name: "vite-plugin-ssr-build",
     apply(_config, { isSsrBuild }) {
