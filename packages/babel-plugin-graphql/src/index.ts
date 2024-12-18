@@ -24,6 +24,7 @@ export type Options = {
   development?: boolean;
   schema?: GraphQLSchema;
   documents?: { [hash: string]: DocumentNode | undefined };
+  transformSchema?: (code: string) => string;
 };
 
 const moduleDir = dirname(fileURLToPath(import.meta.url));
@@ -33,7 +34,12 @@ const schemaPaths = ["js", "cjs", "ts"].map((extname) => join(moduleDir, `schema
 export default declare<Options>(
   (
     _api,
-    { development = env.NODE_ENV === "development", schema = graphqlSchema, documents = documentNodes },
+    {
+      development = env.NODE_ENV === "development",
+      schema = graphqlSchema,
+      documents = documentNodes,
+      transformSchema = (code) => code,
+    },
   ): PluginObj => {
     return {
       name: "babel-plugin-graphql",
@@ -62,12 +68,11 @@ export default declare<Options>(
             const source = printSchemaWithDirectives(schema);
             const documentNode = parse(source, { noLocation: true });
 
-            path.pushContainer(
-              "body",
-              template.statements.ast(
-                `import { buildASTSchema } from "graphql"\nexport default buildASTSchema(JSON.parse(${JSON.stringify(JSON.stringify(documentNode))}))`,
-              ),
+            const code = transformSchema(
+              `import { buildASTSchema } from "graphql"\nexport default buildASTSchema(JSON.parse(${JSON.stringify(JSON.stringify(documentNode))}))`,
             );
+
+            path.pushContainer("body", template.statements.ast(code));
           }
         },
         TaggedTemplateExpression(path) {
