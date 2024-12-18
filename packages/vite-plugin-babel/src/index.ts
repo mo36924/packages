@@ -1,4 +1,4 @@
-import { TransformOptions, transformSync } from "@babel/core";
+import { transformAsync, TransformOptions } from "@babel/core";
 import { createFilter, FilterPattern, Plugin } from "vite";
 
 export type BabelOptions = TransformOptions | null | undefined | void;
@@ -19,18 +19,18 @@ export default ({ enforce, include, exclude, options }: Options): Plugin => {
     configResolved({ command }) {
       isBuild = command === "build";
     },
-    transform(code, id, { ssr = false } = {}) {
+    async transform(code, id, { ssr = false } = {}) {
       if (!filter(id)) {
         return;
       }
 
-      const _options = typeof options === "function" ? options({ id, isBuild, ssr }) : options;
+      const babelOptions = typeof options === "function" ? options({ id, isBuild, ssr }) : options;
 
-      if (!_options) {
+      if (!babelOptions) {
         return;
       }
 
-      return transformSync(code, {
+      const result = await transformAsync(code, {
         babelrc: false,
         configFile: false,
         browserslistConfigFile: false,
@@ -45,10 +45,21 @@ export default ({ enforce, include, exclude, options }: Options): Plugin => {
                 ? [["typescript", { dts: true }]]
                 : /\.[cm]?ts$/.test(id)
                   ? ["typescript"]
-                  : [],
+                  : /\.[cm]?js$/.test(id)
+                    ? []
+                    : ["jsx", "typescript"],
         },
-        ..._options,
-      }) as any;
+        ...babelOptions,
+      });
+
+      if (!result) {
+        return result;
+      }
+
+      return {
+        code: result.code ?? undefined,
+        map: result.map,
+      };
     },
   };
 };
