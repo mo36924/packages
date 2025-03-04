@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getRequestURL } from "./index";
 
-describe("getUrl", () => {
+describe("getRequestURL", () => {
   it("should return URL object for the request", () => {
     const request = new Request("https://example.com/path?query=test");
     const url = getRequestURL(request);
