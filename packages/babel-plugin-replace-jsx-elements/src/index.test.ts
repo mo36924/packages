@@ -21,7 +21,9 @@ it("babel-plugin-replace-jsx-elements", () => {
   `;
 
   const result = transformSync(code, {
-    plugins: [[plugin, { A: "a", title: "Title", header: "Fragment", body: "Body" } satisfies Options]],
+    plugins: [
+      [plugin, { replaceTags: { A: "a", title: "Title", header: "Fragment", body: "Body" } } satisfies Options],
+    ],
   });
 
   expect(result).toMatchInlineSnapshot(`

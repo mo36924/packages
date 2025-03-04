@@ -32,22 +32,24 @@ export default (
       [injectAssetJsxElements, { manifest } satisfies InjectAssetJsxElementsOptions],
       [
         replaceJsxElements,
-        server
-          ? ({
-              body: "Body",
-              Suspense: "Fragment",
-              A: "a",
-            } satisfies ReplaceJsxElementsOptions)
-          : ({
-              html: "Fragment",
-              head: "Fragment",
-              meta: "Fragment",
-              link: "Fragment",
-              script: "Fragment",
-              body: "Fragment",
-              title: "Title",
-              A: "a",
-            } satisfies ReplaceJsxElementsOptions),
+        {
+          replaceTags: server
+            ? {
+                body: "Body",
+                Suspense: "Fragment",
+                A: "a",
+              }
+            : {
+                html: "Fragment",
+                head: "Fragment",
+                meta: "Fragment",
+                link: "Fragment",
+                script: "Fragment",
+                body: "Fragment",
+                title: "Title",
+                A: "a",
+              },
+        } satisfies ReplaceJsxElementsOptions,
       ],
       [
         inject,
