@@ -1,30 +1,19 @@
-const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-const maxByteLength = 1000;
-const uint8Array = new Uint8Array(maxByteLength);
+import { randomBytes } from "node:crypto";
+
 const randomIdLength = 22;
-let i = maxByteLength;
+let ids = "";
 
-export const randomId = () => {
-  let j = 0;
-  let id = "";
+/**
+ * Generates a Base62 random ID
+ * @returns Base62 random ID
+ */
+export const randomId = (): string => {
+  if (ids.length < randomIdLength) {
+    ids += randomBytes(4096).toString("base64").replace(/[+/=]/g, "");
+    return randomId();
+  }
 
-  do {
-    if (i === maxByteLength) {
-      i = 0;
-      crypto.getRandomValues(uint8Array);
-    } else {
-      i++;
-    }
-
-    const byte = uint8Array[i];
-
-    if (byte < 248) {
-      j++;
-      id += chars[byte % 62];
-
-      if (j === randomIdLength) {
-        return id;
-      }
-    }
-  } while (true);
+  const id = ids.slice(0, randomIdLength);
+  ids = ids.slice(randomIdLength);
+  return id;
 };
