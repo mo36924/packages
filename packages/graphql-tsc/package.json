@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/graphql-tsc",
   "type": "module",
-  "version": "5.5.14",
+  "version": "5.6.0",
   "description": "graphql-tsc",
   "author": "mo36924",
   "license": "MIT",
@@ -34,7 +34,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@mo36924/graphql-plugin": "^5.5.14",
+    "@mo36924/graphql-plugin": "^5.6.0",
     "@volar/typescript": "^2.4.10",
     "typescript": "^5.6.3"
   }

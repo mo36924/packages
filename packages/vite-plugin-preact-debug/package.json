@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/vite-plugin-preact-debug",
   "type": "module",
-  "version": "5.5.11",
+  "version": "5.6.0",
   "description": "vite-plugin-preact-debug",
   "author": "mo36924",
   "license": "MIT",
