@@ -1,0 +1,35 @@
+{
+  "name": "@mo36924/request-url",
+  "type": "module",
+  "version": "5.6.7",
+  "description": "request-url",
+  "author": "mo36924",
+  "license": "MIT",
+  "homepage": "https://github.com/mo36924/packages#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mo36924/packages.git",
+    "directory": "packages/request-url"
+  },
+  "bugs": {
+    "url": "https://github.com/mo36924/packages/issues"
+  },
+  "keywords": [],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
