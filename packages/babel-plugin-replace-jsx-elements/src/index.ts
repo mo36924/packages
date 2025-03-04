@@ -22,14 +22,9 @@ export default declare<Options>((_, options) => {
         }
 
         const tag = name.name;
-
-        if (!Object.hasOwn(options, tag)) {
-          return;
-        }
-
         const replacedTag = options[tag];
 
-        if (!replacedTag || path.scope.hasBinding(replacedTag)) {
+        if (!Object.hasOwn(options, tag) || !replacedTag || path.scope.hasBinding(replacedTag)) {
           return;
         }
 
