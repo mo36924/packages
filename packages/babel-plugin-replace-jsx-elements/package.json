@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/babel-plugin-replace-jsx-elements",
   "type": "module",
-  "version": "5.5.8",
+  "version": "5.5.32",
   "description": "babel-plugin-replace-jsx-elements",
   "author": "mo36924",
   "license": "MIT",
