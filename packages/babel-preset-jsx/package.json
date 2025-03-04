@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/babel-preset-jsx",
   "type": "module",
-  "version": "5.6.0",
+  "version": "5.6.1",
   "description": "babel-preset-jsx",
   "author": "mo36924",
   "license": "MIT",
@@ -38,7 +38,7 @@
     "@mo36924/babel-plugin-flatten-nested-fragments": "^5.5.8",
     "@mo36924/babel-plugin-graphql": "^5.5.27",
     "@mo36924/babel-plugin-inject": "^5.5.5",
-    "@mo36924/babel-plugin-inject-asset-jsx-elements": "^5.6.0",
+    "@mo36924/babel-plugin-inject-asset-jsx-elements": "^5.6.1",
     "@mo36924/babel-plugin-jsx-display-name": "^5.5.31",
     "@mo36924/babel-plugin-replace": "^5.5.23",
     "@mo36924/babel-plugin-replace-jsx-elements": "^5.5.32",
