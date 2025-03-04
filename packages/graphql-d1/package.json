@@ -66,7 +66,7 @@
     "@mo36924/change-case": "^0.0.1",
     "@mo36924/graphql": "^5.5.4",
     "graphql": "^16.9.0",
-    "miniflare": "^3.20241106.0",
-    "wrangler": "^3.89.0"
+    "miniflare": "^3.20250214.2",
+    "wrangler": "^3.112.0"
   }
 }

@@ -33,6 +33,6 @@
     "access": "public"
   },
   "dependencies": {
-    "vite": "^5.4.11"
+    "vite": "^6.2.0"
   }
 }

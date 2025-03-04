@@ -39,6 +39,6 @@
     "access": "public"
   },
   "dependencies": {
-    "vitest": "^2.1.5"
+    "vitest": "^3.0.7"
   }
 }
