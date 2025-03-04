@@ -1,7 +1,7 @@
 {
   "name": "@mo36924/cloudflare",
   "type": "module",
-  "version": "5.5.29",
+  "version": "5.5.31",
   "description": "cloudflare",
   "author": "mo36924",
   "license": "MIT",
@@ -99,7 +99,7 @@
     "@hono/vite-dev-server": "^0.17.0",
     "@mo36924/babel-plugin-graphql": "^5.5.27",
     "@mo36924/babel-plugin-server-function": "^5.5.29",
-    "@mo36924/babel-preset-jsx": "^5.5.29",
+    "@mo36924/babel-preset-jsx": "^5.5.31",
     "@mo36924/cloudflare": "^5.4.23",
     "@mo36924/escape-html": "^5.5.4",
     "@mo36924/graphql": "^5.5.4",
