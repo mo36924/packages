@@ -2,7 +2,6 @@ import { relative } from "node:path";
 import { types as t } from "@babel/core";
 import { declare } from "@babel/helper-plugin-utils";
 import jsx from "@babel/plugin-syntax-jsx";
-import viteManifest from "@mo36924/vite-plugin-manifest/manifest";
 import { Manifest } from "vite";
 
 export type Options = {
@@ -24,7 +23,7 @@ const jsxElement = (tag: string, attrs: Record<string, string> = {}) =>
     [],
   );
 
-export default declare<Options>((_, { manifest = viteManifest }) => {
+export default declare<Options>((_, { manifest = {} }) => {
   return {
     name: "babel-plugin-inject-asset-jsx-elements",
     inherits: jsx.default || jsx,
@@ -50,10 +49,12 @@ export default declare<Options>((_, { manifest = viteManifest }) => {
                 compareBooleans(a.isEntry, b.isEntry) ||
                 compareBooleans(a.isDynamicEntry, b.isDynamicEntry),
             )
-            .map(({ file }) =>
+            .map(({ file, isEntry }) =>
               isCss(file)
                 ? jsxElement("link", { rel: "stylesheet", href: `/${file}` })
-                : jsxElement("script", { type: "module", src: `/${file}` }),
+                : isEntry
+                  ? jsxElement("script", { type: "module", src: `/${file}` })
+                  : jsxElement("link", { rel: "modulepreload", href: `/${file}` }),
             ),
         );
       },
