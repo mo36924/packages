@@ -7,7 +7,9 @@ export type Options = {
   enforce?: "pre" | "post";
   include?: FilterPattern;
   exclude?: FilterPattern;
-  options: BabelOptions | ((options: { id: string; isBuild: boolean; ssr: boolean }) => BabelOptions);
+  options:
+    | BabelOptions
+    | ((options: { id: string; isBuild: boolean; ssr: boolean; environment: string }) => BabelOptions);
 };
 
 export default ({ enforce, include, exclude, options }: Options): Plugin => {
@@ -24,7 +26,8 @@ export default ({ enforce, include, exclude, options }: Options): Plugin => {
         return;
       }
 
-      const babelOptions = typeof options === "function" ? options({ id, isBuild, ssr }) : options;
+      const babelOptions =
+        typeof options === "function" ? options({ id, isBuild, ssr, environment: this.environment.name }) : options;
 
       if (!babelOptions) {
         return;
@@ -52,13 +55,9 @@ export default ({ enforce, include, exclude, options }: Options): Plugin => {
         ...babelOptions,
       });
 
-      if (!result) {
-        return result;
-      }
-
       return {
-        code: result.code ?? undefined,
-        map: result.map,
+        code: result!.code!,
+        map: result!.map,
       };
     },
   };
