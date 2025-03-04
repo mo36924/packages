@@ -1,64 +1,25 @@
-import { relative, sep } from "node:path";
-import { fileURLToPath } from "node:url";
-import { ManifestChunk, normalizePath, Plugin } from "vite";
-import viteManifest from "./manifest";
+import { Manifest, Plugin } from "vite";
 
-const manifestJsonPath = "manifest.json";
-const manifestModulePath = fileURLToPath(new URL("manifest.js", import.meta.url));
-const manifestModulePaths = [".js", ".cjs"].map((extname) => normalizePath(manifestModulePath + extname));
+const manifestPath = "manifest.json";
+const _globalThis: { manifest?: Manifest } = globalThis as any;
 
-export default (): Plugin => {
-  let isSsrBuild: boolean = false;
+export default ({ manifest }: { manifest: Manifest }): Plugin => {
   return {
-    name: "vite-plugin-manifest",
-    apply: (_config, { isSsrBuild }) => !isSsrBuild,
-    config(_config, env) {
-      isSsrBuild = !!env.isSsrBuild;
-
-      if (isSsrBuild) {
-        return;
+    name: "manifest",
+    config: () => ({ build: { manifest: manifestPath } }),
+    options() {
+      if (_globalThis.manifest) {
+        Object.keys(manifest).forEach((key) => delete manifest[key]);
+        Object.assign(manifest, _globalThis.manifest);
       }
-
-      return { build: { manifest: manifestJsonPath } };
-    },
-    configResolved(config) {
-      if (isSsrBuild) {
-        return;
-      }
-
-      const input = config.build.rollupOptions.input ?? [];
-      const inputs = typeof input === "string" ? [input] : Object.values(input);
-      const paths = inputs.map((input) => relative(".", input).split(sep).join("/"));
-
-      Object.assign(
-        viteManifest,
-        Object.fromEntries(paths.map((path) => [path, { file: path, isEntry: true } satisfies ManifestChunk])),
-      );
-    },
-    load(id) {
-      if (!manifestModulePaths.includes(id)) {
-        return;
-      }
-
-      return `export default Object.assign(Object.create(null), JSON.parse(${JSON.stringify(JSON.stringify(viteManifest))}))`;
     },
     generateBundle: {
       order: "post",
-      handler(_, bundle) {
-        if (isSsrBuild) {
-          return;
+      handler(_options, bundle) {
+        if (bundle[manifestPath]?.type === "asset") {
+          _globalThis.manifest = JSON.parse(`${bundle[manifestPath].source}`);
+          delete bundle[manifestPath];
         }
-
-        if (bundle[manifestJsonPath]?.type !== "asset") {
-          return;
-        }
-
-        for (const key of Object.keys(viteManifest)) {
-          delete bundle[key];
-        }
-
-        Object.assign(viteManifest, JSON.parse(`${bundle[manifestJsonPath].source}`));
-        delete bundle[manifestJsonPath];
       },
     },
   };
