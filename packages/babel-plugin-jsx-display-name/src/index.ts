@@ -12,12 +12,16 @@ export default declare<Options>((_api, { componentsDir = "src/components" }) => 
     name: "babel-plugin-jsx-display-name",
     visitor: {
       ExportDefaultDeclaration(path, { filename = "" }) {
-        const {
-          scope,
-          node: { declaration },
-        } = path;
+        const { scope } = path;
+        const declaration = path.get("declaration");
 
-        if (!/\.[cm]?[tj]sx$/.test(filename) || !t.isArrowFunctionExpression(declaration)) {
+        if (
+          !(
+            declaration.isArrowFunctionExpression() ||
+            (declaration.isClassDeclaration() && !declaration.get("id").node) ||
+            (declaration.isFunctionDeclaration() && !declaration.get("id").node)
+          )
+        ) {
           return;
         }
 
@@ -35,10 +39,16 @@ export default declare<Options>((_api, { componentsDir = "src/components" }) => 
           displayName += "$";
         }
 
-        path.replaceWithMultiple([
-          t.variableDeclaration("var", [t.variableDeclarator(t.identifier(displayName), declaration)]),
-          t.exportDefaultDeclaration(t.identifier(displayName)),
-        ]);
+        if (declaration.isArrowFunctionExpression()) {
+          path.replaceWithMultiple([
+            t.variableDeclaration("var", [t.variableDeclarator(t.identifier(displayName), declaration.node)]),
+            t.exportDefaultDeclaration(t.identifier(displayName)),
+          ]);
+        } else if (declaration.isClassDeclaration()) {
+          declaration.get("id").replaceWith(t.identifier(displayName));
+        } else if (declaration.isFunctionDeclaration()) {
+          declaration.get("id").replaceWith(t.identifier(displayName));
+        }
       },
     },
   };
