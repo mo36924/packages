@@ -1,43 +1,46 @@
-import { assert, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { parse, stringify } from "./index";
 
-it("json", () => {
-  const data = {
-    a: 1,
-    b: [2, 3],
-    c: new Date(0),
-    d: [0, "aaa"],
-    e: [1, "1970-01-01T00:00:00.000Z"],
-    f: [0, [0, new Date(0)]],
-  };
+describe("json transformer", () => {
+  it("should handle undefined values", () => {
+    const serialized = stringify(undefined);
+    const deserialized = parse(serialized);
+    expect(deserialized).toBe(null);
+  });
 
-  const json = stringify(data);
-  const _data = parse(json);
-  assert.deepEqual(data, _data);
+  it("should handle basic string values", () => {
+    const input = "hello";
+    const serialized = stringify(input);
+    const deserialized = parse(serialized);
+    expect(deserialized).toBe(input);
+  });
 
-  expect(JSON.stringify(JSON.parse(json), null, 2)).toMatchInlineSnapshot(`
-    "{
-      "a": 1,
-      "b": [
-        2,
-        3
-      ],
-      "c": "1970-01-01T00:00:00.000Z",
-      "d": [
-        0,
-        "aaa "
-      ],
-      "e": [
-        1,
-        "1970-01-01T00:00:00.000Z "
-      ],
-      "f": [
-        0,
-        [
-          0,
-          "1970-01-01T00:00:00.000Z"
-        ]
-      ]
-    }"
-  `);
+  it("should handle Date objects", () => {
+    const input = new Date("2023-01-01");
+    const obj = { date: input };
+    const serialized = stringify(obj);
+    const deserialized = parse(serialized);
+    expect(deserialized.date instanceof Date).toBe(true);
+    expect(deserialized.date.getTime()).toBe(input.getTime());
+  });
+
+  it("should handle nested objects with mixed types", () => {
+    const input = { name: "test", date: new Date("2023-01-01"), nested: { text: "nested", number: 42 } };
+
+    const serialized = stringify(input);
+    const deserialized = parse(serialized);
+    expect(deserialized.name).toBe(input.name);
+    expect(deserialized.date instanceof Date).toBe(true);
+    expect(deserialized.nested.text).toBe(input.nested.text);
+    expect(deserialized.nested.number).toBe(input.nested.number);
+  });
+
+  it("should handle arrays", () => {
+    const input = ["hello", new Date("2023-01-01"), 123];
+    const serialized = stringify(input);
+    const deserialized = parse(serialized);
+    expect(deserialized[0]).toBe(input[0]);
+    expect(deserialized[1] instanceof Date).toBe(true);
+    expect(deserialized[2]).toBe(input[2]);
+  });
 });

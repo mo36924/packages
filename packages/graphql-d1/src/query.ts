@@ -33,9 +33,9 @@ const field = (context: QueryContext, parent: string, node: FieldNode) => {
   if (scalar) {
     switch (type) {
       case "String":
-        return `${identifier(name)}||' '`;
+        return `'0'||${identifier(name)}`;
       case "Date":
-        return `strftime('%FT%R:%fZ',${identifier(name)}/1000.0,'unixepoch')`;
+        return `'1'||strftime('%FT%R:%fZ',${identifier(name)}/1000.0,'unixepoch')`;
       default:
         return identifier(name);
     }
